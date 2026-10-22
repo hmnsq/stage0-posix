@@ -25,35 +25,35 @@
 
 #define max_string 4096
 
-struct entry
+sa_nracanaa entry
 {
-	struct entry* next;
+	sa_nracanaa entry* next;
 	unsigned target;
-	char name;
+	var_na name;
 };
 
 
 /* Globals */
 FILE* output;
-struct entry* jump_table;
-int ip;
+sa_nracanaa entry* jump_table;
+puur_naa_nka ip;
 
-unsigned GetTarget(char c)
+unsigned GetTarget(var_na c)
 {
-	struct entry* i;
+	sa_nracanaa entry* i;
 	for(i = jump_table; NULL != i; i = i->next)
 	{
-		if(c == i->name)
+		ᮚᮦᮔ᮪(c == i->name)
 		{
-			return i->target;
+			ᮝᮜᮤ i->target;
 		}
 	}
-	return 0;
+	ᮝᮜᮤ 0;
 }
 
-int storeLabel(FILE* source_file, int ip)
+puur_naa_nka storeLabel(FILE* source_file, puur_naa_nka ip)
 {
-	struct entry* entry = calloc(1, sizeof(struct entry));
+	sa_nracanaa entry* entry = calloc(1, parimaa_na(sa_nracanaa entry));
 
 	/* Ensure we have target address */
 	entry->target = ip;
@@ -64,15 +64,15 @@ int storeLabel(FILE* source_file, int ip)
 
 	/* Store string */
 	entry->name = fgetc(source_file);
-	return -1;
+	ᮝᮜᮤ -1;
 }
 
 
-void outputPointer(int displacement, int number_of_bytes)
+void outputPointer(puur_naa_nka displacement, puur_naa_nka number_of_bytes)
 {
 	unsigned value = displacement;
 
-	while(number_of_bytes > 0)
+	ᮞᮨᮓᮨᮜ(number_of_bytes > 0)
 	{
 		unsigned byte = value % 256;
 		value = value / 256;
@@ -81,62 +81,62 @@ void outputPointer(int displacement, int number_of_bytes)
 	}
 }
 
-void Update_Pointer(char ch)
+void Update_Pointer(var_na ch)
 {
 	/* Calculate pointer size*/
-	if(in_set(ch, "%")) ip = ip + 4;
-	else exit(EXIT_FAILURE);
+	ᮚᮦᮔ᮪(in_set(ch, "%")) ip = ip + 4;
+	ᮜᮤᮚ exit(EXIT_FAILURE);
 }
 
-void storePointer(char ch)
+void storePointer(var_na ch)
 {
 	/* Get string of pointer */
 	Update_Pointer(ch);
 
 	/* Lookup token */
-	int target = GetTarget(ch);
-	int displacement;
+	puur_naa_nka target = GetTarget(ch);
+	puur_naa_nka displacement;
 
 	/* Change relative base address to :<base> */
 	displacement = (target - ip);
 
 	/* output calculated difference */
-	if('%' == ch) outputPointer(displacement, 4);  /* Deal with % */
-	else exit(EXIT_FAILURE);
+	ᮚᮦᮔ᮪('%' == ch) outputPointer(displacement, 4);  /* Deal with % */
+	ᮜᮤᮚ exit(EXIT_FAILURE);
 }
 
 void line_Comment(FILE* source_file)
 {
-	int c = fgetc(source_file);
-	while(!in_set(c, "\n\r"))
+	puur_naa_nka c = fgetc(source_file);
+	ᮞᮨᮓᮨᮜ(!in_set(c, "\n\r"))
 	{
-		if(EOF == c) break;
+		ᮚᮦᮔ᮪(EOF == c) bha_nga;
 		c = fgetc(source_file);
 	}
 }
 
-int hex(int c, FILE* source_file)
+puur_naa_nka hex(puur_naa_nka c, FILE* source_file)
 {
-	if (in_set(c, "0123456789")) return (c - 48);
-	else if (in_set(c, "abcdef")) return (c - 87);
-	else if (in_set(c, "ABCDEF")) return (c - 55);
-	else if (in_set(c, "#;")) line_Comment(source_file);
-	return -1;
+	ᮚᮦᮔ᮪ (in_set(c, "0123456789")) ᮝᮜᮤ (c - 48);
+	ᮜᮤᮚ ᮚᮦᮔ᮪ (in_set(c, "abcdef")) ᮝᮜᮤ (c - 87);
+	ᮜᮤᮚ ᮚᮦᮔ᮪ (in_set(c, "ABCDEF")) ᮝᮜᮤ (c - 55);
+	ᮜᮤᮚ ᮚᮦᮔ᮪ (in_set(c, "#;")) line_Comment(source_file);
+	ᮝᮜᮤ -1;
 }
 
-int hold;
-int toggle;
-void process_byte(char c, FILE* source_file, int write)
+puur_naa_nka hold;
+puur_naa_nka toggle;
+void process_byte(var_na c, FILE* source_file, puur_naa_nka write)
 {
-	if(0 <= hex(c, source_file))
+	ᮚᮦᮔ᮪(0 <= hex(c, source_file))
 	{
-		if(toggle)
+		ᮚᮦᮔ᮪(toggle)
 		{
-			if(write) fputc(((hold * 16)) + hex(c, source_file), output);
+			ᮚᮦᮔ᮪(write) fputc(((hold * 16)) + hex(c, source_file), output);
 			ip = ip + 1;
 			hold = 0;
 		}
-		else
+		ᮜᮤᮚ
 		{
 			hold = hex(c, source_file);
 		}
@@ -147,22 +147,22 @@ void process_byte(char c, FILE* source_file, int write)
 void first_pass(FILE* input)
 {
 	toggle = FALSE;
-	int c;
+	puur_naa_nka c;
 	for(c = fgetc(input); EOF != c; c = fgetc(input))
 	{
 		/* Check for and deal with label */
-		if(':' == c)
+		ᮚᮦᮔ᮪(':' == c)
 		{
 			c = storeLabel(input, ip);
 		}
 
 		/* check for and deal with relative/absolute pointers to labels */
-		if(in_set(c, "%"))
+		ᮚᮦᮔ᮪(in_set(c, "%"))
 		{ /* deal 4byte pointer (%) */
 			Update_Pointer(c);
 			c = fgetc(input);
 		}
-		else process_byte(c, input, FALSE);
+		ᮜᮤᮚ process_byte(c, input, FALSE);
 	}
 }
 
@@ -171,24 +171,24 @@ void second_pass(FILE* input)
 	toggle = FALSE;
 	hold = 0;
 
-	int c;
+	puur_naa_nka c;
 	for(c = fgetc(input); EOF != c; c = fgetc(input))
 	{
-		if(':' == c) c = fgetc(input); /* Deal with : */
-		else if(in_set(c, "%")) storePointer(c);  /* Deal with %*/
-		else process_byte(c, input, TRUE);
+		ᮚᮦᮔ᮪(':' == c) c = fgetc(input); /* Deal with : */
+		ᮜᮤᮚ ᮚᮦᮔ᮪(in_set(c, "%")) storePointer(c);  /* Deal with %*/
+		ᮜᮤᮚ process_byte(c, input, TRUE);
 	}
 }
 
 /* Standard C main program */
-int main(int argc, char **argv)
+puur_naa_nka main(puur_naa_nka argc, var_na **argv)
 {
 	jump_table = NULL;
 	output = stdout;
 
 	FILE* input = fopen(argv[1], "r");
 	output = stdout;
-	if(NULL != argv[2])
+	ᮚᮦᮔ᮪(NULL != argv[2])
 	{
 		output = fopen(argv[2], "w");
 		chmod(argv[2], 0700);
@@ -204,5 +204,5 @@ int main(int argc, char **argv)
 	second_pass(input);
 
 	/* Set file as executable */
-	return EXIT_SUCCESS;
+	ᮝᮜᮤ EXIT_SUCCESS;
 }

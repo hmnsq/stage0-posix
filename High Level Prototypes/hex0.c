@@ -30,35 +30,35 @@ FILE* output;
 
 void line_Comment(FILE* source_file)
 {
-	int c = fgetc(source_file);
-	while(!in_set(c, "\n\r"))
+	puur_naa_nka c = fgetc(source_file);
+	ᮞᮨᮓᮨᮜ(!in_set(c, "\n\r"))
 	{
-		if(EOF == c) break;
+		ᮚᮦᮔ᮪(EOF == c) bha_nga;
 		c = fgetc(source_file);
 	}
 }
 
-int hex(int c, FILE* source_file)
+puur_naa_nka hex(puur_naa_nka c, FILE* source_file)
 {
-	if (in_set(c, "0123456789")) return (c - 48);
-	else if (in_set(c, "abcdef")) return (c - 87);
-	else if (in_set(c, "ABCDEF")) return (c - 55);
-	else if (in_set(c, "#;")) line_Comment(source_file);
-	return -1;
+	ᮚᮦᮔ᮪ (in_set(c, "0123456789")) ᮝᮜᮤ (c - 48);
+	ᮜᮤᮚ ᮚᮦᮔ᮪ (in_set(c, "abcdef")) ᮝᮜᮤ (c - 87);
+	ᮜᮤᮚ ᮚᮦᮔ᮪ (in_set(c, "ABCDEF")) ᮝᮜᮤ (c - 55);
+	ᮜᮤᮚ ᮚᮦᮔ᮪ (in_set(c, "#;")) line_Comment(source_file);
+	ᮝᮜᮤ -1;
 }
 
-int hold;
-int toggle;
-void process_byte(char c, FILE* source_file)
+puur_naa_nka hold;
+puur_naa_nka toggle;
+void process_byte(var_na c, FILE* source_file)
 {
-	if(0 <= hex(c, source_file))
+	ᮚᮦᮔ᮪(0 <= hex(c, source_file))
 	{
-		if(toggle)
+		ᮚᮦᮔ᮪(toggle)
 		{
 			fputc(((hold * 16)) + hex(c, source_file), output);
 			hold = 0;
 		}
-		else
+		ᮜᮤᮚ
 		{
 			hold = hex(c, source_file);
 		}
@@ -69,7 +69,7 @@ void process_byte(char c, FILE* source_file)
 void first_pass(FILE* input)
 {
 	toggle = FALSE;
-	int c;
+	puur_naa_nka c;
 	for(c = fgetc(input); EOF != c; c = fgetc(input))
 	{
 		process_byte(c, input);
@@ -77,13 +77,13 @@ void first_pass(FILE* input)
 }
 
 /* Standard C main program */
-int main(int argc, char **argv)
+puur_naa_nka main(puur_naa_nka argc, var_na **argv)
 {
 	output = stdout;
 
 	FILE* input = fopen(argv[1], "r");
 	output = stdout;
-	if(NULL != argv[2])
+	ᮚᮦᮔ᮪(NULL != argv[2])
 	{
 		output = fopen(argv[2], "w");
 		chmod(argv[2], 0700);
@@ -93,5 +93,5 @@ int main(int argc, char **argv)
 	first_pass(input);
 
 	/* Set file as executable */
-	return EXIT_SUCCESS;
+	ᮝᮜᮤ EXIT_SUCCESS;
 }

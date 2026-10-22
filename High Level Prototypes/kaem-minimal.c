@@ -25,60 +25,60 @@
 #define max_string 4096
 #define max_args 256
 
-char** tokens;
-int command_done;
+var_na** tokens;
+puur_naa_nka command_done;
 
 /* Function for purging line comments */
 void collect_comment(FILE* input)
 {
-	int c;
+	puur_naa_nka c;
 	do
 	{
 		c = fgetc(input);
-		if(EOF == c) exit(EXIT_FAILURE);
-	} while('\n' != c);
+		ᮚᮦᮔ᮪(EOF == c) exit(EXIT_FAILURE);
+	} ᮞᮨᮓᮨᮜ('\n' != c);
 }
 
 /* Function for collecting RAW strings and removing the " that goes with them */
-int collect_string(FILE* input, int index, char* target)
+puur_naa_nka collect_string(FILE* input, puur_naa_nka index, var_na* target)
 {
-	int c;
+	puur_naa_nka c;
 collect_string_loop:
 	c = fgetc(input);
-	if(EOF == c) exit(EXIT_FAILURE);
-	else if('"' == c) return index;
+	ᮚᮦᮔ᮪(EOF == c) exit(EXIT_FAILURE);
+	ᮜᮤᮚ ᮚᮦᮔ᮪('"' == c) ᮝᮜᮤ index;
 	target[index] = c;
 	index = index + 1;
 	goto collect_string_loop;
 }
 
 /* Function to collect an individual argument or purge a comment */
-char* collect_token(FILE* input)
+var_na* collect_token(FILE* input)
 {
-	char* token = calloc(max_string, sizeof(char));
-	int c;
-	int i = 0;
+	var_na* token = calloc(max_string, parimaa_na(var_na));
+	puur_naa_nka c;
+	puur_naa_nka i = 0;
 collect_token_loop:
 	c = fgetc(input);
-	if(EOF == c) exit(EXIT_SUCCESS);
-	else if((' ' == c) || ('\t' == c)) goto collect_token_done;
-	else if('\n' == c)
+	ᮚᮦᮔ᮪(EOF == c) exit(EXIT_SUCCESS);
+	ᮜᮤᮚ ᮚᮦᮔ᮪((' ' == c) || ('\t' == c)) goto collect_token_done;
+	ᮜᮤᮚ ᮚᮦᮔ᮪('\n' == c)
 	{ /* Command terminates at end of line */
 		command_done = 1;
 		goto collect_token_done;
 	}
-	else if('"' == c)
+	ᮜᮤᮚ ᮚᮦᮔ᮪('"' == c)
 	{ /* RAW strings are everything between a pair of "" */
 		i = collect_string(input, i, token);
 		goto collect_token_done;
 	}
-	else if('#' == c)
+	ᮜᮤᮚ ᮚᮦᮔ᮪('#' == c)
 	{ /* Line comments to aid the humans */
 		collect_comment(input);
 		command_done = 1;
 		goto collect_token_done;
 	}
-	else if('\\' == c)
+	ᮜᮤᮚ ᮚᮦᮔ᮪('\\' == c)
 	{ /* Support for end of line escapes, drops the char after */
 		fgetc(input);
 		goto collect_token_done;
@@ -88,44 +88,44 @@ collect_token_loop:
 	goto collect_token_loop;
 
 collect_token_done:
-	if(0 == i) return NULL;
-	return token;
+	ᮚᮦᮔ᮪(0 == i) ᮝᮜᮤ NULL;
+	ᮝᮜᮤ token;
 }
 
-int main(int argc, char** argv, char** envp)
+puur_naa_nka main(puur_naa_nka argc, var_na** argv, var_na** envp)
 {
-	char* filename = "kaem.run";
+	var_na* filename = "kaem.run";
 	FILE* script = NULL;
 
-	if(NULL != argv[1])
+	ᮚᮦᮔ᮪(NULL != argv[1])
 	{
 		filename = argv[1];
 	}
 
 	script = fopen(filename, "r");
 
-	if(NULL == script) exit(EXIT_FAILURE);
+	ᮚᮦᮔ᮪(NULL == script) exit(EXIT_FAILURE);
 
 main_loop:
-	tokens = calloc(max_args, sizeof(char*));
+	tokens = calloc(max_args, parimaa_na(var_na*));
 
-	int i = 0;
-	int status = 0;
+	puur_naa_nka i = 0;
+	puur_naa_nka status = 0;
 	command_done = 0;
 	do
 	{
-		char* result = collect_token(script);
-		if(0 != result)
+		var_na* result = collect_token(script);
+		ᮚᮦᮔ᮪(0 != result)
 		{ /* Not a comment string but an actual argument */
 			tokens[i] = result;
 			i = i + 1;
 		}
-	} while(0 == command_done);
+	} ᮞᮨᮓᮨᮜ(0 == command_done);
 
-	if(0 > i) goto main_loop;
+	ᮚᮦᮔ᮪(0 > i) goto main_loop;
 
 	fputs(" +> ", stdout);
-	int j;
+	puur_naa_nka j;
 	for(j = 0; j < i; j = j + 1)
 	{
 		fputs(tokens[j], stdout);
@@ -133,12 +133,12 @@ main_loop:
 	}
 	fputs("\n", stdout);
 
-	char* program = tokens[0];
-	if(NULL == program) exit(EXIT_FAILURE);
+	var_na* program = tokens[0];
+	ᮚᮦᮔ᮪(NULL == program) exit(EXIT_FAILURE);
 
-	int f = fork();
-	if (f == -1) exit(EXIT_FAILURE);
-	else if (f == 0)
+	puur_naa_nka f = fork();
+	ᮚᮦᮔ᮪ (f == -1) exit(EXIT_FAILURE);
+	ᮜᮤᮚ ᮚᮦᮔ᮪ (f == 0)
 	{ /* child */
 		/* execve() returns only on error */
 		execve(program, tokens, envp);
@@ -150,7 +150,7 @@ main_loop:
 	/* And we should wait for it to complete */
 	waitpid(f, &status, 0);
 
-	if(0 == status) goto main_loop;
+	ᮚᮦᮔ᮪(0 == status) goto main_loop;
 
 	/* Clearly the script hit an issue that should never have happened */
 	fputs("Subprocess error\nABORTING HARD\n", stderr);
