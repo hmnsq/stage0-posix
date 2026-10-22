@@ -15,69 +15,69 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include<stdio.h>
-#include<stdlib.h>
-#include<stdbool.h>
+#ಅನ್ತರ್ಭಾವ<stdio.h>
+#ಅನ್ತರ್ಭಾವ<stdlib.h>
+#ಅನ್ತರ್ಭಾವ<stdbool.h>
 
-void purge_line_comments()
+ಶೂನ್ಯ purge_ಸಾಲು_comments()
 {
-	int c;
-	do
+	ಪೂರ್ಣಾಂಕ c;
+	ಮಾಡು
 	{
 		c = getchar();
 
-		if (EOF == c)
+		ಆದರೆ (EOF == c)
 		{
-			exit(EXIT_SUCCESS);
+			ನಿರ್ಗಮಿಸು(EXIT_SUCCESS);
 		}
-	} while ( '\n' != c );
+	} ಆಗ ( '\n' != c );
 }
 
-int hex(int c)
+ಪೂರ್ಣಾಂಕ hex(ಪೂರ್ಣಾಂಕ c)
 {
-	if (c >= '0' && c <= '9')
+	ಆದರೆ (c >= '0' && c <= '9')
 	{
-		return (c - 48);
+		ಹಿಂತಿರುಗಿ (c - 48);
 	}
-	else if (c >= 'a' && c <= 'z')
+	ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (c >= 'a' && c <= 'z')
 	{
-		return (c - 87);
+		ಹಿಂತಿರುಗಿ (c - 87);
 	}
-	else if (c >= 'A' && c <= 'Z')
+	ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (c >= 'A' && c <= 'Z')
 	{
-		return (c - 55);
+		ಹಿಂತಿರುಗಿ (c - 55);
 	}
 
-	printf("You managed to call a hex function without a hex value!!!\n");
-	exit(EXIT_FAILURE);
+	ಬರೆ("You managed to call a hex function without a hex value!!!\n");
+	ನಿರ್ಗಮಿಸು(EXIT_FAILURE);
 }
 
-int main(int argc, char *argv[])
+ಪೂರ್ಣಾಂಕ ಮುಖ್ಯ(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ *argv[])
 {
-	int c;
-	int sum = 0;
+	ಪೂರ್ಣಾಂಕ c;
+	ಪೂರ್ಣಾಂಕ ಮೊತ್ತ = 0;
 	bool toggle;
 	toggle = false;
 
-	do
+	ಮಾಡು
 	{
 		c = getchar();
-		if ((c == '#') || (c == ';')) purge_line_comments();
-		else if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+		ಆದರೆ ((c == '#') || (c == ';')) purge_ಸಾಲು_comments();
+		ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
 		{
-			if(!toggle)
+			ಆದರೆ(!toggle)
 			{
-				sum = hex(c);
+				ಮೊತ್ತ = hex(c);
 				toggle = true;
 			}
-			else
+			ಇಲ್ಲದಿದ್ದರೆ
 			{
-				sum = (sum << 4) + hex(c);
+				ಮೊತ್ತ = (ಮೊತ್ತ << 4) + hex(c);
 				toggle = false;
-				fputc(sum, stdout);
+				fputc(ಮೊತ್ತ, stdout);
 			}
 		}
-	}while(c != EOF);
+	}ಆಗ(c != EOF);
 
-	exit(EXIT_SUCCESS);
+	ನಿರ್ಗಮಿಸು(EXIT_SUCCESS);
 }

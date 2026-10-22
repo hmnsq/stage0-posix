@@ -16,179 +16,179 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include "../M2libc/bootstrappable.h"
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಅನ್ತರ್ಭಾವ <sys/stat.h>
+#ಅನ್ತರ್ಭಾವ "../M2libc/bootstrappable.h"
 
-#define max_string 4096
+#ವ್ಯಾಖ್ಯಾನಿಸು max_string 4096
 
-struct entry
+ರಚನೆ ನಮೂದು
 {
-	struct entry* next;
-	unsigned target;
-	char name;
+	ರಚನೆ ನಮೂದು* ಮುಂದಿನ;
+	ಚಿಹ್ನೆರಹಿತ ಗುರಿ;
+	ಅಕ್ಷರ name;
 };
 
 
 /* Globals */
 FILE* output;
-struct entry* jump_table;
-int ip;
+ರಚನೆ ನಮೂದು* jump_ಕೋಷ್ಟಕ;
+ಪೂರ್ಣಾಂಕ ip;
 
-unsigned GetTarget(char c)
+ಚಿಹ್ನೆರಹಿತ Get_ಗುರಿ(ಅಕ್ಷರ c)
 {
-	struct entry* i;
-	for(i = jump_table; NULL != i; i = i->next)
+	ರಚನೆ ನಮೂದು* i;
+	ಗಾಗಿ(i = jump_ಕೋಷ್ಟಕ; ಖಾಲಿ != i; i = i->ಮುಂದಿನ)
 	{
-		if(c == i->name)
+		ಆದರೆ(c == i->name)
 		{
-			return i->target;
+			ಹಿಂತಿರುಗಿ i->ಗುರಿ;
 		}
 	}
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-int storeLabel(FILE* source_file, int ip)
+ಪೂರ್ಣಾಂಕ storeLabel(FILE* ಮೂಲ_file, ಪೂರ್ಣಾಂಕ ip)
 {
-	struct entry* entry = calloc(1, sizeof(struct entry));
+	ರಚನೆ ನಮೂದು* ನಮೂದು = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(1, ಗಾತ್ರ(ರಚನೆ ನಮೂದು));
 
 	/* Ensure we have target address */
-	entry->target = ip;
+	ನಮೂದು->ಗುರಿ = ip;
 
 	/* Prepend to list */
-	entry->next = jump_table;
-	jump_table = entry;
+	ನಮೂದು->ಮುಂದಿನ = jump_ಕೋಷ್ಟಕ;
+	jump_ಕೋಷ್ಟಕ = ನಮೂದು;
 
 	/* Store string */
-	entry->name = fgetc(source_file);
-	return -1;
+	ನಮೂದು->name = fgetc(ಮೂಲ_file);
+	ಹಿಂತಿರುಗಿ -1;
 }
 
 
-void outputPointer(int displacement, int number_of_bytes)
+ಶೂನ್ಯ output_ಸೂಚಕ(ಪೂರ್ಣಾಂಕ displacement, ಪೂರ್ಣಾಂಕ ಸಂಖ್ಯೆ_ದ_ಬೈಟುಗಳು)
 {
-	unsigned value = displacement;
+	ಚಿಹ್ನೆರಹಿತ ಮೌಲ್ಯ = displacement;
 
-	while(number_of_bytes > 0)
+	ಆಗ(ಸಂಖ್ಯೆ_ದ_ಬೈಟುಗಳು > 0)
 	{
-		unsigned byte = value % 256;
-		value = value / 256;
+		ಚಿಹ್ನೆರಹಿತ byte = ಮೌಲ್ಯ % 256;
+		ಮೌಲ್ಯ = ಮೌಲ್ಯ / 256;
 		fputc(byte, output);
-		number_of_bytes = number_of_bytes - 1;
+		ಸಂಖ್ಯೆ_ದ_ಬೈಟುಗಳು = ಸಂಖ್ಯೆ_ದ_ಬೈಟುಗಳು - 1;
 	}
 }
 
-void Update_Pointer(char ch)
+ಶೂನ್ಯ Update_ಸೂಚಕ(ಅಕ್ಷರ ch)
 {
 	/* Calculate pointer size*/
-	if(in_set(ch, "%")) ip = ip + 4;
-	else exit(EXIT_FAILURE);
+	ಆದರೆ(ಒಳ_ಗಣ(ch, "%")) ip = ip + 4;
+	ಇಲ್ಲದಿದ್ದರೆ ನಿರ್ಗಮಿಸು(EXIT_FAILURE);
 }
 
-void storePointer(char ch)
+ಶೂನ್ಯ store_ಸೂಚಕ(ಅಕ್ಷರ ch)
 {
 	/* Get string of pointer */
-	Update_Pointer(ch);
+	Update_ಸೂಚಕ(ch);
 
 	/* Lookup token */
-	int target = GetTarget(ch);
-	int displacement;
+	ಪೂರ್ಣಾಂಕ ಗುರಿ = Get_ಗುರಿ(ch);
+	ಪೂರ್ಣಾಂಕ displacement;
 
 	/* Change relative base address to :<base> */
-	displacement = (target - ip);
+	displacement = (ಗುರಿ - ip);
 
 	/* output calculated difference */
-	if('%' == ch) outputPointer(displacement, 4);  /* Deal with % */
-	else exit(EXIT_FAILURE);
+	ಆದರೆ('%' == ch) output_ಸೂಚಕ(displacement, 4);  /* Deal with % */
+	ಇಲ್ಲದಿದ್ದರೆ ನಿರ್ಗಮಿಸು(EXIT_FAILURE);
 }
 
-void line_Comment(FILE* source_file)
+ಶೂನ್ಯ ಸಾಲು_Comment(FILE* ಮೂಲ_file)
 {
-	int c = fgetc(source_file);
-	while(!in_set(c, "\n\r"))
+	ಪೂರ್ಣಾಂಕ c = fgetc(ಮೂಲ_file);
+	ಆಗ(!ಒಳ_ಗಣ(c, "\n\r"))
 	{
-		if(EOF == c) break;
-		c = fgetc(source_file);
+		ಆದರೆ(EOF == c) ನಿಲ್ಲಿಸು;
+		c = fgetc(ಮೂಲ_file);
 	}
 }
 
-int hex(int c, FILE* source_file)
+ಪೂರ್ಣಾಂಕ hex(ಪೂರ್ಣಾಂಕ c, FILE* ಮೂಲ_file)
 {
-	if (in_set(c, "0123456789")) return (c - 48);
-	else if (in_set(c, "abcdef")) return (c - 87);
-	else if (in_set(c, "ABCDEF")) return (c - 55);
-	else if (in_set(c, "#;")) line_Comment(source_file);
-	return -1;
+	ಆದರೆ (ಒಳ_ಗಣ(c, "0123456789")) ಹಿಂತಿರುಗಿ (c - 48);
+	ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (ಒಳ_ಗಣ(c, "abcdef")) ಹಿಂತಿರುಗಿ (c - 87);
+	ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (ಒಳ_ಗಣ(c, "ABCDEF")) ಹಿಂತಿರುಗಿ (c - 55);
+	ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (ಒಳ_ಗಣ(c, "#;")) ಸಾಲು_Comment(ಮೂಲ_file);
+	ಹಿಂತಿರುಗಿ -1;
 }
 
-int hold;
-int toggle;
-void process_byte(char c, FILE* source_file, int write)
+ಪೂರ್ಣಾಂಕ hold;
+ಪೂರ್ಣಾಂಕ toggle;
+ಶೂನ್ಯ process_byte(ಅಕ್ಷರ c, FILE* ಮೂಲ_file, ಪೂರ್ಣಾಂಕ ಲಿಖ)
 {
-	if(0 <= hex(c, source_file))
+	ಆದರೆ(0 <= hex(c, ಮೂಲ_file))
 	{
-		if(toggle)
+		ಆದರೆ(toggle)
 		{
-			if(write) fputc(((hold * 16)) + hex(c, source_file), output);
+			ಆದರೆ(ಲಿಖ) fputc(((hold * 16)) + hex(c, ಮೂಲ_file), output);
 			ip = ip + 1;
 			hold = 0;
 		}
-		else
+		ಇಲ್ಲದಿದ್ದರೆ
 		{
-			hold = hex(c, source_file);
+			hold = hex(c, ಮೂಲ_file);
 		}
 		toggle = !toggle;
 	}
 }
 
-void first_pass(FILE* input)
+ಶೂನ್ಯ ಮೊದಲ_pass(FILE* ಒಳಹರಿವು)
 {
 	toggle = FALSE;
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	ಪೂರ್ಣಾಂಕ c;
+	ಗಾಗಿ(c = fgetc(ಒಳಹರಿವು); EOF != c; c = fgetc(ಒಳಹರಿವು))
 	{
 		/* Check for and deal with label */
-		if(':' == c)
+		ಆದರೆ(':' == c)
 		{
-			c = storeLabel(input, ip);
+			c = storeLabel(ಒಳಹರಿವು, ip);
 		}
 
 		/* check for and deal with relative/absolute pointers to labels */
-		if(in_set(c, "%"))
+		ಆದರೆ(ಒಳ_ಗಣ(c, "%"))
 		{ /* deal 4byte pointer (%) */
-			Update_Pointer(c);
-			c = fgetc(input);
+			Update_ಸೂಚಕ(c);
+			c = fgetc(ಒಳಹರಿವು);
 		}
-		else process_byte(c, input, FALSE);
+		ಇಲ್ಲದಿದ್ದರೆ process_byte(c, ಒಳಹರಿವು, FALSE);
 	}
 }
 
-void second_pass(FILE* input)
+ಶೂನ್ಯ ಎರಡನೇ_pass(FILE* ಒಳಹರಿವು)
 {
 	toggle = FALSE;
 	hold = 0;
 
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	ಪೂರ್ಣಾಂಕ c;
+	ಗಾಗಿ(c = fgetc(ಒಳಹರಿವು); EOF != c; c = fgetc(ಒಳಹರಿವು))
 	{
-		if(':' == c) c = fgetc(input); /* Deal with : */
-		else if(in_set(c, "%")) storePointer(c);  /* Deal with %*/
-		else process_byte(c, input, TRUE);
+		ಆದರೆ(':' == c) c = fgetc(ಒಳಹರಿವು); /* Deal with : */
+		ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ(ಒಳ_ಗಣ(c, "%")) store_ಸೂಚಕ(c);  /* Deal with %*/
+		ಇಲ್ಲದಿದ್ದರೆ process_byte(c, ಒಳಹರಿವು, TRUE);
 	}
 }
 
 /* Standard C main program */
-int main(int argc, char **argv)
+ಪೂರ್ಣಾಂಕ ಮುಖ್ಯ(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv)
 {
-	jump_table = NULL;
+	jump_ಕೋಷ್ಟಕ = ಖಾಲಿ;
 	output = stdout;
 
-	FILE* input = fopen(argv[1], "r");
+	FILE* ಒಳಹರಿವು = fopen(argv[1], "r");
 	output = stdout;
-	if(NULL != argv[2])
+	ಆದರೆ(ಖಾಲಿ != argv[2])
 	{
 		output = fopen(argv[2], "w");
 		chmod(argv[2], 0700);
@@ -196,13 +196,13 @@ int main(int argc, char **argv)
 
 	/* Get all of the labels */
 	ip = 0;
-	first_pass(input);
-	rewind(input);
+	ಮೊದಲ_pass(ಒಳಹರಿವು);
+	rewind(ಒಳಹರಿವು);
 
 	/* Fix all the references*/
 	ip = 0;
-	second_pass(input);
+	ಎರಡನೇ_pass(ಒಳಹರಿವು);
 
 	/* Set file as executable */
-	return EXIT_SUCCESS;
+	ಹಿಂತಿರುಗಿ EXIT_SUCCESS;
 }

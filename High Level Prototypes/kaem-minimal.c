@@ -15,145 +15,145 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <sys/wait.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಅನ್ತರ್ಭಾವ <sys/wait.h>
 
-#define FALSE 0
-#define TRUE 1
-#define max_string 4096
-#define max_args 256
+#ವ್ಯಾಖ್ಯಾನಿಸು FALSE 0
+#ವ್ಯಾಖ್ಯಾನಿಸು TRUE 1
+#ವ್ಯಾಖ್ಯಾನಿಸು max_string 4096
+#ವ್ಯಾಖ್ಯಾನಿಸು max_ವಾದಗಳು 256
 
-char** tokens;
-int command_done;
+ಅಕ್ಷರ** ಟೋಕನುಗಳು;
+ಪೂರ್ಣಾಂಕ command_ಮುಗಿದ;
 
 /* Function for purging line comments */
-void collect_comment(FILE* input)
+ಶೂನ್ಯ collect_comment(FILE* ಒಳಹರಿವು)
 {
-	int c;
-	do
+	ಪೂರ್ಣಾಂಕ c;
+	ಮಾಡು
 	{
-		c = fgetc(input);
-		if(EOF == c) exit(EXIT_FAILURE);
-	} while('\n' != c);
+		c = fgetc(ಒಳಹರಿವು);
+		ಆದರೆ(EOF == c) ನಿರ್ಗಮಿಸು(EXIT_FAILURE);
+	} ಆಗ('\n' != c);
 }
 
 /* Function for collecting RAW strings and removing the " that goes with them */
-int collect_string(FILE* input, int index, char* target)
+ಪೂರ್ಣಾಂಕ collect_string(FILE* ಒಳಹರಿವು, ಪೂರ್ಣಾಂಕ index, ಅಕ್ಷರ* ಗುರಿ)
 {
-	int c;
+	ಪೂರ್ಣಾಂಕ c;
 collect_string_loop:
-	c = fgetc(input);
-	if(EOF == c) exit(EXIT_FAILURE);
-	else if('"' == c) return index;
-	target[index] = c;
+	c = fgetc(ಒಳಹರಿವು);
+	ಆದರೆ(EOF == c) ನಿರ್ಗಮಿಸು(EXIT_FAILURE);
+	ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ('"' == c) ಹಿಂತಿರುಗಿ index;
+	ಗುರಿ[index] = c;
 	index = index + 1;
-	goto collect_string_loop;
+	ಹೋಗು collect_string_loop;
 }
 
 /* Function to collect an individual argument or purge a comment */
-char* collect_token(FILE* input)
+ಅಕ್ಷರ* collect_token(FILE* ಒಳಹರಿವು)
 {
-	char* token = calloc(max_string, sizeof(char));
-	int c;
-	int i = 0;
+	ಅಕ್ಷರ* token = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(max_string, ಗಾತ್ರ(ಅಕ್ಷರ));
+	ಪೂರ್ಣಾಂಕ c;
+	ಪೂರ್ಣಾಂಕ i = 0;
 collect_token_loop:
-	c = fgetc(input);
-	if(EOF == c) exit(EXIT_SUCCESS);
-	else if((' ' == c) || ('\t' == c)) goto collect_token_done;
-	else if('\n' == c)
+	c = fgetc(ಒಳಹರಿವು);
+	ಆದರೆ(EOF == c) ನಿರ್ಗಮಿಸು(EXIT_SUCCESS);
+	ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ((' ' == c) || ('\t' == c)) ಹೋಗು collect_token_ಮುಗಿದ;
+	ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ('\n' == c)
 	{ /* Command terminates at end of line */
-		command_done = 1;
-		goto collect_token_done;
+		command_ಮುಗಿದ = 1;
+		ಹೋಗು collect_token_ಮುಗಿದ;
 	}
-	else if('"' == c)
+	ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ('"' == c)
 	{ /* RAW strings are everything between a pair of "" */
-		i = collect_string(input, i, token);
-		goto collect_token_done;
+		i = collect_string(ಒಳಹರಿವು, i, token);
+		ಹೋಗು collect_token_ಮುಗಿದ;
 	}
-	else if('#' == c)
+	ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ('#' == c)
 	{ /* Line comments to aid the humans */
-		collect_comment(input);
-		command_done = 1;
-		goto collect_token_done;
+		collect_comment(ಒಳಹರಿವು);
+		command_ಮುಗಿದ = 1;
+		ಹೋಗು collect_token_ಮುಗಿದ;
 	}
-	else if('\\' == c)
+	ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ('\\' == c)
 	{ /* Support for end of line escapes, drops the char after */
-		fgetc(input);
-		goto collect_token_done;
+		fgetc(ಒಳಹರಿವು);
+		ಹೋಗು collect_token_ಮುಗಿದ;
 	}
 	token[i] = c;
 	i = i + 1;
-	goto collect_token_loop;
+	ಹೋಗು collect_token_loop;
 
-collect_token_done:
-	if(0 == i) return NULL;
-	return token;
+collect_token_ಮುಗಿದ:
+	ಆದರೆ(0 == i) ಹಿಂತಿರುಗಿ ಖಾಲಿ;
+	ಹಿಂತಿರುಗಿ token;
 }
 
-int main(int argc, char** argv, char** envp)
+ಪೂರ್ಣಾಂಕ ಮುಖ್ಯ(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ** argv, ಅಕ್ಷರ** envp)
 {
-	char* filename = "kaem.run";
-	FILE* script = NULL;
+	ಅಕ್ಷರ* filename = "kaem.run";
+	FILE* script = ಖಾಲಿ;
 
-	if(NULL != argv[1])
+	ಆದರೆ(ಖಾಲಿ != argv[1])
 	{
 		filename = argv[1];
 	}
 
 	script = fopen(filename, "r");
 
-	if(NULL == script) exit(EXIT_FAILURE);
+	ಆದರೆ(ಖಾಲಿ == script) ನಿರ್ಗಮಿಸು(EXIT_FAILURE);
 
 main_loop:
-	tokens = calloc(max_args, sizeof(char*));
+	ಟೋಕನುಗಳು = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(max_ವಾದಗಳು, ಗಾತ್ರ(ಅಕ್ಷರ*));
 
-	int i = 0;
-	int status = 0;
-	command_done = 0;
-	do
+	ಪೂರ್ಣಾಂಕ i = 0;
+	ಪೂರ್ಣಾಂಕ ಸ್ಥಿತಿ_2 = 0;
+	command_ಮುಗಿದ = 0;
+	ಮಾಡು
 	{
-		char* result = collect_token(script);
-		if(0 != result)
+		ಅಕ್ಷರ* ಫಲಿತಾಂಶ = collect_token(script);
+		ಆದರೆ(0 != ಫಲಿತಾಂಶ)
 		{ /* Not a comment string but an actual argument */
-			tokens[i] = result;
+			ಟೋಕನುಗಳು[i] = ಫಲಿತಾಂಶ;
 			i = i + 1;
 		}
-	} while(0 == command_done);
+	} ಆಗ(0 == command_ಮುಗಿದ);
 
-	if(0 > i) goto main_loop;
+	ಆದರೆ(0 > i) ಹೋಗು main_loop;
 
 	fputs(" +> ", stdout);
-	int j;
-	for(j = 0; j < i; j = j + 1)
+	ಪೂರ್ಣಾಂಕ j;
+	ಗಾಗಿ(j = 0; j < i; j = j + 1)
 	{
-		fputs(tokens[j], stdout);
+		fputs(ಟೋಕನುಗಳು[j], stdout);
 		fputc(' ', stdout);
 	}
 	fputs("\n", stdout);
 
-	char* program = tokens[0];
-	if(NULL == program) exit(EXIT_FAILURE);
+	ಅಕ್ಷರ* ಕಾರ್ಯಕ್ರಮ = ಟೋಕನುಗಳು[0];
+	ಆದರೆ(ಖಾಲಿ == ಕಾರ್ಯಕ್ರಮ) ನಿರ್ಗಮಿಸು(EXIT_FAILURE);
 
-	int f = fork();
-	if (f == -1) exit(EXIT_FAILURE);
-	else if (f == 0)
-	{ /* child */
+	ಪೂರ್ಣಾಂಕ f = fork();
+	ಆದರೆ (f == -1) ನಿರ್ಗಮಿಸು(EXIT_FAILURE);
+	ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (f == 0)
+	{ /*ಮಗು*/
 		/* execve() returns only on error */
-		execve(program, tokens, envp);
+		execve(ಕಾರ್ಯಕ್ರಮ, ಟೋಕನುಗಳು, envp);
 		/* Prevent infinite loops */
-		exit(EXIT_FAILURE);
+		ನಿರ್ಗಮಿಸು(EXIT_FAILURE);
 	}
 
 	/* Otherwise we are the parent */
 	/* And we should wait for it to complete */
-	waitpid(f, &status, 0);
+	waitpid(f, &ಸ್ಥಿತಿ_2, 0);
 
-	if(0 == status) goto main_loop;
+	ಆದರೆ(0 == ಸ್ಥಿತಿ_2) ಹೋಗು main_loop;
 
 	/* Clearly the script hit an issue that should never have happened */
 	fputs("Subprocess error\nABORTING HARD\n", stderr);
 	/* stop to prevent damage */
-	exit(EXIT_FAILURE);
+	ನಿರ್ಗಮಿಸು(EXIT_FAILURE);
 }
