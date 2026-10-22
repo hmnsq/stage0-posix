@@ -30,35 +30,35 @@ FILE* output;
 
 void line_Comment(FILE* source_file)
 {
-	int c = fgetc(source_file);
-	while(!in_set(c, "\n\r"))
+	ចំនួនគត់ c = fgetc(source_file);
+	ខណៈពេល(!in_set(c, "\n\r"))
 	{
-		if(EOF == c) break;
+		ប្រសិនបើ(EOF == c) bha_nga;
 		c = fgetc(source_file);
 	}
 }
 
-int hex(int c, FILE* source_file)
+ចំនួនគត់ hex(ចំនួនគត់ c, FILE* source_file)
 {
-	if (in_set(c, "0123456789")) return (c - 48);
-	else if (in_set(c, "abcdef")) return (c - 87);
-	else if (in_set(c, "ABCDEF")) return (c - 55);
-	else if (in_set(c, "#;")) line_Comment(source_file);
-	return -1;
+	ប្រសិនបើ (in_set(c, "0123456789")) ត្រឡប់ (c - 48);
+	បើមិនដូច្នេះ ប្រសិនបើ (in_set(c, "abcdef")) ត្រឡប់ (c - 87);
+	បើមិនដូច្នេះ ប្រសិនបើ (in_set(c, "ABCDEF")) ត្រឡប់ (c - 55);
+	បើមិនដូច្នេះ ប្រសិនបើ (in_set(c, "#;")) line_Comment(source_file);
+	ត្រឡប់ -1;
 }
 
-int hold;
-int toggle;
-void process_byte(char c, FILE* source_file)
+ចំនួនគត់ hold;
+ចំនួនគត់ toggle;
+void process_byte(var_na c, FILE* source_file)
 {
-	if(0 <= hex(c, source_file))
+	ប្រសិនបើ(0 <= hex(c, source_file))
 	{
-		if(toggle)
+		ប្រសិនបើ(toggle)
 		{
 			fputc(((hold * 16)) + hex(c, source_file), output);
 			hold = 0;
 		}
-		else
+		បើមិនដូច្នេះ
 		{
 			hold = hex(c, source_file);
 		}
@@ -69,21 +69,21 @@ void process_byte(char c, FILE* source_file)
 void first_pass(FILE* input)
 {
 	toggle = FALSE;
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	ចំនួនគត់ c;
+	សម្រាប់(c = fgetc(input); EOF != c; c = fgetc(input))
 	{
 		process_byte(c, input);
 	}
 }
 
 /* Standard C main program */
-int main(int argc, char **argv)
+ចំនួនគត់ main(ចំនួនគត់ argc, var_na **argv)
 {
 	output = stdout;
 
 	FILE* input = fopen(argv[1], "r");
 	output = stdout;
-	if(NULL != argv[2])
+	ប្រសិនបើ(NULL != argv[2])
 	{
 		output = fopen(argv[2], "w");
 		chmod(argv[2], 0700);
@@ -93,5 +93,5 @@ int main(int argc, char **argv)
 	first_pass(input);
 
 	/* Set file as executable */
-	return EXIT_SUCCESS;
+	ត្រឡប់ EXIT_SUCCESS;
 }

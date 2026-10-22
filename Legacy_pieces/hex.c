@@ -21,63 +21,63 @@
 
 void purge_line_comments()
 {
-	int c;
+	ចំនួនគត់ c;
 	do
 	{
 		c = getchar();
 
-		if (EOF == c)
+		ប្រសិនបើ (EOF == c)
 		{
 			exit(EXIT_SUCCESS);
 		}
-	} while ( '\n' != c );
+	} ខណៈពេល ( '\n' != c );
 }
 
-int hex(int c)
+ចំនួនគត់ hex(ចំនួនគត់ c)
 {
-	if (c >= '0' && c <= '9')
+	ប្រសិនបើ (c >= '0' && c <= '9')
 	{
-		return (c - 48);
+		ត្រឡប់ (c - 48);
 	}
-	else if (c >= 'a' && c <= 'z')
+	បើមិនដូច្នេះ ប្រសិនបើ (c >= 'a' && c <= 'z')
 	{
-		return (c - 87);
+		ត្រឡប់ (c - 87);
 	}
-	else if (c >= 'A' && c <= 'Z')
+	បើមិនដូច្នេះ ប្រសិនបើ (c >= 'A' && c <= 'Z')
 	{
-		return (c - 55);
+		ត្រឡប់ (c - 55);
 	}
 
 	printf("You managed to call a hex function without a hex value!!!\n");
 	exit(EXIT_FAILURE);
 }
 
-int main(int argc, char *argv[])
+ចំនួនគត់ main(ចំនួនគត់ argc, var_na *argv[])
 {
-	int c;
-	int sum = 0;
+	ចំនួនគត់ c;
+	ចំនួនគត់ sum = 0;
 	bool toggle;
 	toggle = false;
 
 	do
 	{
 		c = getchar();
-		if ((c == '#') || (c == ';')) purge_line_comments();
-		else if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+		ប្រសិនបើ ((c == '#') || (c == ';')) purge_line_comments();
+		បើមិនដូច្នេះ ប្រសិនបើ ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
 		{
-			if(!toggle)
+			ប្រសិនបើ(!toggle)
 			{
 				sum = hex(c);
 				toggle = true;
 			}
-			else
+			បើមិនដូច្នេះ
 			{
 				sum = (sum << 4) + hex(c);
 				toggle = false;
 				fputc(sum, stdout);
 			}
 		}
-	}while(c != EOF);
+	}ខណៈពេល(c != EOF);
 
 	exit(EXIT_SUCCESS);
 }
