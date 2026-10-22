@@ -15,42 +15,42 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdlib.h>
-#include <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
 
-int main (int argc, char** argv)
+ਪੂਰਨ ਮੁੱਖ (ਪੂਰਨ argc, ਅੱਖਰ** argv)
 {
-	if(argc != 2)
+	ਜੇ(argc != 2)
 	{
 		fputs("xeh $filename is the only valid input form\n", stderr);
-		exit(EXIT_FAILURE);
+		ਬਾਹਰ_ਨਿਕਲੋ(EXIT_FAILURE);
 	}
 
-	FILE* in = fopen(argv[1], "r");
-	if(NULL == in)
+	FILE* ਵਿੱਚ_2 = fopen(argv[1], "r");
+	ਜੇ(ਨਿਰਾ == ਵਿੱਚ_2)
 	{
 		fputs("Unable to open file: ", stderr);
 		fputs(argv[1], stderr);
 		fputs(" aborting to prevent problems\n", stderr);
-		exit(EXIT_FAILURE);
+		ਬਾਹਰ_ਨਿਕਲੋ(EXIT_FAILURE);
 	}
 
-	char* table = "0123456789ABCDEF";
-	int c = fgetc(in);
-	int col = 40;
-	while(EOF != c)
+	ਅੱਖਰ* ਸਾਰਣੀ = "0123456789ABCDEF";
+	ਪੂਰਨ c = fgetc(ਵਿੱਚ_2);
+	ਪੂਰਨ ਖਾਨਾ = 40;
+	ਜਦੋਂ(EOF != c)
 	{
-		fputc(table[c / 16], stdout);
-		fputc(table[c % 16], stdout);
-		col = col - 2;
-		if(0 == col)
+		fputc(ਸਾਰਣੀ[c / 16], stdout);
+		fputc(ਸਾਰਣੀ[c % 16], stdout);
+		ਖਾਨਾ = ਖਾਨਾ - 2;
+		ਜੇ(0 == ਖਾਨਾ)
 		{
-			col = 40;
+			ਖਾਨਾ = 40;
 			fputc('\n', stdout);
 		}
-		else fputc(' ', stdout);
-		c = fgetc(in);
+		ਨਹੀਂਤਾਂ fputc(' ', stdout);
+		c = fgetc(ਵਿੱਚ_2);
 	}
 	fputc('\n', stdout);
-	exit(EXIT_SUCCESS);
+	ਬਾਹਰ_ਨਿਕਲੋ(EXIT_SUCCESS);
 }

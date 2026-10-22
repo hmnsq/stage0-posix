@@ -16,77 +16,77 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include "../M2libc/bootstrappable.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/stat.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ "../M2libc/bootstrappable.h"
 
-#define max_string 4096
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ max_string 4096
 
-struct entry
+ਬਣਤਰ ਇੰਦਰਾਜ
 {
-	struct entry* next;
-	unsigned target;
-	char* name;
+	ਬਣਤਰ ਇੰਦਰਾਜ* ਅਗਲਾ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਨਿਸ਼ਾਨਾ;
+	ਅੱਖਰ* name;
 };
 
 
 /* Globals */
 FILE* output;
-struct entry* jump_table;
-int Base_Address;
-int ip;
-char* scratch;
+ਬਣਤਰ ਇੰਦਰਾਜ* jump_ਸਾਰਣੀ;
+ਪੂਰਨ ਅਧਾਰ_ਪਤਾ;
+ਪੂਰਨ ip;
+ਅੱਖਰ* scratch;
 
-int consume_token(FILE* source_file)
+ਪੂਰਨ consume_token(FILE* ਸਰੋਤ_file)
 {
-	int i = 0;
-	int c = fgetc(source_file);
-	while(!in_set(c, " \t\n>"))
+	ਪੂਰਨ i = 0;
+	ਪੂਰਨ c = fgetc(ਸਰੋਤ_file);
+	ਜਦੋਂ(!ਵਿੱਚ_ਸੈੱਟ(c, " \t\n>"))
 	{
 		scratch[i] = c;
 		i = i + 1;
-		c = fgetc(source_file);
+		c = fgetc(ਸਰੋਤ_file);
 		require(max_string > i, "Consumed token exceeds length restriction\n");
-		if(EOF == c) break;
+		ਜੇ(EOF == c) ਰੋਕੋ;
 	}
 
-	return c;
+	ਵਾਪਸ c;
 }
 
-int Throwaway_token(FILE* source_file)
+ਪੂਰਨ Throwaway_token(FILE* ਸਰੋਤ_file)
 {
-	int c;
-	do
+	ਪੂਰਨ c;
+	ਕਰੋ
 	{
-		c = fgetc(source_file);
-		if(EOF == c) break;
-	} while(!in_set(c, " \t\n>"));
+		c = fgetc(ਸਰੋਤ_file);
+		ਜੇ(EOF == c) ਰੋਕੋ;
+	} ਜਦੋਂ(!ਵਿੱਚ_ਸੈੱਟ(c, " \t\n>"));
 
-	return c;
+	ਵਾਪਸ c;
 }
 
-int length(char* s)
+ਪੂਰਨ ਲੰਮਾਈ(ਅੱਖਰ* s)
 {
-	int i = 0;
-	while(0 != s[i]) i = i + 1;
-	return i;
+	ਪੂਰਨ i = 0;
+	ਜਦੋਂ(0 != s[i]) i = i + 1;
+	ਵਾਪਸ i;
 }
 
-void Clear_Scratch(char* s)
+ਖਾਲੀ Clear_Scratch(ਅੱਖਰ* s)
 {
-	do
+	ਕਰੋ
 	{
 		s[0] = 0;
 		s = s + 1;
-	} while(0 != s[0]);
+	} ਜਦੋਂ(0 != s[0]);
 }
 
-void Copy_String(char* a, char* b)
+ਖਾਲੀ Copy_String(ਅੱਖਰ* a, ਅੱਖਰ* b)
 {
-	while(0 != a[0])
+	ਜਦੋਂ(0 != a[0])
 	{
 		b[0] = a[0];
 		a = a + 1;
@@ -94,205 +94,205 @@ void Copy_String(char* a, char* b)
 	}
 }
 
-unsigned GetTarget(char* c)
+ਬਿਨਾਨਿਸ਼ਾਨੀ Get_ਨਿਸ਼ਾਨਾ(ਅੱਖਰ* c)
 {
-	struct entry* i;
-	for(i = jump_table; NULL != i; i = i->next)
+	ਬਣਤਰ ਇੰਦਰਾਜ* i;
+	ਲਈ(i = jump_ਸਾਰਣੀ; ਨਿਰਾ != i; i = i->ਅਗਲਾ)
 	{
-		if(match(c, i->name))
+		ਜੇ(ਮੇਲ(c, i->name))
 		{
-			return i->target;
+			ਵਾਪਸ i->ਨਿਸ਼ਾਨਾ;
 		}
 	}
 	fputs("Target label ", stderr);
 	fputs(c, stderr);
 	fputs(" is not valid\n", stderr);
-	exit(EXIT_FAILURE);
+	ਬਾਹਰ_ਨਿਕਲੋ(EXIT_FAILURE);
 }
 
-int storeLabel(FILE* source_file, int ip)
+ਪੂਰਨ storeLabel(FILE* ਸਰੋਤ_file, ਪੂਰਨ ip)
 {
-	struct entry* entry = calloc(1, sizeof(struct entry));
+	ਬਣਤਰ ਇੰਦਰਾਜ* ਇੰਦਰਾਜ = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(1, ਆਕਾਰ(ਬਣਤਰ ਇੰਦਰਾਜ));
 
 	/* Ensure we have target address */
-	entry->target = ip;
+	ਇੰਦਰਾਜ->ਨਿਸ਼ਾਨਾ = ip;
 
 	/* Prepend to list */
-	entry->next = jump_table;
-	jump_table = entry;
+	ਇੰਦਰਾਜ->ਅਗਲਾ = jump_ਸਾਰਣੀ;
+	jump_ਸਾਰਣੀ = ਇੰਦਰਾਜ;
 
 	/* Store string */
-	int c = consume_token(source_file);
-	entry->name = calloc(length(scratch) + 1, sizeof(char));
-	Copy_String(scratch, entry->name);
+	ਪੂਰਨ c = consume_token(ਸਰੋਤ_file);
+	ਇੰਦਰਾਜ->name = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(ਲੰਮਾਈ(scratch) + 1, ਆਕਾਰ(ਅੱਖਰ));
+	Copy_String(scratch, ਇੰਦਰਾਜ->name);
 	Clear_Scratch(scratch);
 
-	return c;
+	ਵਾਪਸ c;
 }
 
-void outputPointer(int displacement, int number_of_bytes)
+ਖਾਲੀ output_ਸੂਚਕ(ਪੂਰਨ displacement, ਪੂਰਨ ਸੰਖਿਆ_ਦਾ_ਬਾਈਟਾਂ)
 {
-	unsigned value = displacement;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਮੁੱਲ = displacement;
 
-	while(number_of_bytes > 0)
+	ਜਦੋਂ(ਸੰਖਿਆ_ਦਾ_ਬਾਈਟਾਂ > 0)
 	{
-		unsigned byte = value % 256;
-		value = value / 256;
+		ਬਿਨਾਨਿਸ਼ਾਨੀ byte = ਮੁੱਲ % 256;
+		ਮੁੱਲ = ਮੁੱਲ / 256;
 		fputc(byte, output);
-		number_of_bytes = number_of_bytes - 1;
+		ਸੰਖਿਆ_ਦਾ_ਬਾਈਟਾਂ = ਸੰਖਿਆ_ਦਾ_ਬਾਈਟਾਂ - 1;
 	}
 }
 
-void Update_Pointer(char ch)
+ਖਾਲੀ Update_ਸੂਚਕ(ਅੱਖਰ ch)
 {
 	/* Calculate pointer size*/
-	if(in_set(ch, "%&")) ip = ip + 4; /* Deal with % and & */
-	else if(in_set(ch, "@$")) ip = ip + 2; /* Deal with @ and $ */
-	else if('!' == ch) ip = ip + 1; /* Deal with ! */
-	else exit(EXIT_FAILURE);
+	ਜੇ(ਵਿੱਚ_ਸੈੱਟ(ch, "%&")) ip = ip + 4; /* Deal with % and & */
+	ਨਹੀਂਤਾਂ ਜੇ(ਵਿੱਚ_ਸੈੱਟ(ch, "@$")) ip = ip + 2; /* Deal with @ and $ */
+	ਨਹੀਂਤਾਂ ਜੇ('!' == ch) ip = ip + 1; /* Deal with ! */
+	ਨਹੀਂਤਾਂ ਬਾਹਰ_ਨਿਕਲੋ(EXIT_FAILURE);
 }
 
-void storePointer(char ch, FILE* source_file)
+ਖਾਲੀ store_ਸੂਚਕ(ਅੱਖਰ ch, FILE* ਸਰੋਤ_file)
 {
 	/* Get string of pointer */
 	Clear_Scratch(scratch);
-	Update_Pointer(ch);
-	int base_sep_p = consume_token(source_file);
+	Update_ਸੂਚਕ(ch);
+	ਪੂਰਨ ਅਧਾਰ_sep_p = consume_token(ਸਰੋਤ_file);
 
 	/* Lookup token */
-	int target = GetTarget(scratch);
-	int displacement;
+	ਪੂਰਨ ਨਿਸ਼ਾਨਾ = Get_ਨਿਸ਼ਾਨਾ(scratch);
+	ਪੂਰਨ displacement;
 
-	int base = ip;
+	ਪੂਰਨ ਅਧਾਰ = ip;
 
 	/* Change relative base address to :<base> */
-	if ('>' == base_sep_p)
+	ਜੇ ('>' == ਅਧਾਰ_sep_p)
 	{
 		Clear_Scratch(scratch);
-		consume_token (source_file);
-		base = GetTarget (scratch);
+		consume_token (ਸਰੋਤ_file);
+		ਅਧਾਰ = Get_ਨਿਸ਼ਾਨਾ (scratch);
 
 		/* Force universality of behavior */
-		displacement = (target - base);
+		displacement = (ਨਿਸ਼ਾਨਾ - ਅਧਾਰ);
 	}
-	else
+	ਨਹੀਂਤਾਂ
 	{
-		displacement = base - target;
+		displacement = ਅਧਾਰ - ਨਿਸ਼ਾਨਾ;
 	}
 
 	/* output calculated difference */
-	if('!' == ch) outputPointer(displacement, 1); /* Deal with ! */
-	else if('$' == ch) outputPointer(target, 2); /* Deal with $ */
-	else if('@' == ch) outputPointer(displacement, 2); /* Deal with @ */
-	else if('&' == ch) outputPointer(target, 4); /* Deal with & */
-	else if('%' == ch) outputPointer(displacement, 4);  /* Deal with % */
-	else exit(EXIT_FAILURE);
+	ਜੇ('!' == ch) output_ਸੂਚਕ(displacement, 1); /* Deal with ! */
+	ਨਹੀਂਤਾਂ ਜੇ('$' == ch) output_ਸੂਚਕ(ਨਿਸ਼ਾਨਾ, 2); /* Deal with $ */
+	ਨਹੀਂਤਾਂ ਜੇ('@' == ch) output_ਸੂਚਕ(displacement, 2); /* Deal with @ */
+	ਨਹੀਂਤਾਂ ਜੇ('&' == ch) output_ਸੂਚਕ(ਨਿਸ਼ਾਨਾ, 4); /* Deal with & */
+	ਨਹੀਂਤਾਂ ਜੇ('%' == ch) output_ਸੂਚਕ(displacement, 4);  /* Deal with % */
+	ਨਹੀਂਤਾਂ ਬਾਹਰ_ਨਿਕਲੋ(EXIT_FAILURE);
 }
 
-void line_Comment(FILE* source_file)
+ਖਾਲੀ ਸਤਰ_Comment(FILE* ਸਰੋਤ_file)
 {
-	int c = fgetc(source_file);
-	while(!in_set(c, "\n\r"))
+	ਪੂਰਨ c = fgetc(ਸਰੋਤ_file);
+	ਜਦੋਂ(!ਵਿੱਚ_ਸੈੱਟ(c, "\n\r"))
 	{
-		if(EOF == c) break;
-		c = fgetc(source_file);
+		ਜੇ(EOF == c) ਰੋਕੋ;
+		c = fgetc(ਸਰੋਤ_file);
 	}
 }
 
-int hex(int c, FILE* source_file)
+ਪੂਰਨ hex(ਪੂਰਨ c, FILE* ਸਰੋਤ_file)
 {
-	if (in_set(c, "0123456789")) return (c - 48);
-	else if (in_set(c, "abcdef")) return (c - 87);
-	else if (in_set(c, "ABCDEF")) return (c - 55);
-	else if (in_set(c, "#;")) line_Comment(source_file);
-	return -1;
+	ਜੇ (ਵਿੱਚ_ਸੈੱਟ(c, "0123456789")) ਵਾਪਸ (c - 48);
+	ਨਹੀਂਤਾਂ ਜੇ (ਵਿੱਚ_ਸੈੱਟ(c, "abcdef")) ਵਾਪਸ (c - 87);
+	ਨਹੀਂਤਾਂ ਜੇ (ਵਿੱਚ_ਸੈੱਟ(c, "ABCDEF")) ਵਾਪਸ (c - 55);
+	ਨਹੀਂਤਾਂ ਜੇ (ਵਿੱਚ_ਸੈੱਟ(c, "#;")) ਸਤਰ_Comment(ਸਰੋਤ_file);
+	ਵਾਪਸ -1;
 }
 
-int hold;
-int toggle;
-void process_byte(char c, FILE* source_file, int write)
+ਪੂਰਨ hold;
+ਪੂਰਨ toggle;
+ਖਾਲੀ process_byte(ਅੱਖਰ c, FILE* ਸਰੋਤ_file, ਪੂਰਨ ਲਿਖ)
 {
-	if(0 <= hex(c, source_file))
+	ਜੇ(0 <= hex(c, ਸਰੋਤ_file))
 	{
-		if(toggle)
+		ਜੇ(toggle)
 		{
-			if(write) fputc(((hold * 16)) + hex(c, source_file), output);
+			ਜੇ(ਲਿਖ) fputc(((hold * 16)) + hex(c, ਸਰੋਤ_file), output);
 			ip = ip + 1;
 			hold = 0;
 		}
-		else
+		ਨਹੀਂਤਾਂ
 		{
-			hold = hex(c, source_file);
+			hold = hex(c, ਸਰੋਤ_file);
 		}
 		toggle = !toggle;
 	}
 }
 
-void first_pass(FILE* input)
+ਖਾਲੀ ਪਹਿਲਾ_pass(FILE* ਨਿਵੇਸ਼)
 {
 	toggle = FALSE;
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	ਪੂਰਨ c;
+	ਲਈ(c = fgetc(ਨਿਵੇਸ਼); EOF != c; c = fgetc(ਨਿਵੇਸ਼))
 	{
 		/* Check for and deal with label */
-		if(':' == c)
+		ਜੇ(':' == c)
 		{
-			c = storeLabel(input, ip);
+			c = storeLabel(ਨਿਵੇਸ਼, ip);
 		}
 
 		/* check for and deal with relative/absolute pointers to labels */
-		if(in_set(c, "!@$~%&"))
+		ਜੇ(ਵਿੱਚ_ਸੈੱਟ(c, "!@$~%&"))
 		{ /* deal with 1byte pointer !; 2byte pointers (@ and $); 3byte pointers ~; 4byte pointers (% and &) */
-			Update_Pointer(c);
-			c = Throwaway_token(input);
-			if ('>' == c)
+			Update_ਸੂਚਕ(c);
+			c = Throwaway_token(ਨਿਵੇਸ਼);
+			ਜੇ ('>' == c)
 			{ /* deal with label>base */
-				c = Throwaway_token(input);
+				c = Throwaway_token(ਨਿਵੇਸ਼);
 			}
 		}
-		else process_byte(c, input, FALSE);
+		ਨਹੀਂਤਾਂ process_byte(c, ਨਿਵੇਸ਼, FALSE);
 	}
 }
 
-void second_pass(FILE* input)
+ਖਾਲੀ ਦੂਜਾ_pass(FILE* ਨਿਵੇਸ਼)
 {
 	toggle = FALSE;
 	hold = 0;
 
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	ਪੂਰਨ c;
+	ਲਈ(c = fgetc(ਨਿਵੇਸ਼); EOF != c; c = fgetc(ਨਿਵੇਸ਼))
 	{
-		if(':' == c) c = Throwaway_token(input); /* Deal with : */
-		else if(in_set(c, "!@$~%&")) storePointer(c, input);  /* Deal with !, @, $, ~, % and & */
-		else process_byte(c, input, TRUE);
+		ਜੇ(':' == c) c = Throwaway_token(ਨਿਵੇਸ਼); /* Deal with : */
+		ਨਹੀਂਤਾਂ ਜੇ(ਵਿੱਚ_ਸੈੱਟ(c, "!@$~%&")) store_ਸੂਚਕ(c, ਨਿਵੇਸ਼);  /* Deal with !, @, $, ~, % and & */
+		ਨਹੀਂਤਾਂ process_byte(c, ਨਿਵੇਸ਼, TRUE);
 	}
 }
 
 /* Standard C main program */
-int main(int argc, char **argv)
+ਪੂਰਨ ਮੁੱਖ(ਪੂਰਨ argc, ਅੱਖਰ **argv)
 {
-	jump_table = NULL;
-	Base_Address = 0x8048000;
+	jump_ਸਾਰਣੀ = ਨਿਰਾ;
+	ਅਧਾਰ_ਪਤਾ = 0x8048000;
 	output = stdout;
-	scratch = calloc(max_string + 1, sizeof(char));
+	scratch = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(max_string + 1, ਆਕਾਰ(ਅੱਖਰ));
 
-	FILE* input = fopen(argv[1], "r");
+	FILE* ਨਿਵੇਸ਼ = fopen(argv[1], "r");
 	output = stdout;
-	if(NULL != argv[2])
+	ਜੇ(ਨਿਰਾ != argv[2])
 	{
 		output = fopen(argv[2], "w");
 		chmod(argv[2], 0700);
 	}
 
 	/* Get all of the labels */
-	ip = Base_Address;
-	first_pass(input);
-	rewind(input);
+	ip = ਅਧਾਰ_ਪਤਾ;
+	ਪਹਿਲਾ_pass(ਨਿਵੇਸ਼);
+	rewind(ਨਿਵੇਸ਼);
 
 	/* Fix all the references*/
-	ip = Base_Address;
-	second_pass(input);
+	ip = ਅਧਾਰ_ਪਤਾ;
+	ਦੂਜਾ_pass(ਨਿਵੇਸ਼);
 
 	/* Set file as executable */
-	return EXIT_SUCCESS;
+	ਵਾਪਸ EXIT_SUCCESS;
 }

@@ -16,179 +16,179 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include "../M2libc/bootstrappable.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/stat.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ "../M2libc/bootstrappable.h"
 
-#define max_string 4096
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ max_string 4096
 
-struct entry
+ਬਣਤਰ ਇੰਦਰਾਜ
 {
-	struct entry* next;
-	unsigned target;
-	char name;
+	ਬਣਤਰ ਇੰਦਰਾਜ* ਅਗਲਾ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਨਿਸ਼ਾਨਾ;
+	ਅੱਖਰ name;
 };
 
 
 /* Globals */
 FILE* output;
-struct entry* jump_table;
-int ip;
+ਬਣਤਰ ਇੰਦਰਾਜ* jump_ਸਾਰਣੀ;
+ਪੂਰਨ ip;
 
-unsigned GetTarget(char c)
+ਬਿਨਾਨਿਸ਼ਾਨੀ Get_ਨਿਸ਼ਾਨਾ(ਅੱਖਰ c)
 {
-	struct entry* i;
-	for(i = jump_table; NULL != i; i = i->next)
+	ਬਣਤਰ ਇੰਦਰਾਜ* i;
+	ਲਈ(i = jump_ਸਾਰਣੀ; ਨਿਰਾ != i; i = i->ਅਗਲਾ)
 	{
-		if(c == i->name)
+		ਜੇ(c == i->name)
 		{
-			return i->target;
+			ਵਾਪਸ i->ਨਿਸ਼ਾਨਾ;
 		}
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int storeLabel(FILE* source_file, int ip)
+ਪੂਰਨ storeLabel(FILE* ਸਰੋਤ_file, ਪੂਰਨ ip)
 {
-	struct entry* entry = calloc(1, sizeof(struct entry));
+	ਬਣਤਰ ਇੰਦਰਾਜ* ਇੰਦਰਾਜ = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(1, ਆਕਾਰ(ਬਣਤਰ ਇੰਦਰਾਜ));
 
 	/* Ensure we have target address */
-	entry->target = ip;
+	ਇੰਦਰਾਜ->ਨਿਸ਼ਾਨਾ = ip;
 
 	/* Prepend to list */
-	entry->next = jump_table;
-	jump_table = entry;
+	ਇੰਦਰਾਜ->ਅਗਲਾ = jump_ਸਾਰਣੀ;
+	jump_ਸਾਰਣੀ = ਇੰਦਰਾਜ;
 
 	/* Store string */
-	entry->name = fgetc(source_file);
-	return -1;
+	ਇੰਦਰਾਜ->name = fgetc(ਸਰੋਤ_file);
+	ਵਾਪਸ -1;
 }
 
 
-void outputPointer(int displacement, int number_of_bytes)
+ਖਾਲੀ output_ਸੂਚਕ(ਪੂਰਨ displacement, ਪੂਰਨ ਸੰਖਿਆ_ਦਾ_ਬਾਈਟਾਂ)
 {
-	unsigned value = displacement;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਮੁੱਲ = displacement;
 
-	while(number_of_bytes > 0)
+	ਜਦੋਂ(ਸੰਖਿਆ_ਦਾ_ਬਾਈਟਾਂ > 0)
 	{
-		unsigned byte = value % 256;
-		value = value / 256;
+		ਬਿਨਾਨਿਸ਼ਾਨੀ byte = ਮੁੱਲ % 256;
+		ਮੁੱਲ = ਮੁੱਲ / 256;
 		fputc(byte, output);
-		number_of_bytes = number_of_bytes - 1;
+		ਸੰਖਿਆ_ਦਾ_ਬਾਈਟਾਂ = ਸੰਖਿਆ_ਦਾ_ਬਾਈਟਾਂ - 1;
 	}
 }
 
-void Update_Pointer(char ch)
+ਖਾਲੀ Update_ਸੂਚਕ(ਅੱਖਰ ch)
 {
 	/* Calculate pointer size*/
-	if(in_set(ch, "%")) ip = ip + 4;
-	else exit(EXIT_FAILURE);
+	ਜੇ(ਵਿੱਚ_ਸੈੱਟ(ch, "%")) ip = ip + 4;
+	ਨਹੀਂਤਾਂ ਬਾਹਰ_ਨਿਕਲੋ(EXIT_FAILURE);
 }
 
-void storePointer(char ch)
+ਖਾਲੀ store_ਸੂਚਕ(ਅੱਖਰ ch)
 {
 	/* Get string of pointer */
-	Update_Pointer(ch);
+	Update_ਸੂਚਕ(ch);
 
 	/* Lookup token */
-	int target = GetTarget(ch);
-	int displacement;
+	ਪੂਰਨ ਨਿਸ਼ਾਨਾ = Get_ਨਿਸ਼ਾਨਾ(ch);
+	ਪੂਰਨ displacement;
 
 	/* Change relative base address to :<base> */
-	displacement = (target - ip);
+	displacement = (ਨਿਸ਼ਾਨਾ - ip);
 
 	/* output calculated difference */
-	if('%' == ch) outputPointer(displacement, 4);  /* Deal with % */
-	else exit(EXIT_FAILURE);
+	ਜੇ('%' == ch) output_ਸੂਚਕ(displacement, 4);  /* Deal with % */
+	ਨਹੀਂਤਾਂ ਬਾਹਰ_ਨਿਕਲੋ(EXIT_FAILURE);
 }
 
-void line_Comment(FILE* source_file)
+ਖਾਲੀ ਸਤਰ_Comment(FILE* ਸਰੋਤ_file)
 {
-	int c = fgetc(source_file);
-	while(!in_set(c, "\n\r"))
+	ਪੂਰਨ c = fgetc(ਸਰੋਤ_file);
+	ਜਦੋਂ(!ਵਿੱਚ_ਸੈੱਟ(c, "\n\r"))
 	{
-		if(EOF == c) break;
-		c = fgetc(source_file);
+		ਜੇ(EOF == c) ਰੋਕੋ;
+		c = fgetc(ਸਰੋਤ_file);
 	}
 }
 
-int hex(int c, FILE* source_file)
+ਪੂਰਨ hex(ਪੂਰਨ c, FILE* ਸਰੋਤ_file)
 {
-	if (in_set(c, "0123456789")) return (c - 48);
-	else if (in_set(c, "abcdef")) return (c - 87);
-	else if (in_set(c, "ABCDEF")) return (c - 55);
-	else if (in_set(c, "#;")) line_Comment(source_file);
-	return -1;
+	ਜੇ (ਵਿੱਚ_ਸੈੱਟ(c, "0123456789")) ਵਾਪਸ (c - 48);
+	ਨਹੀਂਤਾਂ ਜੇ (ਵਿੱਚ_ਸੈੱਟ(c, "abcdef")) ਵਾਪਸ (c - 87);
+	ਨਹੀਂਤਾਂ ਜੇ (ਵਿੱਚ_ਸੈੱਟ(c, "ABCDEF")) ਵਾਪਸ (c - 55);
+	ਨਹੀਂਤਾਂ ਜੇ (ਵਿੱਚ_ਸੈੱਟ(c, "#;")) ਸਤਰ_Comment(ਸਰੋਤ_file);
+	ਵਾਪਸ -1;
 }
 
-int hold;
-int toggle;
-void process_byte(char c, FILE* source_file, int write)
+ਪੂਰਨ hold;
+ਪੂਰਨ toggle;
+ਖਾਲੀ process_byte(ਅੱਖਰ c, FILE* ਸਰੋਤ_file, ਪੂਰਨ ਲਿਖ)
 {
-	if(0 <= hex(c, source_file))
+	ਜੇ(0 <= hex(c, ਸਰੋਤ_file))
 	{
-		if(toggle)
+		ਜੇ(toggle)
 		{
-			if(write) fputc(((hold * 16)) + hex(c, source_file), output);
+			ਜੇ(ਲਿਖ) fputc(((hold * 16)) + hex(c, ਸਰੋਤ_file), output);
 			ip = ip + 1;
 			hold = 0;
 		}
-		else
+		ਨਹੀਂਤਾਂ
 		{
-			hold = hex(c, source_file);
+			hold = hex(c, ਸਰੋਤ_file);
 		}
 		toggle = !toggle;
 	}
 }
 
-void first_pass(FILE* input)
+ਖਾਲੀ ਪਹਿਲਾ_pass(FILE* ਨਿਵੇਸ਼)
 {
 	toggle = FALSE;
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	ਪੂਰਨ c;
+	ਲਈ(c = fgetc(ਨਿਵੇਸ਼); EOF != c; c = fgetc(ਨਿਵੇਸ਼))
 	{
 		/* Check for and deal with label */
-		if(':' == c)
+		ਜੇ(':' == c)
 		{
-			c = storeLabel(input, ip);
+			c = storeLabel(ਨਿਵੇਸ਼, ip);
 		}
 
 		/* check for and deal with relative/absolute pointers to labels */
-		if(in_set(c, "%"))
+		ਜੇ(ਵਿੱਚ_ਸੈੱਟ(c, "%"))
 		{ /* deal 4byte pointer (%) */
-			Update_Pointer(c);
-			c = fgetc(input);
+			Update_ਸੂਚਕ(c);
+			c = fgetc(ਨਿਵੇਸ਼);
 		}
-		else process_byte(c, input, FALSE);
+		ਨਹੀਂਤਾਂ process_byte(c, ਨਿਵੇਸ਼, FALSE);
 	}
 }
 
-void second_pass(FILE* input)
+ਖਾਲੀ ਦੂਜਾ_pass(FILE* ਨਿਵੇਸ਼)
 {
 	toggle = FALSE;
 	hold = 0;
 
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	ਪੂਰਨ c;
+	ਲਈ(c = fgetc(ਨਿਵੇਸ਼); EOF != c; c = fgetc(ਨਿਵੇਸ਼))
 	{
-		if(':' == c) c = fgetc(input); /* Deal with : */
-		else if(in_set(c, "%")) storePointer(c);  /* Deal with %*/
-		else process_byte(c, input, TRUE);
+		ਜੇ(':' == c) c = fgetc(ਨਿਵੇਸ਼); /* Deal with : */
+		ਨਹੀਂਤਾਂ ਜੇ(ਵਿੱਚ_ਸੈੱਟ(c, "%")) store_ਸੂਚਕ(c);  /* Deal with %*/
+		ਨਹੀਂਤਾਂ process_byte(c, ਨਿਵੇਸ਼, TRUE);
 	}
 }
 
 /* Standard C main program */
-int main(int argc, char **argv)
+ਪੂਰਨ ਮੁੱਖ(ਪੂਰਨ argc, ਅੱਖਰ **argv)
 {
-	jump_table = NULL;
+	jump_ਸਾਰਣੀ = ਨਿਰਾ;
 	output = stdout;
 
-	FILE* input = fopen(argv[1], "r");
+	FILE* ਨਿਵੇਸ਼ = fopen(argv[1], "r");
 	output = stdout;
-	if(NULL != argv[2])
+	ਜੇ(ਨਿਰਾ != argv[2])
 	{
 		output = fopen(argv[2], "w");
 		chmod(argv[2], 0700);
@@ -196,13 +196,13 @@ int main(int argc, char **argv)
 
 	/* Get all of the labels */
 	ip = 0;
-	first_pass(input);
-	rewind(input);
+	ਪਹਿਲਾ_pass(ਨਿਵੇਸ਼);
+	rewind(ਨਿਵੇਸ਼);
 
 	/* Fix all the references*/
 	ip = 0;
-	second_pass(input);
+	ਦੂਜਾ_pass(ਨਿਵੇਸ਼);
 
 	/* Set file as executable */
-	return EXIT_SUCCESS;
+	ਵਾਪਸ EXIT_SUCCESS;
 }

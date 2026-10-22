@@ -16,82 +16,82 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include "../M2libc/bootstrappable.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/stat.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ "../M2libc/bootstrappable.h"
 
-#define max_string 4096
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ max_string 4096
 
 /* Globals */
 FILE* output;
 
-void line_Comment(FILE* source_file)
+ਖਾਲੀ ਸਤਰ_Comment(FILE* ਸਰੋਤ_file)
 {
-	int c = fgetc(source_file);
-	while(!in_set(c, "\n\r"))
+	ਪੂਰਨ c = fgetc(ਸਰੋਤ_file);
+	ਜਦੋਂ(!ਵਿੱਚ_ਸੈੱਟ(c, "\n\r"))
 	{
-		if(EOF == c) break;
-		c = fgetc(source_file);
+		ਜੇ(EOF == c) ਰੋਕੋ;
+		c = fgetc(ਸਰੋਤ_file);
 	}
 }
 
-int hex(int c, FILE* source_file)
+ਪੂਰਨ hex(ਪੂਰਨ c, FILE* ਸਰੋਤ_file)
 {
-	if (in_set(c, "0123456789")) return (c - 48);
-	else if (in_set(c, "abcdef")) return (c - 87);
-	else if (in_set(c, "ABCDEF")) return (c - 55);
-	else if (in_set(c, "#;")) line_Comment(source_file);
-	return -1;
+	ਜੇ (ਵਿੱਚ_ਸੈੱਟ(c, "0123456789")) ਵਾਪਸ (c - 48);
+	ਨਹੀਂਤਾਂ ਜੇ (ਵਿੱਚ_ਸੈੱਟ(c, "abcdef")) ਵਾਪਸ (c - 87);
+	ਨਹੀਂਤਾਂ ਜੇ (ਵਿੱਚ_ਸੈੱਟ(c, "ABCDEF")) ਵਾਪਸ (c - 55);
+	ਨਹੀਂਤਾਂ ਜੇ (ਵਿੱਚ_ਸੈੱਟ(c, "#;")) ਸਤਰ_Comment(ਸਰੋਤ_file);
+	ਵਾਪਸ -1;
 }
 
-int hold;
-int toggle;
-void process_byte(char c, FILE* source_file)
+ਪੂਰਨ hold;
+ਪੂਰਨ toggle;
+ਖਾਲੀ process_byte(ਅੱਖਰ c, FILE* ਸਰੋਤ_file)
 {
-	if(0 <= hex(c, source_file))
+	ਜੇ(0 <= hex(c, ਸਰੋਤ_file))
 	{
-		if(toggle)
+		ਜੇ(toggle)
 		{
-			fputc(((hold * 16)) + hex(c, source_file), output);
+			fputc(((hold * 16)) + hex(c, ਸਰੋਤ_file), output);
 			hold = 0;
 		}
-		else
+		ਨਹੀਂਤਾਂ
 		{
-			hold = hex(c, source_file);
+			hold = hex(c, ਸਰੋਤ_file);
 		}
 		toggle = !toggle;
 	}
 }
 
-void first_pass(FILE* input)
+ਖਾਲੀ ਪਹਿਲਾ_pass(FILE* ਨਿਵੇਸ਼)
 {
 	toggle = FALSE;
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	ਪੂਰਨ c;
+	ਲਈ(c = fgetc(ਨਿਵੇਸ਼); EOF != c; c = fgetc(ਨਿਵੇਸ਼))
 	{
-		process_byte(c, input);
+		process_byte(c, ਨਿਵੇਸ਼);
 	}
 }
 
 /* Standard C main program */
-int main(int argc, char **argv)
+ਪੂਰਨ ਮੁੱਖ(ਪੂਰਨ argc, ਅੱਖਰ **argv)
 {
 	output = stdout;
 
-	FILE* input = fopen(argv[1], "r");
+	FILE* ਨਿਵੇਸ਼ = fopen(argv[1], "r");
 	output = stdout;
-	if(NULL != argv[2])
+	ਜੇ(ਨਿਰਾ != argv[2])
 	{
 		output = fopen(argv[2], "w");
 		chmod(argv[2], 0700);
 	}
 
 	/* do the work */
-	first_pass(input);
+	ਪਹਿਲਾ_pass(ਨਿਵੇਸ਼);
 
 	/* Set file as executable */
-	return EXIT_SUCCESS;
+	ਵਾਪਸ EXIT_SUCCESS;
 }

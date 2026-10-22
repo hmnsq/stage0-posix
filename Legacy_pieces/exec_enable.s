@@ -19,7 +19,7 @@
 	# we must export the entry point to the ELF linker or loader.
 # They convientionally recognize _start as their entry point.
 # Use ld -e main to override the default if you wish
-.global _start
+.ਵੈਸ਼੍ਵਿਕ _start
 
 _start:
 	# first check that we got the correct number of inputs
@@ -42,7 +42,7 @@ _start:
 	# Call the kernel
 	syscall
 
-Done:
+ਪੂਰਾ:
 	# program completed Successfully
 	mov $0, %rdi        # All is well
 	mov $60, %rax       # put the exit syscall number in eax
