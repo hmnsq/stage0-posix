@@ -16,44 +16,44 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include "../M2libc/bootstrappable.h"
+#شامل <stdio.h>
+#شامل <stdlib.h>
+#شامل <string.h>
+#شامل <unistd.h>
+#شامل <sys/stat.h>
+#شامل "../M2libc/bootstrappable.h"
 
 #define max_string 4096
 
-struct entry
+ساختار entry
 {
-	struct entry* next;
+	ساختار entry* next;
 	unsigned target;
-	char name;
+	نویسه name;
 };
 
 
 /* Globals */
 FILE* output;
-struct entry* jump_table;
-int ip;
+ساختار entry* jump_table;
+صحیح ip;
 
-unsigned GetTarget(char c)
+unsigned GetTarget(نویسه c)
 {
-	struct entry* i;
-	for(i = jump_table; NULL != i; i = i->next)
+	ساختار entry* i;
+	برای(i = jump_table; پوچ != i; i = i->next)
 	{
-		if(c == i->name)
+		اگر(c == i->name)
 		{
-			return i->target;
+			بازگشت i->target;
 		}
 	}
-	return 0;
+	بازگشت 0;
 }
 
-int storeLabel(FILE* source_file, int ip)
+صحیح storeLabel(FILE* source_file, صحیح ip)
 {
-	struct entry* entry = calloc(1, sizeof(struct entry));
+	ساختار entry* entry = calloc(1, اندازه(ساختار entry));
 
 	/* Ensure we have target address */
 	entry->target = ip;
@@ -64,79 +64,79 @@ int storeLabel(FILE* source_file, int ip)
 
 	/* Store string */
 	entry->name = fgetc(source_file);
-	return -1;
+	بازگشت -1;
 }
 
 
-void outputPointer(int displacement, int number_of_bytes)
+تهی outputPointer(صحیح displacement, صحیح عدد_of_bytes)
 {
-	unsigned value = displacement;
+	unsigned مقدار = displacement;
 
-	while(number_of_bytes > 0)
+	وقتی(عدد_of_bytes > 0)
 	{
-		unsigned byte = value % 256;
-		value = value / 256;
+		unsigned byte = مقدار % 256;
+		مقدار = مقدار / 256;
 		fputc(byte, output);
-		number_of_bytes = number_of_bytes - 1;
+		عدد_of_bytes = عدد_of_bytes - 1;
 	}
 }
 
-void Update_Pointer(char ch)
+تهی Update_Pointer(نویسه ch)
 {
 	/* Calculate pointer size*/
-	if(in_set(ch, "%")) ip = ip + 4;
-	else exit(EXIT_FAILURE);
+	اگر(in_set(ch, "%")) ip = ip + 4;
+	وگرنه exit(EXIT_FAILURE);
 }
 
-void storePointer(char ch)
+تهی storePointer(نویسه ch)
 {
 	/* Get string of pointer */
 	Update_Pointer(ch);
 
 	/* Lookup token */
-	int target = GetTarget(ch);
-	int displacement;
+	صحیح target = GetTarget(ch);
+	صحیح displacement;
 
 	/* Change relative base address to :<base> */
 	displacement = (target - ip);
 
 	/* output calculated difference */
-	if('%' == ch) outputPointer(displacement, 4);  /* Deal with % */
-	else exit(EXIT_FAILURE);
+	اگر('%' == ch) outputPointer(displacement, 4);  /* Deal with % */
+	وگرنه exit(EXIT_FAILURE);
 }
 
-void line_Comment(FILE* source_file)
+تهی سطر_Comment(FILE* source_file)
 {
-	int c = fgetc(source_file);
-	while(!in_set(c, "\n\r"))
+	صحیح c = fgetc(source_file);
+	وقتی(!in_set(c, "\n\r"))
 	{
-		if(EOF == c) break;
+		اگر(EOF == c) بشکن;
 		c = fgetc(source_file);
 	}
 }
 
-int hex(int c, FILE* source_file)
+صحیح hex(صحیح c, FILE* source_file)
 {
-	if (in_set(c, "0123456789")) return (c - 48);
-	else if (in_set(c, "abcdef")) return (c - 87);
-	else if (in_set(c, "ABCDEF")) return (c - 55);
-	else if (in_set(c, "#;")) line_Comment(source_file);
-	return -1;
+	اگر (in_set(c, "0123456789")) بازگشت (c - 48);
+	وگرنه اگر (in_set(c, "abcdef")) بازگشت (c - 87);
+	وگرنه اگر (in_set(c, "ABCDEF")) بازگشت (c - 55);
+	وگرنه اگر (in_set(c, "#;")) سطر_Comment(source_file);
+	بازگشت -1;
 }
 
-int hold;
-int toggle;
-void process_byte(char c, FILE* source_file, int write)
+صحیح hold;
+صحیح toggle;
+تهی process_byte(نویسه c, FILE* source_file, صحیح اكتب)
 {
-	if(0 <= hex(c, source_file))
+	اگر(0 <= hex(c, source_file))
 	{
-		if(toggle)
+		اگر(toggle)
 		{
-			if(write) fputc(((hold * 16)) + hex(c, source_file), output);
+			اگر(اكتب) fputc(((hold * 16)) + hex(c, source_file), output);
 			ip = ip + 1;
 			hold = 0;
 		}
-		else
+		وگرنه
 		{
 			hold = hex(c, source_file);
 		}
@@ -144,51 +144,51 @@ void process_byte(char c, FILE* source_file, int write)
 	}
 }
 
-void first_pass(FILE* input)
+تهی first_pass(FILE* درون_داد)
 {
 	toggle = FALSE;
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	صحیح c;
+	برای(c = fgetc(درون_داد); EOF != c; c = fgetc(درون_داد))
 	{
 		/* Check for and deal with label */
-		if(':' == c)
+		اگر(':' == c)
 		{
-			c = storeLabel(input, ip);
+			c = storeLabel(درون_داد, ip);
 		}
 
 		/* check for and deal with relative/absolute pointers to labels */
-		if(in_set(c, "%"))
+		اگر(in_set(c, "%"))
 		{ /* deal 4byte pointer (%) */
 			Update_Pointer(c);
-			c = fgetc(input);
+			c = fgetc(درون_داد);
 		}
-		else process_byte(c, input, FALSE);
+		وگرنه process_byte(c, درون_داد, FALSE);
 	}
 }
 
-void second_pass(FILE* input)
+تهی second_pass(FILE* درون_داد)
 {
 	toggle = FALSE;
 	hold = 0;
 
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	صحیح c;
+	برای(c = fgetc(درون_داد); EOF != c; c = fgetc(درون_داد))
 	{
-		if(':' == c) c = fgetc(input); /* Deal with : */
-		else if(in_set(c, "%")) storePointer(c);  /* Deal with %*/
-		else process_byte(c, input, TRUE);
+		اگر(':' == c) c = fgetc(درون_داد); /* Deal with : */
+		وگرنه اگر(in_set(c, "%")) storePointer(c);  /* Deal with %*/
+		وگرنه process_byte(c, درون_داد, TRUE);
 	}
 }
 
 /* Standard C main program */
-int main(int argc, char **argv)
+صحیح اصلی(صحیح argc, نویسه **argv)
 {
-	jump_table = NULL;
+	jump_table = پوچ;
 	output = stdout;
 
-	FILE* input = fopen(argv[1], "r");
+	FILE* درون_داد = fopen(argv[1], "r");
 	output = stdout;
-	if(NULL != argv[2])
+	اگر(پوچ != argv[2])
 	{
 		output = fopen(argv[2], "w");
 		chmod(argv[2], 0700);
@@ -196,13 +196,13 @@ int main(int argc, char **argv)
 
 	/* Get all of the labels */
 	ip = 0;
-	first_pass(input);
-	rewind(input);
+	first_pass(درون_داد);
+	rewind(درون_داد);
 
 	/* Fix all the references*/
 	ip = 0;
-	second_pass(input);
+	second_pass(درون_داد);
 
 	/* Set file as executable */
-	return EXIT_SUCCESS;
+	بازگشت EXIT_SUCCESS;
 }
