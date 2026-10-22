@@ -15,130 +15,130 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <sys/wait.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <unistd.h>
+#அந்தர்பாவ <sys/wait.h>
 
 #define FALSE 0
 #define TRUE 1
 #define max_string 4096
 #define max_args 256
 
-char** tokens;
-int command_done;
+எழுத்து** tokens;
+முழு command_done;
 
 /* Function for purging line comments */
-void collect_comment(FILE* input)
+வெறுமை collect_comment(FILE* உள்ளீடு)
 {
-	int c;
-	do
+	முழு c;
+	செய்
 	{
-		c = fgetc(input);
-		if(EOF == c) exit(EXIT_FAILURE);
-	} while('\n' != c);
+		c = fgetc(உள்ளீடு);
+		எனில்(EOF == c) exit(EXIT_FAILURE);
+	} போது('\n' != c);
 }
 
 /* Function for collecting RAW strings and removing the " that goes with them */
-int collect_string(FILE* input, int index, char* target)
+முழு collect_string(FILE* உள்ளீடு, முழு index, எழுத்து* target)
 {
-	int c;
+	முழு c;
 collect_string_loop:
-	c = fgetc(input);
-	if(EOF == c) exit(EXIT_FAILURE);
-	else if('"' == c) return index;
+	c = fgetc(உள்ளீடு);
+	எனில்(EOF == c) exit(EXIT_FAILURE);
+	இல்லையெனில் எனில்('"' == c) திரும்பு index;
 	target[index] = c;
 	index = index + 1;
-	goto collect_string_loop;
+	செல் collect_string_loop;
 }
 
 /* Function to collect an individual argument or purge a comment */
-char* collect_token(FILE* input)
+எழுத்து* collect_token(FILE* உள்ளீடு)
 {
-	char* token = calloc(max_string, sizeof(char));
-	int c;
-	int i = 0;
+	எழுத்து* token = calloc(max_string, அளவு(எழுத்து));
+	முழு c;
+	முழு i = 0;
 collect_token_loop:
-	c = fgetc(input);
-	if(EOF == c) exit(EXIT_SUCCESS);
-	else if((' ' == c) || ('\t' == c)) goto collect_token_done;
-	else if('\n' == c)
+	c = fgetc(உள்ளீடு);
+	எனில்(EOF == c) exit(EXIT_SUCCESS);
+	இல்லையெனில் எனில்((' ' == c) || ('\t' == c)) செல் collect_token_done;
+	இல்லையெனில் எனில்('\n' == c)
 	{ /* Command terminates at end of line */
 		command_done = 1;
-		goto collect_token_done;
+		செல் collect_token_done;
 	}
-	else if('"' == c)
+	இல்லையெனில் எனில்('"' == c)
 	{ /* RAW strings are everything between a pair of "" */
-		i = collect_string(input, i, token);
-		goto collect_token_done;
+		i = collect_string(உள்ளீடு, i, token);
+		செல் collect_token_done;
 	}
-	else if('#' == c)
+	இல்லையெனில் எனில்('#' == c)
 	{ /* Line comments to aid the humans */
-		collect_comment(input);
+		collect_comment(உள்ளீடு);
 		command_done = 1;
-		goto collect_token_done;
+		செல் collect_token_done;
 	}
-	else if('\\' == c)
+	இல்லையெனில் எனில்('\\' == c)
 	{ /* Support for end of line escapes, drops the char after */
-		fgetc(input);
-		goto collect_token_done;
+		fgetc(உள்ளீடு);
+		செல் collect_token_done;
 	}
 	token[i] = c;
 	i = i + 1;
-	goto collect_token_loop;
+	செல் collect_token_loop;
 
 collect_token_done:
-	if(0 == i) return NULL;
-	return token;
+	எனில்(0 == i) திரும்பு வெற்று;
+	திரும்பு token;
 }
 
-int main(int argc, char** argv, char** envp)
+முழு முதன்மை(முழு argc, எழுத்து** argv, எழுத்து** envp)
 {
-	char* filename = "kaem.run";
-	FILE* script = NULL;
+	எழுத்து* filename = "kaem.run";
+	FILE* script = வெற்று;
 
-	if(NULL != argv[1])
+	எனில்(வெற்று != argv[1])
 	{
 		filename = argv[1];
 	}
 
 	script = fopen(filename, "r");
 
-	if(NULL == script) exit(EXIT_FAILURE);
+	எனில்(வெற்று == script) exit(EXIT_FAILURE);
 
 main_loop:
-	tokens = calloc(max_args, sizeof(char*));
+	tokens = calloc(max_args, அளவு(எழுத்து*));
 
-	int i = 0;
-	int status = 0;
+	முழு i = 0;
+	முழு status = 0;
 	command_done = 0;
-	do
+	செய்
 	{
-		char* result = collect_token(script);
-		if(0 != result)
+		எழுத்து* result = collect_token(script);
+		எனில்(0 != result)
 		{ /* Not a comment string but an actual argument */
 			tokens[i] = result;
 			i = i + 1;
 		}
-	} while(0 == command_done);
+	} போது(0 == command_done);
 
-	if(0 > i) goto main_loop;
+	எனில்(0 > i) செல் main_loop;
 
 	fputs(" +> ", stdout);
-	int j;
-	for(j = 0; j < i; j = j + 1)
+	முழு j;
+	க்கு(j = 0; j < i; j = j + 1)
 	{
 		fputs(tokens[j], stdout);
 		fputc(' ', stdout);
 	}
 	fputs("\n", stdout);
 
-	char* program = tokens[0];
-	if(NULL == program) exit(EXIT_FAILURE);
+	எழுத்து* program = tokens[0];
+	எனில்(வெற்று == program) exit(EXIT_FAILURE);
 
-	int f = fork();
-	if (f == -1) exit(EXIT_FAILURE);
-	else if (f == 0)
+	முழு f = fork();
+	எனில் (f == -1) exit(EXIT_FAILURE);
+	இல்லையெனில் எனில் (f == 0)
 	{ /* child */
 		/* execve() returns only on error */
 		execve(program, tokens, envp);
@@ -150,7 +150,7 @@ main_loop:
 	/* And we should wait for it to complete */
 	waitpid(f, &status, 0);
 
-	if(0 == status) goto main_loop;
+	எனில்(0 == status) செல் main_loop;
 
 	/* Clearly the script hit an issue that should never have happened */
 	fputs("Subprocess error\nABORTING HARD\n", stderr);

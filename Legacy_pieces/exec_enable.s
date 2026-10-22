@@ -19,7 +19,7 @@
 	# we must export the entry point to the ELF linker or loader.
 # They convientionally recognize _start as their entry point.
 # Use ld -e main to override the default if you wish
-.global _start
+.வைஶ்விக _start
 
 _start:
 	# first check that we got the correct number of inputs

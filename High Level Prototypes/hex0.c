@@ -16,49 +16,49 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include "../M2libc/bootstrappable.h"
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <unistd.h>
+#அந்தர்பாவ <sys/stat.h>
+#அந்தர்பாவ "../M2libc/bootstrappable.h"
 
 #define max_string 4096
 
 /* Globals */
 FILE* output;
 
-void line_Comment(FILE* source_file)
+வெறுமை வரி_Comment(FILE* source_file)
 {
-	int c = fgetc(source_file);
-	while(!in_set(c, "\n\r"))
+	முழு c = fgetc(source_file);
+	போது(!in_set(c, "\n\r"))
 	{
-		if(EOF == c) break;
+		எனில்(EOF == c) நிறுத்து;
 		c = fgetc(source_file);
 	}
 }
 
-int hex(int c, FILE* source_file)
+முழு hex(முழு c, FILE* source_file)
 {
-	if (in_set(c, "0123456789")) return (c - 48);
-	else if (in_set(c, "abcdef")) return (c - 87);
-	else if (in_set(c, "ABCDEF")) return (c - 55);
-	else if (in_set(c, "#;")) line_Comment(source_file);
-	return -1;
+	எனில் (in_set(c, "0123456789")) திரும்பு (c - 48);
+	இல்லையெனில் எனில் (in_set(c, "abcdef")) திரும்பு (c - 87);
+	இல்லையெனில் எனில் (in_set(c, "ABCDEF")) திரும்பு (c - 55);
+	இல்லையெனில் எனில் (in_set(c, "#;")) வரி_Comment(source_file);
+	திரும்பு -1;
 }
 
-int hold;
-int toggle;
-void process_byte(char c, FILE* source_file)
+முழு hold;
+முழு toggle;
+வெறுமை process_byte(எழுத்து c, FILE* source_file)
 {
-	if(0 <= hex(c, source_file))
+	எனில்(0 <= hex(c, source_file))
 	{
-		if(toggle)
+		எனில்(toggle)
 		{
 			fputc(((hold * 16)) + hex(c, source_file), output);
 			hold = 0;
 		}
-		else
+		இல்லையெனில்
 		{
 			hold = hex(c, source_file);
 		}
@@ -66,32 +66,32 @@ void process_byte(char c, FILE* source_file)
 	}
 }
 
-void first_pass(FILE* input)
+வெறுமை first_pass(FILE* உள்ளீடு)
 {
 	toggle = FALSE;
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	முழு c;
+	க்கு(c = fgetc(உள்ளீடு); EOF != c; c = fgetc(உள்ளீடு))
 	{
-		process_byte(c, input);
+		process_byte(c, உள்ளீடு);
 	}
 }
 
 /* Standard C main program */
-int main(int argc, char **argv)
+முழு முதன்மை(முழு argc, எழுத்து **argv)
 {
 	output = stdout;
 
-	FILE* input = fopen(argv[1], "r");
+	FILE* உள்ளீடு = fopen(argv[1], "r");
 	output = stdout;
-	if(NULL != argv[2])
+	எனில்(வெற்று != argv[2])
 	{
 		output = fopen(argv[2], "w");
 		chmod(argv[2], 0700);
 	}
 
 	/* do the work */
-	first_pass(input);
+	first_pass(உள்ளீடு);
 
 	/* Set file as executable */
-	return EXIT_SUCCESS;
+	திரும்பு EXIT_SUCCESS;
 }

@@ -15,69 +15,69 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include<stdio.h>
-#include<stdlib.h>
-#include<stdbool.h>
+#அந்தர்பாவ<stdio.h>
+#அந்தர்பாவ<stdlib.h>
+#அந்தர்பாவ<stdbool.h>
 
-void purge_line_comments()
+வெறுமை purge_வரி_comments()
 {
-	int c;
-	do
+	முழு c;
+	செய்
 	{
 		c = getchar();
 
-		if (EOF == c)
+		எனில் (EOF == c)
 		{
 			exit(EXIT_SUCCESS);
 		}
-	} while ( '\n' != c );
+	} போது ( '\n' != c );
 }
 
-int hex(int c)
+முழு hex(முழு c)
 {
-	if (c >= '0' && c <= '9')
+	எனில் (c >= '0' && c <= '9')
 	{
-		return (c - 48);
+		திரும்பு (c - 48);
 	}
-	else if (c >= 'a' && c <= 'z')
+	இல்லையெனில் எனில் (c >= 'a' && c <= 'z')
 	{
-		return (c - 87);
+		திரும்பு (c - 87);
 	}
-	else if (c >= 'A' && c <= 'Z')
+	இல்லையெனில் எனில் (c >= 'A' && c <= 'Z')
 	{
-		return (c - 55);
+		திரும்பு (c - 55);
 	}
 
 	printf("You managed to call a hex function without a hex value!!!\n");
 	exit(EXIT_FAILURE);
 }
 
-int main(int argc, char *argv[])
+முழு முதன்மை(முழு argc, எழுத்து *argv[])
 {
-	int c;
-	int sum = 0;
+	முழு c;
+	முழு sum = 0;
 	bool toggle;
 	toggle = false;
 
-	do
+	செய்
 	{
 		c = getchar();
-		if ((c == '#') || (c == ';')) purge_line_comments();
-		else if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+		எனில் ((c == '#') || (c == ';')) purge_வரி_comments();
+		இல்லையெனில் எனில் ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
 		{
-			if(!toggle)
+			எனில்(!toggle)
 			{
 				sum = hex(c);
 				toggle = true;
 			}
-			else
+			இல்லையெனில்
 			{
 				sum = (sum << 4) + hex(c);
 				toggle = false;
 				fputc(sum, stdout);
 			}
 		}
-	}while(c != EOF);
+	}போது(c != EOF);
 
 	exit(EXIT_SUCCESS);
 }
