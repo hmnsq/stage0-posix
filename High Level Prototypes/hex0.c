@@ -16,82 +16,82 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include "../M2libc/bootstrappable.h"
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <unistd.h>
+#ضمن <sys/stat.h>
+#ضمن "../M2libc/bootstrappable.h"
 
-#define max_string 4096
+#تعریف_کن max_string 4096
 
 /* Globals */
 FILE* output;
 
-void line_Comment(FILE* source_file)
+فراغ سطر_Comment(FILE* منبع_file)
 {
-	int c = fgetc(source_file);
-	while(!in_set(c, "\n\r"))
+	صحيح c = fgetc(منبع_file);
+	طالما(!درون_مجموعه(c, "\n\r"))
 	{
-		if(EOF == c) break;
-		c = fgetc(source_file);
+		إذا(EOF == c) اكسر;
+		c = fgetc(منبع_file);
 	}
 }
 
-int hex(int c, FILE* source_file)
+صحيح hex(صحيح c, FILE* منبع_file)
 {
-	if (in_set(c, "0123456789")) return (c - 48);
-	else if (in_set(c, "abcdef")) return (c - 87);
-	else if (in_set(c, "ABCDEF")) return (c - 55);
-	else if (in_set(c, "#;")) line_Comment(source_file);
-	return -1;
+	إذا (درون_مجموعه(c, "0123456789")) أرجع (c - 48);
+	وإلا إذا (درون_مجموعه(c, "abcdef")) أرجع (c - 87);
+	وإلا إذا (درون_مجموعه(c, "ABCDEF")) أرجع (c - 55);
+	وإلا إذا (درون_مجموعه(c, "#;")) سطر_Comment(منبع_file);
+	أرجع -1;
 }
 
-int hold;
-int toggle;
-void process_byte(char c, FILE* source_file)
+صحيح hold;
+صحيح toggle;
+فراغ process_byte(حرف c, FILE* منبع_file)
 {
-	if(0 <= hex(c, source_file))
+	إذا(0 <= hex(c, منبع_file))
 	{
-		if(toggle)
+		إذا(toggle)
 		{
-			fputc(((hold * 16)) + hex(c, source_file), output);
+			fputc(((hold * 16)) + hex(c, منبع_file), output);
 			hold = 0;
 		}
-		else
+		وإلا
 		{
-			hold = hex(c, source_file);
+			hold = hex(c, منبع_file);
 		}
 		toggle = !toggle;
 	}
 }
 
-void first_pass(FILE* input)
+فراغ اولی_pass(FILE* درون_داد)
 {
 	toggle = FALSE;
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	صحيح c;
+	لكل(c = fgetc(درون_داد); EOF != c; c = fgetc(درون_داد))
 	{
-		process_byte(c, input);
+		process_byte(c, درون_داد);
 	}
 }
 
 /* Standard C main program */
-int main(int argc, char **argv)
+صحيح اصلی(صحيح argc, حرف **argv)
 {
 	output = stdout;
 
-	FILE* input = fopen(argv[1], "r");
+	FILE* درون_داد = fopen(argv[1], "r");
 	output = stdout;
-	if(NULL != argv[2])
+	إذا(عدم != argv[2])
 	{
 		output = fopen(argv[2], "w");
 		chmod(argv[2], 0700);
 	}
 
 	/* do the work */
-	first_pass(input);
+	اولی_pass(درون_داد);
 
 	/* Set file as executable */
-	return EXIT_SUCCESS;
+	أرجع EXIT_SUCCESS;
 }

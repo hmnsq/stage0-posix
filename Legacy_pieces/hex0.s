@@ -45,16 +45,16 @@ hex:
 purge_comment:
 	# Attempt to read 1 byte from STDIN
 	mov $1, %rdx          # set the size of chars we want
-	mov $input, %rsi      # Where to put it
+	mov $درون_داد, %rsi      # Where to put it
 	mov $0, %rdi          # Where are we reading from
 	mov $0, %rax          # the syscall number for read
-	syscall               # call the Kernel
+	syscall               # نادي the Kernel
 
 	test %rax, %rax       # check what we got
-	jz Done               # Got EOF call it done
+	jz انجامشده               # Got EOF نادي it done
 
 	# load byte
-	movb input, %al       # load char
+	movb درون_داد, %al       # load char
 	movzx %al, %rax       # We have to zero extend it to use it
 
 	# Loop if not LF
@@ -88,20 +88,20 @@ _start:
 loop:
 	# Attempt to read 1 byte from STDIN
 	mov $1, %rdx          # set the size of chars we want
-	mov $input, %rsi      # Where to put it
+	mov $درون_داد, %rsi      # Where to put it
 	mov $0, %rdi          # Where are we reading from
 	mov $0, %rax          # the syscall number for read
-	syscall               # call the Kernel
+	syscall               # نادي the Kernel
 
 	test %rax, %rax       # check what we got
-	jz Done               # Got EOF call it done
+	jz انجامشده               # Got EOF نادي it done
 
 	# load byte
-	movb input, %al       # load char
+	movb درون_داد, %al       # load char
 	movzx %al, %rax       # We have to zero extend it to use it
 
 	# process byte
-	call hex
+	نادي hex
 
 	# deal with -1 values
 	cmp $0, %rax
@@ -131,18 +131,18 @@ print:
 	mov $output, %rsi     # What we are writing
 	mov $1, %rdi          # Stdout File Descriptor
 	mov $1, %rax          # the syscall number for write
-	syscall               # call the Kernel
+	syscall               # نادي the Kernel
 
 	jmp loop
 
-Done:
+انجامشده:
 	# program completed Successfully
 	mov $0, %rdi          # All is well
 	mov $60, %rax         # put the exit syscall number in eax
 	syscall               # Call it a good day
 
 read_size = 2
-input:
+درون_داد:
 	.byte read_size
 output:
 	.byte 0x00
