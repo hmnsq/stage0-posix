@@ -45,16 +45,16 @@ hex:
 purge_comment:
 	# Attempt to read 1 byte from STDIN
 	mov $1, %rdx          # set the size of chars we want
-	mov $input, %rsi      # Where to put it
+	mov $شغرو, %rsi      # Where to put it
 	mov $0, %rdi          # Where are we reading from
 	mov $0, %rax          # the syscall number for read
-	syscall               # call the Kernel
+	syscall               # نادي the Kernel
 
 	test %rax, %rax       # check what we got
-	jz Done               # Got EOF call it done
+	jz Done               # Got EOF نادي it done
 
 	# load byte
-	movb input, %al       # load char
+	movb شغرو, %al       # load char
 	movzx %al, %rax       # We have to zero extend it to use it
 
 	# Loop if not LF
@@ -88,20 +88,20 @@ _start:
 loop:
 	# Attempt to read 1 byte from STDIN
 	mov $1, %rdx          # set the size of chars we want
-	mov $input, %rsi      # Where to put it
+	mov $شغرو, %rsi      # Where to put it
 	mov $0, %rdi          # Where are we reading from
 	mov $0, %rax          # the syscall number for read
-	syscall               # call the Kernel
+	syscall               # نادي the Kernel
 
 	test %rax, %rax       # check what we got
-	jz Done               # Got EOF call it done
+	jz Done               # Got EOF نادي it done
 
 	# load byte
-	movb input, %al       # load char
+	movb شغرو, %al       # load char
 	movzx %al, %rax       # We have to zero extend it to use it
 
 	# process byte
-	call hex
+	نادي hex
 
 	# deal with -1 values
 	cmp $0, %rax
@@ -109,7 +109,7 @@ loop:
 
 	# deal with toggle
 	cmp $0, %r15
-	jge print
+	jge بغ
 
 	# process first byte of pair
 	mov %rax, %r14
@@ -117,7 +117,7 @@ loop:
 	jmp loop
 
 # process second byte of pair
-print:
+بغ:
 	# update the sum and store in output
 	shl $4, %r14
 	add %r14, %rax
@@ -131,7 +131,7 @@ print:
 	mov $output, %rsi     # What we are writing
 	mov $1, %rdi          # Stdout File Descriptor
 	mov $1, %rax          # the syscall number for write
-	syscall               # call the Kernel
+	syscall               # نادي the Kernel
 
 	jmp loop
 
@@ -142,7 +142,7 @@ Done:
 	syscall               # Call it a good day
 
 read_size = 2
-input:
+شغرو:
 	.byte read_size
 output:
 	.byte 0x00
