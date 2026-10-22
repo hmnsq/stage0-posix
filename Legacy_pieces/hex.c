@@ -21,63 +21,63 @@
 
 void purge_line_comments()
 {
-	int c;
+	정수 c;
 	do
 	{
 		c = getchar();
 
-		if (EOF == c)
+		만약 (EOF == c)
 		{
 			exit(EXIT_SUCCESS);
 		}
-	} while ( '\n' != c );
+	} 동안 ( '\n' != c );
 }
 
-int hex(int c)
+정수 hex(정수 c)
 {
-	if (c >= '0' && c <= '9')
+	만약 (c >= '0' && c <= '9')
 	{
-		return (c - 48);
+		반환 (c - 48);
 	}
-	else if (c >= 'a' && c <= 'z')
+	아니면 만약 (c >= 'a' && c <= 'z')
 	{
-		return (c - 87);
+		반환 (c - 87);
 	}
-	else if (c >= 'A' && c <= 'Z')
+	아니면 만약 (c >= 'A' && c <= 'Z')
 	{
-		return (c - 55);
+		반환 (c - 55);
 	}
 
 	printf("You managed to call a hex function without a hex value!!!\n");
 	exit(EXIT_FAILURE);
 }
 
-int main(int argc, char *argv[])
+정수 main(정수 argc, char *argv[])
 {
-	int c;
-	int sum = 0;
+	정수 c;
+	정수 sum = 0;
 	bool toggle;
 	toggle = false;
 
 	do
 	{
 		c = getchar();
-		if ((c == '#') || (c == ';')) purge_line_comments();
-		else if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+		만약 ((c == '#') || (c == ';')) purge_line_comments();
+		아니면 만약 ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
 		{
-			if(!toggle)
+			만약(!toggle)
 			{
 				sum = hex(c);
 				toggle = true;
 			}
-			else
+			아니면
 			{
 				sum = (sum << 4) + hex(c);
 				toggle = false;
 				fputc(sum, stdout);
 			}
 		}
-	}while(c != EOF);
+	}동안(c != EOF);
 
 	exit(EXIT_SUCCESS);
 }

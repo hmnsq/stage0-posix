@@ -44,36 +44,36 @@ struct Token* newToken()
 	struct Token* p;
 
 	p = calloc (1, sizeof (struct Token));
-	if (NULL == p)
+	만약 (NULL == p)
 	{
 		fprintf (stderr, "calloc failed.\n");
 		exit (EXIT_FAILURE);
 	}
 
-	return p;
+	반환 p;
 }
 
 struct Token* addToken(struct Token* head, struct Token* p)
 {
-	if(NULL == head)
+	만약(NULL == head)
 	{
-		return p;
+		반환 p;
 	}
-	if(NULL == head->next)
+	만약(NULL == head->next)
 	{
 		head->next = p;
 	}
-	else
+	아니면
 	{
 		addToken(head->next, p);
 	}
-	return head;
+	반환 head;
 }
 
 void purge_lineComment()
 {
-	int c = fgetc(source_file);
-	while((10 != c) && (13 != c))
+	정수 c = fgetc(source_file);
+	동안((10 != c) && (13 != c))
 	{
 		c = fgetc(source_file);
 	}
@@ -90,9 +90,9 @@ char* store_atom(char c)
 		store[i] = (char)ch;
 		ch = fgetc(source_file);
 		i = i + 1;
-	} while ((9 != ch) && (10 != ch) && (32 != ch));
+	} 동안 ((9 != ch) && (10 != ch) && (32 != ch));
 
-	return store;
+	반환 store;
 }
 
 char* store_string(char c)
@@ -106,9 +106,9 @@ char* store_string(char c)
 		store[i] = (char)ch;
 		i = i + 1;
 		ch = fgetc(source_file);
-	} while(ch != c);
+	} 동안(ch != c);
 
-	return store;
+	반환 store;
 }
 
 struct Token* Tokenize_Line(struct Token* head)
@@ -117,53 +117,53 @@ struct Token* Tokenize_Line(struct Token* head)
 	int32_t c;
 	c = fgetc(source_file);
 
-	if((35 == c) || (59 == c))
+	만약((35 == c) || (59 == c))
 	{
 		purge_lineComment();
-		return Tokenize_Line(head);
+		반환 Tokenize_Line(head);
 	}
 
-	if((9 == c) || (10 == c) || (32 == c))
+	만약((9 == c) || (10 == c) || (32 == c))
 	{
-		return Tokenize_Line(head);
+		반환 Tokenize_Line(head);
 	}
 
 	struct Token* p = newToken();
-	if(-1 == c)
+	만약(-1 == c)
 	{
 		Reached_EOF = true;
 		free(p);
-		return head;
+		반환 head;
 	}
-	else if((34 == c) || (39 == c))
+	아니면 만약((34 == c) || (39 == c))
 	{
 		p->Text = store_string(c);
 		p->type = str;
 	}
-	else
+	아니면
 	{
 		p->Text = store_atom(c);
 	}
 
-	return addToken(head, p);
+	반환 addToken(head, p);
 }
 
 void setExpression(struct Token* p, char match[], char Exp[])
 {
 	/* Leave macros alone */
-	if((p->type & macro))
+	만약((p->type & macro))
 	{
 		setExpression(p->next, match, Exp);
-		return;
+		반환;
 	}
 
 	/* Only if there is an exact match replace */
-	if(0 == strncmp(p->Text, match, max_string))
+	만약(0 == strncmp(p->Text, match, max_string))
 	{
 		p->Expression = Exp;
 	}
 
-	if(NULL != p->next)
+	만약(NULL != p->next)
 	{
 		setExpression(p->next, match, Exp);
 	}
@@ -172,22 +172,22 @@ void setExpression(struct Token* p, char match[], char Exp[])
 
 void identify_macros(struct Token* p)
 {
-	if(0 == strncmp(p->Text, "DEFINE", max_string))
+	만약(0 == strncmp(p->Text, "DEFINE", max_string))
 	{
 		p->type = macro;
 		p->Text = p->next->Text;
-		if(p->next->next->type & str)
+		만약(p->next->next->type & str)
 		{
 			p->Expression = p->next->next->Text + 1;
 		}
-		else
+		아니면
 		{
 			p->Expression = p->next->next->Text;
 		}
 		p->next = p->next->next->next;
 	}
 
-	if(NULL != p->next)
+	만약(NULL != p->next)
 	{
 		identify_macros(p->next);
 	}
@@ -195,12 +195,12 @@ void identify_macros(struct Token* p)
 
 void line_macro(struct Token* p)
 {
-	if(p->type & macro)
+	만약(p->type & macro)
 	{
 		setExpression(p->next, p->Text, p->Expression);
 	}
 
-	if(NULL != p->next)
+	만약(NULL != p->next)
 	{
 		line_macro(p->next);
 	}
@@ -209,24 +209,24 @@ void line_macro(struct Token* p)
 void hexify_string(struct Token* p)
 {
 	char table[16] = {0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46};
-	int i = ((strnlen(p->Text + 1 , max_string)/4) + 1) * 8;
+	정수 i = ((strnlen(p->Text + 1 , max_string)/4) + 1) * 8;
 
 	char* d = calloc(max_string, sizeof(char));
 	p->Expression = d;
 
-	while(0 < i)
+	동안(0 < i)
 	{
 		i = i - 1;
 		d[i] = 0x30;
 	}
 
-	while( i < max_string)
+	동안( i < max_string)
 	{
-		if(0 == p->Text[i+1])
+		만약(0 == p->Text[i+1])
 		{
 			i = max_string;
 		}
-		else
+		아니면
 		{
 			d[2*i]  = table[p->Text[i+1] / 16];
 			d[2*i + 1] = table[p->Text[i+1] % 16];
@@ -237,19 +237,19 @@ void hexify_string(struct Token* p)
 
 void process_string(struct Token* p)
 {
-	if(p->type & str)
+	만약(p->type & str)
 	{
-		if('\'' == p->Text[0])
+		만약('\'' == p->Text[0])
 		{
 			p->Expression = p->Text + 1;
 		}
-		else if('"' == p->Text[0])
+		아니면 만약('"' == p->Text[0])
 		{
 			hexify_string(p);
 		}
 	}
 
-	if(NULL != p->next)
+	만약(NULL != p->next)
 	{
 		process_string(p->next);
 	}
@@ -258,12 +258,12 @@ void process_string(struct Token* p)
 
 void preserve_other(struct Token* p)
 {
-	if(NULL != p->next)
+	만약(NULL != p->next)
 	{
 		preserve_other(p->next);
 	}
 
-	if((NULL == p->Expression) && !(p->type & macro))
+	만약((NULL == p->Expression) && !(p->type & macro))
 	{
 		p->Expression = p->Text;
 	}
@@ -272,22 +272,22 @@ void preserve_other(struct Token* p)
 uint16_t numerate_string(char a[])
 {
 	char *ptr;
-	return (uint16_t)strtol(a, &ptr, 0);
+	반환 (uint16_t)strtol(a, &ptr, 0);
 }
 
 void eval_immediates(struct Token* p)
 {
-	if(NULL != p->next)
+	만약(NULL != p->next)
 	{
 		eval_immediates(p->next);
 	}
 
-	if((NULL == p->Expression) && !(p->type & macro))
+	만약((NULL == p->Expression) && !(p->type & macro))
 	{
 		uint16_t value;
 		value = numerate_string(p->Text);
 
-		if(('0' == p->Text[0]) || (0 != value))
+		만약(('0' == p->Text[0]) || (0 != value))
 		{
 			char* c = calloc(5, sizeof(char));
 			sprintf(c, "%04x", value);
@@ -298,36 +298,36 @@ void eval_immediates(struct Token* p)
 
 void print_hex(struct Token* p)
 {
-	if(p->type ^ macro)
+	만약(p->type ^ macro)
 	{
 		fprintf(stdout, "\n%s", p->Expression);
 	}
 
-	if(NULL != p->next)
+	만약(NULL != p->next)
 	{
 		print_hex(p->next);
 	}
-	else
+	아니면
 	{
 		fprintf(stdout, "\n");
 	}
 }
 
 /* Standard C main program */
-int main(int argc, char **argv)
+정수 main(정수 argc, char **argv)
 {
 	/* Make sure we have a program tape to run */
-	if (argc < 2)
+	만약 (argc < 2)
 	{
 		fprintf(stderr, "Usage: %s $FileName\nWhere $FileName is the name of the paper tape of the program being run\n", argv[0]);
-		return EXIT_FAILURE;
+		반환 EXIT_FAILURE;
 	}
 
 	source_file = fopen(argv[1], "r");
 
 	Reached_EOF = false;
 	struct Token* head = NULL;
-	while(!Reached_EOF)
+	동안(!Reached_EOF)
 	{
 		head = Tokenize_Line(head);
 	}
@@ -339,5 +339,5 @@ int main(int argc, char **argv)
 	preserve_other(head);
 	print_hex(head);
 
-	return EXIT_SUCCESS;
+	반환 EXIT_SUCCESS;
 }
