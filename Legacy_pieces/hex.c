@@ -21,63 +21,63 @@
 
 void purge_line_comments()
 {
-	int c;
+	ကိန်းပြည့် c;
 	do
 	{
 		c = getchar();
 
-		if (EOF == c)
+		အကယ်၍ (EOF == c)
 		{
 			exit(EXIT_SUCCESS);
 		}
-	} while ( '\n' != c );
+	} နေစဉ် ( '\n' != c );
 }
 
-int hex(int c)
+ကိန်းပြည့် hex(ကိန်းပြည့် c)
 {
-	if (c >= '0' && c <= '9')
+	အကယ်၍ (c >= '0' && c <= '9')
 	{
-		return (c - 48);
+		ပြန်ပေး (c - 48);
 	}
-	else if (c >= 'a' && c <= 'z')
+	မဟုတ်ပါက အကယ်၍ (c >= 'a' && c <= 'z')
 	{
-		return (c - 87);
+		ပြန်ပေး (c - 87);
 	}
-	else if (c >= 'A' && c <= 'Z')
+	မဟုတ်ပါက အကယ်၍ (c >= 'A' && c <= 'Z')
 	{
-		return (c - 55);
+		ပြန်ပေး (c - 55);
 	}
 
 	printf("You managed to call a hex function without a hex value!!!\n");
 	exit(EXIT_FAILURE);
 }
 
-int main(int argc, char *argv[])
+ကိန်းပြည့် main(ကိန်းပြည့် argc, var_na *argv[])
 {
-	int c;
-	int sum = 0;
+	ကိန်းပြည့် c;
+	ကိန်းပြည့် sum = 0;
 	bool toggle;
 	toggle = false;
 
 	do
 	{
 		c = getchar();
-		if ((c == '#') || (c == ';')) purge_line_comments();
-		else if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+		အကယ်၍ ((c == '#') || (c == ';')) purge_line_comments();
+		မဟုတ်ပါက အကယ်၍ ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
 		{
-			if(!toggle)
+			အကယ်၍(!toggle)
 			{
 				sum = hex(c);
 				toggle = true;
 			}
-			else
+			မဟုတ်ပါက
 			{
 				sum = (sum << 4) + hex(c);
 				toggle = false;
 				fputc(sum, stdout);
 			}
 		}
-	}while(c != EOF);
+	}နေစဉ်(c != EOF);
 
 	exit(EXIT_SUCCESS);
 }

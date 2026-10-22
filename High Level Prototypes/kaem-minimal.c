@@ -25,60 +25,60 @@
 #define max_string 4096
 #define max_args 256
 
-char** tokens;
-int command_done;
+var_na** tokens;
+ကိန်းပြည့် command_done;
 
 /* Function for purging line comments */
 void collect_comment(FILE* input)
 {
-	int c;
+	ကိန်းပြည့် c;
 	do
 	{
 		c = fgetc(input);
-		if(EOF == c) exit(EXIT_FAILURE);
-	} while('\n' != c);
+		အကယ်၍(EOF == c) exit(EXIT_FAILURE);
+	} နေစဉ်('\n' != c);
 }
 
 /* Function for collecting RAW strings and removing the " that goes with them */
-int collect_string(FILE* input, int index, char* target)
+ကိန်းပြည့် collect_string(FILE* input, ကိန်းပြည့် index, var_na* target)
 {
-	int c;
+	ကိန်းပြည့် c;
 collect_string_loop:
 	c = fgetc(input);
-	if(EOF == c) exit(EXIT_FAILURE);
-	else if('"' == c) return index;
+	အကယ်၍(EOF == c) exit(EXIT_FAILURE);
+	မဟုတ်ပါက အကယ်၍('"' == c) ပြန်ပေး index;
 	target[index] = c;
 	index = index + 1;
 	goto collect_string_loop;
 }
 
 /* Function to collect an individual argument or purge a comment */
-char* collect_token(FILE* input)
+var_na* collect_token(FILE* input)
 {
-	char* token = calloc(max_string, sizeof(char));
-	int c;
-	int i = 0;
+	var_na* token = calloc(max_string, parimaa_na(var_na));
+	ကိန်းပြည့် c;
+	ကိန်းပြည့် i = 0;
 collect_token_loop:
 	c = fgetc(input);
-	if(EOF == c) exit(EXIT_SUCCESS);
-	else if((' ' == c) || ('\t' == c)) goto collect_token_done;
-	else if('\n' == c)
+	အကယ်၍(EOF == c) exit(EXIT_SUCCESS);
+	မဟုတ်ပါက အကယ်၍((' ' == c) || ('\t' == c)) goto collect_token_done;
+	မဟုတ်ပါက အကယ်၍('\n' == c)
 	{ /* Command terminates at end of line */
 		command_done = 1;
 		goto collect_token_done;
 	}
-	else if('"' == c)
+	မဟုတ်ပါက အကယ်၍('"' == c)
 	{ /* RAW strings are everything between a pair of "" */
 		i = collect_string(input, i, token);
 		goto collect_token_done;
 	}
-	else if('#' == c)
+	မဟုတ်ပါက အကယ်၍('#' == c)
 	{ /* Line comments to aid the humans */
 		collect_comment(input);
 		command_done = 1;
 		goto collect_token_done;
 	}
-	else if('\\' == c)
+	မဟုတ်ပါက အကယ်၍('\\' == c)
 	{ /* Support for end of line escapes, drops the char after */
 		fgetc(input);
 		goto collect_token_done;
@@ -88,57 +88,57 @@ collect_token_loop:
 	goto collect_token_loop;
 
 collect_token_done:
-	if(0 == i) return NULL;
-	return token;
+	အကယ်၍(0 == i) ပြန်ပေး NULL;
+	ပြန်ပေး token;
 }
 
-int main(int argc, char** argv, char** envp)
+ကိန်းပြည့် main(ကိန်းပြည့် argc, var_na** argv, var_na** envp)
 {
-	char* filename = "kaem.run";
+	var_na* filename = "kaem.run";
 	FILE* script = NULL;
 
-	if(NULL != argv[1])
+	အကယ်၍(NULL != argv[1])
 	{
 		filename = argv[1];
 	}
 
 	script = fopen(filename, "r");
 
-	if(NULL == script) exit(EXIT_FAILURE);
+	အကယ်၍(NULL == script) exit(EXIT_FAILURE);
 
 main_loop:
-	tokens = calloc(max_args, sizeof(char*));
+	tokens = calloc(max_args, parimaa_na(var_na*));
 
-	int i = 0;
-	int status = 0;
+	ကိန်းပြည့် i = 0;
+	ကိန်းပြည့် status = 0;
 	command_done = 0;
 	do
 	{
-		char* result = collect_token(script);
-		if(0 != result)
+		var_na* result = collect_token(script);
+		အကယ်၍(0 != result)
 		{ /* Not a comment string but an actual argument */
 			tokens[i] = result;
 			i = i + 1;
 		}
-	} while(0 == command_done);
+	} နေစဉ်(0 == command_done);
 
-	if(0 > i) goto main_loop;
+	အကယ်၍(0 > i) goto main_loop;
 
 	fputs(" +> ", stdout);
-	int j;
-	for(j = 0; j < i; j = j + 1)
+	ကိန်းပြည့် j;
+	အတွက်(j = 0; j < i; j = j + 1)
 	{
 		fputs(tokens[j], stdout);
 		fputc(' ', stdout);
 	}
 	fputs("\n", stdout);
 
-	char* program = tokens[0];
-	if(NULL == program) exit(EXIT_FAILURE);
+	var_na* program = tokens[0];
+	အကယ်၍(NULL == program) exit(EXIT_FAILURE);
 
-	int f = fork();
-	if (f == -1) exit(EXIT_FAILURE);
-	else if (f == 0)
+	ကိန်းပြည့် f = fork();
+	အကယ်၍ (f == -1) exit(EXIT_FAILURE);
+	မဟုတ်ပါက အကယ်၍ (f == 0)
 	{ /* child */
 		/* execve() returns only on error */
 		execve(program, tokens, envp);
@@ -150,7 +150,7 @@ main_loop:
 	/* And we should wait for it to complete */
 	waitpid(f, &status, 0);
 
-	if(0 == status) goto main_loop;
+	အကယ်၍(0 == status) goto main_loop;
 
 	/* Clearly the script hit an issue that should never have happened */
 	fputs("Subprocess error\nABORTING HARD\n", stderr);
