@@ -15,42 +15,42 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdlib.h>
-#include <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <stdio.h>
 
-int main (int argc, char** argv)
+صحيح مکھ (صحيح argc, حرف** argv)
 {
-	if(argc != 2)
+	إذا(argc != 2)
 	{
 		fputs("xeh $filename is the only valid input form\n", stderr);
-		exit(EXIT_FAILURE);
+		باہر_نکلو(EXIT_FAILURE);
 	}
 
-	FILE* in = fopen(argv[1], "r");
-	if(NULL == in)
+	FILE* وچ = fopen(argv[1], "r");
+	إذا(عدم == وچ)
 	{
 		fputs("Unable to open file: ", stderr);
 		fputs(argv[1], stderr);
 		fputs(" aborting to prevent problems\n", stderr);
-		exit(EXIT_FAILURE);
+		باہر_نکلو(EXIT_FAILURE);
 	}
 
-	char* table = "0123456789ABCDEF";
-	int c = fgetc(in);
-	int col = 40;
-	while(EOF != c)
+	حرف* جدول = "0123456789ABCDEF";
+	صحيح c = fgetc(وچ);
+	صحيح خانہ = 40;
+	طالما(EOF != c)
 	{
-		fputc(table[c / 16], stdout);
-		fputc(table[c % 16], stdout);
-		col = col - 2;
-		if(0 == col)
+		fputc(جدول[c / 16], stdout);
+		fputc(جدول[c % 16], stdout);
+		خانہ = خانہ - 2;
+		إذا(0 == خانہ)
 		{
-			col = 40;
+			خانہ = 40;
 			fputc('\n', stdout);
 		}
-		else fputc(' ', stdout);
-		c = fgetc(in);
+		وإلا fputc(' ', stdout);
+		c = fgetc(وچ);
 	}
 	fputc('\n', stdout);
-	exit(EXIT_SUCCESS);
+	باہر_نکلو(EXIT_SUCCESS);
 }

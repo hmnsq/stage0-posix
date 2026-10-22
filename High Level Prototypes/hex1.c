@@ -16,179 +16,179 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include "../M2libc/bootstrappable.h"
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <unistd.h>
+#ضمن <sys/stat.h>
+#ضمن "../M2libc/bootstrappable.h"
 
-#define max_string 4096
+#تعریف_کرو max_string 4096
 
-struct entry
+بنية اندراج
 {
-	struct entry* next;
-	unsigned target;
-	char name;
+	بنية اندراج* اگلا;
+	بنانشانی نشانہ;
+	حرف name;
 };
 
 
 /* Globals */
 FILE* output;
-struct entry* jump_table;
-int ip;
+بنية اندراج* jump_جدول;
+صحيح ip;
 
-unsigned GetTarget(char c)
+بنانشانی Get_نشانہ(حرف c)
 {
-	struct entry* i;
-	for(i = jump_table; NULL != i; i = i->next)
+	بنية اندراج* i;
+	لكل(i = jump_جدول; عدم != i; i = i->اگلا)
 	{
-		if(c == i->name)
+		إذا(c == i->name)
 		{
-			return i->target;
+			أرجع i->نشانہ;
 		}
 	}
-	return 0;
+	أرجع 0;
 }
 
-int storeLabel(FILE* source_file, int ip)
+صحيح storeLabel(FILE* سروت_file, صحيح ip)
 {
-	struct entry* entry = calloc(1, sizeof(struct entry));
+	بنية اندراج* اندراج = صفر_حافظہ_دیو(1, حجم(بنية اندراج));
 
 	/* Ensure we have target address */
-	entry->target = ip;
+	اندراج->نشانہ = ip;
 
 	/* Prepend to list */
-	entry->next = jump_table;
-	jump_table = entry;
+	اندراج->اگلا = jump_جدول;
+	jump_جدول = اندراج;
 
 	/* Store string */
-	entry->name = fgetc(source_file);
-	return -1;
+	اندراج->name = fgetc(سروت_file);
+	أرجع -1;
 }
 
 
-void outputPointer(int displacement, int number_of_bytes)
+فراغ output_اشارہ_گر(صحيح displacement, صحيح نمبر_دا_بائٹاں)
 {
-	unsigned value = displacement;
+	بنانشانی قدر = displacement;
 
-	while(number_of_bytes > 0)
+	طالما(نمبر_دا_بائٹاں > 0)
 	{
-		unsigned byte = value % 256;
-		value = value / 256;
+		بنانشانی byte = قدر % 256;
+		قدر = قدر / 256;
 		fputc(byte, output);
-		number_of_bytes = number_of_bytes - 1;
+		نمبر_دا_بائٹاں = نمبر_دا_بائٹاں - 1;
 	}
 }
 
-void Update_Pointer(char ch)
+فراغ Update_اشارہ_گر(حرف ch)
 {
 	/* Calculate pointer size*/
-	if(in_set(ch, "%")) ip = ip + 4;
-	else exit(EXIT_FAILURE);
+	إذا(وچ_سیٹ(ch, "%")) ip = ip + 4;
+	وإلا باہر_نکلو(EXIT_FAILURE);
 }
 
-void storePointer(char ch)
+فراغ store_اشارہ_گر(حرف ch)
 {
 	/* Get string of pointer */
-	Update_Pointer(ch);
+	Update_اشارہ_گر(ch);
 
 	/* Lookup token */
-	int target = GetTarget(ch);
-	int displacement;
+	صحيح نشانہ = Get_نشانہ(ch);
+	صحيح displacement;
 
 	/* Change relative base address to :<base> */
-	displacement = (target - ip);
+	displacement = (نشانہ - ip);
 
 	/* output calculated difference */
-	if('%' == ch) outputPointer(displacement, 4);  /* Deal with % */
-	else exit(EXIT_FAILURE);
+	إذا('%' == ch) output_اشارہ_گر(displacement, 4);  /* Deal with % */
+	وإلا باہر_نکلو(EXIT_FAILURE);
 }
 
-void line_Comment(FILE* source_file)
+فراغ سطر_Comment(FILE* سروت_file)
 {
-	int c = fgetc(source_file);
-	while(!in_set(c, "\n\r"))
+	صحيح c = fgetc(سروت_file);
+	طالما(!وچ_سیٹ(c, "\n\r"))
 	{
-		if(EOF == c) break;
-		c = fgetc(source_file);
+		إذا(EOF == c) اكسر;
+		c = fgetc(سروت_file);
 	}
 }
 
-int hex(int c, FILE* source_file)
+صحيح hex(صحيح c, FILE* سروت_file)
 {
-	if (in_set(c, "0123456789")) return (c - 48);
-	else if (in_set(c, "abcdef")) return (c - 87);
-	else if (in_set(c, "ABCDEF")) return (c - 55);
-	else if (in_set(c, "#;")) line_Comment(source_file);
-	return -1;
+	إذا (وچ_سیٹ(c, "0123456789")) أرجع (c - 48);
+	وإلا إذا (وچ_سیٹ(c, "abcdef")) أرجع (c - 87);
+	وإلا إذا (وچ_سیٹ(c, "ABCDEF")) أرجع (c - 55);
+	وإلا إذا (وچ_سیٹ(c, "#;")) سطر_Comment(سروت_file);
+	أرجع -1;
 }
 
-int hold;
-int toggle;
-void process_byte(char c, FILE* source_file, int write)
+صحيح hold;
+صحيح toggle;
+فراغ process_byte(حرف c, FILE* سروت_file, صحيح اكتب)
 {
-	if(0 <= hex(c, source_file))
+	إذا(0 <= hex(c, سروت_file))
 	{
-		if(toggle)
+		إذا(toggle)
 		{
-			if(write) fputc(((hold * 16)) + hex(c, source_file), output);
+			إذا(اكتب) fputc(((hold * 16)) + hex(c, سروت_file), output);
 			ip = ip + 1;
 			hold = 0;
 		}
-		else
+		وإلا
 		{
-			hold = hex(c, source_file);
+			hold = hex(c, سروت_file);
 		}
 		toggle = !toggle;
 	}
 }
 
-void first_pass(FILE* input)
+فراغ پہلا_pass(FILE* داخلہ)
 {
 	toggle = FALSE;
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	صحيح c;
+	لكل(c = fgetc(داخلہ); EOF != c; c = fgetc(داخلہ))
 	{
 		/* Check for and deal with label */
-		if(':' == c)
+		إذا(':' == c)
 		{
-			c = storeLabel(input, ip);
+			c = storeLabel(داخلہ, ip);
 		}
 
 		/* check for and deal with relative/absolute pointers to labels */
-		if(in_set(c, "%"))
+		إذا(وچ_سیٹ(c, "%"))
 		{ /* deal 4byte pointer (%) */
-			Update_Pointer(c);
-			c = fgetc(input);
+			Update_اشارہ_گر(c);
+			c = fgetc(داخلہ);
 		}
-		else process_byte(c, input, FALSE);
+		وإلا process_byte(c, داخلہ, FALSE);
 	}
 }
 
-void second_pass(FILE* input)
+فراغ دوجا_pass(FILE* داخلہ)
 {
 	toggle = FALSE;
 	hold = 0;
 
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	صحيح c;
+	لكل(c = fgetc(داخلہ); EOF != c; c = fgetc(داخلہ))
 	{
-		if(':' == c) c = fgetc(input); /* Deal with : */
-		else if(in_set(c, "%")) storePointer(c);  /* Deal with %*/
-		else process_byte(c, input, TRUE);
+		إذا(':' == c) c = fgetc(داخلہ); /* Deal with : */
+		وإلا إذا(وچ_سیٹ(c, "%")) store_اشارہ_گر(c);  /* Deal with %*/
+		وإلا process_byte(c, داخلہ, TRUE);
 	}
 }
 
 /* Standard C main program */
-int main(int argc, char **argv)
+صحيح مکھ(صحيح argc, حرف **argv)
 {
-	jump_table = NULL;
+	jump_جدول = عدم;
 	output = stdout;
 
-	FILE* input = fopen(argv[1], "r");
+	FILE* داخلہ = fopen(argv[1], "r");
 	output = stdout;
-	if(NULL != argv[2])
+	إذا(عدم != argv[2])
 	{
 		output = fopen(argv[2], "w");
 		chmod(argv[2], 0700);
@@ -196,13 +196,13 @@ int main(int argc, char **argv)
 
 	/* Get all of the labels */
 	ip = 0;
-	first_pass(input);
-	rewind(input);
+	پہلا_pass(داخلہ);
+	rewind(داخلہ);
 
 	/* Fix all the references*/
 	ip = 0;
-	second_pass(input);
+	دوجا_pass(داخلہ);
 
 	/* Set file as executable */
-	return EXIT_SUCCESS;
+	أرجع EXIT_SUCCESS;
 }
