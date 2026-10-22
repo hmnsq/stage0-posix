@@ -21,63 +21,63 @@
 
 void purge_line_comments()
 {
-	int c;
+	puur_naa_nka c;
 	do
 	{
 		c = getchar();
 
-		if (EOF == c)
+		ပေႃး (EOF == c)
 		{
 			exit(EXIT_SUCCESS);
 		}
-	} while ( '\n' != c );
+	} ၶၢဝ်း ( '\n' != c );
 }
 
-int hex(int c)
+puur_naa_nka hex(puur_naa_nka c)
 {
-	if (c >= '0' && c <= '9')
+	ပေႃး (c >= '0' && c <= '9')
 	{
-		return (c - 48);
+		ပွၵ်ႈ (c - 48);
 	}
-	else if (c >= 'a' && c <= 'z')
+	ပေႃးဢမ်ႇ ပေႃး (c >= 'a' && c <= 'z')
 	{
-		return (c - 87);
+		ပွၵ်ႈ (c - 87);
 	}
-	else if (c >= 'A' && c <= 'Z')
+	ပေႃးဢမ်ႇ ပေႃး (c >= 'A' && c <= 'Z')
 	{
-		return (c - 55);
+		ပွၵ်ႈ (c - 55);
 	}
 
 	printf("You managed to call a hex function without a hex value!!!\n");
 	exit(EXIT_FAILURE);
 }
 
-int main(int argc, char *argv[])
+puur_naa_nka main(puur_naa_nka argc, var_na *argv[])
 {
-	int c;
-	int sum = 0;
+	puur_naa_nka c;
+	puur_naa_nka sum = 0;
 	bool toggle;
 	toggle = false;
 
 	do
 	{
 		c = getchar();
-		if ((c == '#') || (c == ';')) purge_line_comments();
-		else if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+		ပေႃး ((c == '#') || (c == ';')) purge_line_comments();
+		ပေႃးဢမ်ႇ ပေႃး ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
 		{
-			if(!toggle)
+			ပေႃး(!toggle)
 			{
 				sum = hex(c);
 				toggle = true;
 			}
-			else
+			ပေႃးဢမ်ႇ
 			{
 				sum = (sum << 4) + hex(c);
 				toggle = false;
 				fputc(sum, stdout);
 			}
 		}
-	}while(c != EOF);
+	}ၶၢဝ်း(c != EOF);
 
 	exit(EXIT_SUCCESS);
 }

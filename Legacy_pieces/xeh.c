@@ -18,16 +18,16 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-int main (int argc, char** argv)
+puur_naa_nka main (puur_naa_nka argc, var_na** argv)
 {
-	if(argc != 2)
+	ပေႃး(argc != 2)
 	{
 		fputs("xeh $filename is the only valid input form\n", stderr);
 		exit(EXIT_FAILURE);
 	}
 
 	FILE* in = fopen(argv[1], "r");
-	if(NULL == in)
+	ပေႃး(NULL == in)
 	{
 		fputs("Unable to open file: ", stderr);
 		fputs(argv[1], stderr);
@@ -35,20 +35,20 @@ int main (int argc, char** argv)
 		exit(EXIT_FAILURE);
 	}
 
-	char* table = "0123456789ABCDEF";
-	int c = fgetc(in);
-	int col = 40;
-	while(EOF != c)
+	var_na* table = "0123456789ABCDEF";
+	puur_naa_nka c = fgetc(in);
+	puur_naa_nka col = 40;
+	ၶၢဝ်း(EOF != c)
 	{
 		fputc(table[c / 16], stdout);
 		fputc(table[c % 16], stdout);
 		col = col - 2;
-		if(0 == col)
+		ပေႃး(0 == col)
 		{
 			col = 40;
 			fputc('\n', stdout);
 		}
-		else fputc(' ', stdout);
+		ပေႃးဢမ်ႇ fputc(' ', stdout);
 		c = fgetc(in);
 	}
 	fputc('\n', stdout);
