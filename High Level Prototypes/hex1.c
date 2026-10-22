@@ -36,22 +36,22 @@ struct entry
 /* Globals */
 FILE* output;
 struct entry* jump_table;
-int ip;
+цео ip;
 
 unsigned GetTarget(char c)
 {
 	struct entry* i;
-	for(i = jump_table; NULL != i; i = i->next)
+	за(i = jump_table; NULL != i; i = i->next)
 	{
-		if(c == i->name)
+		ако(c == i->name)
 		{
-			return i->target;
+			врати i->target;
 		}
 	}
-	return 0;
+	врати 0;
 }
 
-int storeLabel(FILE* source_file, int ip)
+цео storeLabel(FILE* source_file, цео ip)
 {
 	struct entry* entry = calloc(1, sizeof(struct entry));
 
@@ -64,15 +64,15 @@ int storeLabel(FILE* source_file, int ip)
 
 	/* Store string */
 	entry->name = fgetc(source_file);
-	return -1;
+	врати -1;
 }
 
 
-void outputPointer(int displacement, int number_of_bytes)
+void outputPointer(цео displacement, цео number_of_bytes)
 {
 	unsigned value = displacement;
 
-	while(number_of_bytes > 0)
+	док(number_of_bytes > 0)
 	{
 		unsigned byte = value % 256;
 		value = value / 256;
@@ -84,8 +84,8 @@ void outputPointer(int displacement, int number_of_bytes)
 void Update_Pointer(char ch)
 {
 	/* Calculate pointer size*/
-	if(in_set(ch, "%")) ip = ip + 4;
-	else exit(EXIT_FAILURE);
+	ако(in_set(ch, "%")) ip = ip + 4;
+	инако exit(EXIT_FAILURE);
 }
 
 void storePointer(char ch)
@@ -94,49 +94,49 @@ void storePointer(char ch)
 	Update_Pointer(ch);
 
 	/* Lookup token */
-	int target = GetTarget(ch);
-	int displacement;
+	цео target = GetTarget(ch);
+	цео displacement;
 
 	/* Change relative base address to :<base> */
 	displacement = (target - ip);
 
 	/* output calculated difference */
-	if('%' == ch) outputPointer(displacement, 4);  /* Deal with % */
-	else exit(EXIT_FAILURE);
+	ако('%' == ch) outputPointer(displacement, 4);  /* Deal with % */
+	инако exit(EXIT_FAILURE);
 }
 
 void line_Comment(FILE* source_file)
 {
-	int c = fgetc(source_file);
-	while(!in_set(c, "\n\r"))
+	цео c = fgetc(source_file);
+	док(!in_set(c, "\n\r"))
 	{
-		if(EOF == c) break;
+		ако(EOF == c) break;
 		c = fgetc(source_file);
 	}
 }
 
-int hex(int c, FILE* source_file)
+цео hex(цео c, FILE* source_file)
 {
-	if (in_set(c, "0123456789")) return (c - 48);
-	else if (in_set(c, "abcdef")) return (c - 87);
-	else if (in_set(c, "ABCDEF")) return (c - 55);
-	else if (in_set(c, "#;")) line_Comment(source_file);
-	return -1;
+	ако (in_set(c, "0123456789")) врати (c - 48);
+	инако ако (in_set(c, "abcdef")) врати (c - 87);
+	инако ако (in_set(c, "ABCDEF")) врати (c - 55);
+	инако ако (in_set(c, "#;")) line_Comment(source_file);
+	врати -1;
 }
 
-int hold;
-int toggle;
-void process_byte(char c, FILE* source_file, int write)
+цео hold;
+цео toggle;
+void process_byte(char c, FILE* source_file, цео write)
 {
-	if(0 <= hex(c, source_file))
+	ако(0 <= hex(c, source_file))
 	{
-		if(toggle)
+		ако(toggle)
 		{
-			if(write) fputc(((hold * 16)) + hex(c, source_file), output);
+			ако(write) fputc(((hold * 16)) + hex(c, source_file), output);
 			ip = ip + 1;
 			hold = 0;
 		}
-		else
+		инако
 		{
 			hold = hex(c, source_file);
 		}
@@ -147,22 +147,22 @@ void process_byte(char c, FILE* source_file, int write)
 void first_pass(FILE* input)
 {
 	toggle = FALSE;
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	цео c;
+	за(c = fgetc(input); EOF != c; c = fgetc(input))
 	{
 		/* Check for and deal with label */
-		if(':' == c)
+		ако(':' == c)
 		{
 			c = storeLabel(input, ip);
 		}
 
 		/* check for and deal with relative/absolute pointers to labels */
-		if(in_set(c, "%"))
+		ако(in_set(c, "%"))
 		{ /* deal 4byte pointer (%) */
 			Update_Pointer(c);
 			c = fgetc(input);
 		}
-		else process_byte(c, input, FALSE);
+		инако process_byte(c, input, FALSE);
 	}
 }
 
@@ -171,24 +171,24 @@ void second_pass(FILE* input)
 	toggle = FALSE;
 	hold = 0;
 
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	цео c;
+	за(c = fgetc(input); EOF != c; c = fgetc(input))
 	{
-		if(':' == c) c = fgetc(input); /* Deal with : */
-		else if(in_set(c, "%")) storePointer(c);  /* Deal with %*/
-		else process_byte(c, input, TRUE);
+		ако(':' == c) c = fgetc(input); /* Deal with : */
+		инако ако(in_set(c, "%")) storePointer(c);  /* Deal with %*/
+		инако process_byte(c, input, TRUE);
 	}
 }
 
 /* Standard C main program */
-int main(int argc, char **argv)
+цео main(цео argc, char **argv)
 {
 	jump_table = NULL;
 	output = stdout;
 
 	FILE* input = fopen(argv[1], "r");
 	output = stdout;
-	if(NULL != argv[2])
+	ако(NULL != argv[2])
 	{
 		output = fopen(argv[2], "w");
 		chmod(argv[2], 0700);
@@ -204,5 +204,5 @@ int main(int argc, char **argv)
 	second_pass(input);
 
 	/* Set file as executable */
-	return EXIT_SUCCESS;
+	врати EXIT_SUCCESS;
 }

@@ -21,63 +21,63 @@
 
 void purge_line_comments()
 {
-	int c;
+	цео c;
 	do
 	{
 		c = getchar();
 
-		if (EOF == c)
+		ако (EOF == c)
 		{
 			exit(EXIT_SUCCESS);
 		}
-	} while ( '\n' != c );
+	} док ( '\n' != c );
 }
 
-int hex(int c)
+цео hex(цео c)
 {
-	if (c >= '0' && c <= '9')
+	ако (c >= '0' && c <= '9')
 	{
-		return (c - 48);
+		врати (c - 48);
 	}
-	else if (c >= 'a' && c <= 'z')
+	инако ако (c >= 'a' && c <= 'z')
 	{
-		return (c - 87);
+		врати (c - 87);
 	}
-	else if (c >= 'A' && c <= 'Z')
+	инако ако (c >= 'A' && c <= 'Z')
 	{
-		return (c - 55);
+		врати (c - 55);
 	}
 
 	printf("You managed to call a hex function without a hex value!!!\n");
 	exit(EXIT_FAILURE);
 }
 
-int main(int argc, char *argv[])
+цео main(цео argc, char *argv[])
 {
-	int c;
-	int sum = 0;
+	цео c;
+	цео sum = 0;
 	bool toggle;
 	toggle = false;
 
 	do
 	{
 		c = getchar();
-		if ((c == '#') || (c == ';')) purge_line_comments();
-		else if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+		ако ((c == '#') || (c == ';')) purge_line_comments();
+		инако ако ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
 		{
-			if(!toggle)
+			ако(!toggle)
 			{
 				sum = hex(c);
 				toggle = true;
 			}
-			else
+			инако
 			{
 				sum = (sum << 4) + hex(c);
 				toggle = false;
 				fputc(sum, stdout);
 			}
 		}
-	}while(c != EOF);
+	}док(c != EOF);
 
 	exit(EXIT_SUCCESS);
 }
