@@ -15,42 +15,42 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdlib.h>
-#include <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <stdio.h>
 
-int main (int argc, char** argv)
+పూర్ణాంకం ప్రధాన (పూర్ణాంకం argc, అక్షరం** argv)
 {
-	if(argc != 2)
+	ఒకవేళ(argc != 2)
 	{
 		fputs("xeh $filename is the only valid input form\n", stderr);
-		exit(EXIT_FAILURE);
+		నిష్క్రమించు(EXIT_FAILURE);
 	}
 
-	FILE* in = fopen(argv[1], "r");
-	if(NULL == in)
+	FILE* లోపల = fopen(argv[1], "r");
+	ఒకవేళ(ఖాళీ == లోపల)
 	{
 		fputs("Unable to open file: ", stderr);
 		fputs(argv[1], stderr);
 		fputs(" aborting to prevent problems\n", stderr);
-		exit(EXIT_FAILURE);
+		నిష్క్రమించు(EXIT_FAILURE);
 	}
 
-	char* table = "0123456789ABCDEF";
-	int c = fgetc(in);
-	int col = 40;
-	while(EOF != c)
+	అక్షరం* పట్టిక = "0123456789ABCDEF";
+	పూర్ణాంకం c = fgetc(లోపల);
+	పూర్ణాంకం నిలువు = 40;
+	అయితే(EOF != c)
 	{
-		fputc(table[c / 16], stdout);
-		fputc(table[c % 16], stdout);
-		col = col - 2;
-		if(0 == col)
+		fputc(పట్టిక[c / 16], stdout);
+		fputc(పట్టిక[c % 16], stdout);
+		నిలువు = నిలువు - 2;
+		ఒకవేళ(0 == నిలువు)
 		{
-			col = 40;
+			నిలువు = 40;
 			fputc('\n', stdout);
 		}
-		else fputc(' ', stdout);
-		c = fgetc(in);
+		లేకపోతే fputc(' ', stdout);
+		c = fgetc(లోపల);
 	}
 	fputc('\n', stdout);
-	exit(EXIT_SUCCESS);
+	నిష్క్రమించు(EXIT_SUCCESS);
 }

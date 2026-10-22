@@ -15,69 +15,69 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include<stdio.h>
-#include<stdlib.h>
-#include<stdbool.h>
+#అన్తర్భావ<stdio.h>
+#అన్తర్భావ<stdlib.h>
+#అన్తర్భావ<stdbool.h>
 
-void purge_line_comments()
+శూన్య purge_పంక్తి_comments()
 {
-	int c;
-	do
+	పూర్ణాంకం c;
+	చేయి
 	{
 		c = getchar();
 
-		if (EOF == c)
+		ఒకవేళ (EOF == c)
 		{
-			exit(EXIT_SUCCESS);
+			నిష్క్రమించు(EXIT_SUCCESS);
 		}
-	} while ( '\n' != c );
+	} అయితే ( '\n' != c );
 }
 
-int hex(int c)
+పూర్ణాంకం hex(పూర్ణాంకం c)
 {
-	if (c >= '0' && c <= '9')
+	ఒకవేళ (c >= '0' && c <= '9')
 	{
-		return (c - 48);
+		తిరిగి (c - 48);
 	}
-	else if (c >= 'a' && c <= 'z')
+	లేకపోతే ఒకవేళ (c >= 'a' && c <= 'z')
 	{
-		return (c - 87);
+		తిరిగి (c - 87);
 	}
-	else if (c >= 'A' && c <= 'Z')
+	లేకపోతే ఒకవేళ (c >= 'A' && c <= 'Z')
 	{
-		return (c - 55);
+		తిరిగి (c - 55);
 	}
 
-	printf("You managed to call a hex function without a hex value!!!\n");
-	exit(EXIT_FAILURE);
+	రాయి("You managed to call a hex function without a hex value!!!\n");
+	నిష్క్రమించు(EXIT_FAILURE);
 }
 
-int main(int argc, char *argv[])
+పూర్ణాంకం ప్రధాన(పూర్ణాంకం argc, అక్షరం *argv[])
 {
-	int c;
-	int sum = 0;
+	పూర్ణాంకం c;
+	పూర్ణాంకం కూడిక = 0;
 	bool toggle;
 	toggle = false;
 
-	do
+	చేయి
 	{
 		c = getchar();
-		if ((c == '#') || (c == ';')) purge_line_comments();
-		else if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+		ఒకవేళ ((c == '#') || (c == ';')) purge_పంక్తి_comments();
+		లేకపోతే ఒకవేళ ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
 		{
-			if(!toggle)
+			ఒకవేళ(!toggle)
 			{
-				sum = hex(c);
+				కూడిక = hex(c);
 				toggle = true;
 			}
-			else
+			లేకపోతే
 			{
-				sum = (sum << 4) + hex(c);
+				కూడిక = (కూడిక << 4) + hex(c);
 				toggle = false;
-				fputc(sum, stdout);
+				fputc(కూడిక, stdout);
 			}
 		}
-	}while(c != EOF);
+	}అయితే(c != EOF);
 
-	exit(EXIT_SUCCESS);
+	నిష్క్రమించు(EXIT_SUCCESS);
 }

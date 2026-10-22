@@ -15,145 +15,145 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <sys/wait.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <sys/wait.h>
 
-#define FALSE 0
-#define TRUE 1
-#define max_string 4096
-#define max_args 256
+#నిర్వచించు FALSE 0
+#నిర్వచించు TRUE 1
+#నిర్వచించు max_string 4096
+#నిర్వచించు max_వాదనలు 256
 
-char** tokens;
-int command_done;
+అక్షరం** టోకెన్లు;
+పూర్ణాంకం command_పూర్తి;
 
 /* Function for purging line comments */
-void collect_comment(FILE* input)
+శూన్య collect_comment(FILE* ఆదానం)
 {
-	int c;
-	do
+	పూర్ణాంకం c;
+	చేయి
 	{
-		c = fgetc(input);
-		if(EOF == c) exit(EXIT_FAILURE);
-	} while('\n' != c);
+		c = fgetc(ఆదానం);
+		ఒకవేళ(EOF == c) నిష్క్రమించు(EXIT_FAILURE);
+	} అయితే('\n' != c);
 }
 
 /* Function for collecting RAW strings and removing the " that goes with them */
-int collect_string(FILE* input, int index, char* target)
+పూర్ణాంకం collect_string(FILE* ఆదానం, పూర్ణాంకం index, అక్షరం* లక్ష్యం)
 {
-	int c;
+	పూర్ణాంకం c;
 collect_string_loop:
-	c = fgetc(input);
-	if(EOF == c) exit(EXIT_FAILURE);
-	else if('"' == c) return index;
-	target[index] = c;
+	c = fgetc(ఆదానం);
+	ఒకవేళ(EOF == c) నిష్క్రమించు(EXIT_FAILURE);
+	లేకపోతే ఒకవేళ('"' == c) తిరిగి index;
+	లక్ష్యం[index] = c;
 	index = index + 1;
-	goto collect_string_loop;
+	వెళ్ళు collect_string_loop;
 }
 
 /* Function to collect an individual argument or purge a comment */
-char* collect_token(FILE* input)
+అక్షరం* collect_token(FILE* ఆదానం)
 {
-	char* token = calloc(max_string, sizeof(char));
-	int c;
-	int i = 0;
+	అక్షరం* token = సున్నా_జ్ఞాపకం_ఇవ్వు(max_string, పరిమాణం(అక్షరం));
+	పూర్ణాంకం c;
+	పూర్ణాంకం i = 0;
 collect_token_loop:
-	c = fgetc(input);
-	if(EOF == c) exit(EXIT_SUCCESS);
-	else if((' ' == c) || ('\t' == c)) goto collect_token_done;
-	else if('\n' == c)
+	c = fgetc(ఆదానం);
+	ఒకవేళ(EOF == c) నిష్క్రమించు(EXIT_SUCCESS);
+	లేకపోతే ఒకవేళ((' ' == c) || ('\t' == c)) వెళ్ళు collect_token_పూర్తి;
+	లేకపోతే ఒకవేళ('\n' == c)
 	{ /* Command terminates at end of line */
-		command_done = 1;
-		goto collect_token_done;
+		command_పూర్తి = 1;
+		వెళ్ళు collect_token_పూర్తి;
 	}
-	else if('"' == c)
+	లేకపోతే ఒకవేళ('"' == c)
 	{ /* RAW strings are everything between a pair of "" */
-		i = collect_string(input, i, token);
-		goto collect_token_done;
+		i = collect_string(ఆదానం, i, token);
+		వెళ్ళు collect_token_పూర్తి;
 	}
-	else if('#' == c)
+	లేకపోతే ఒకవేళ('#' == c)
 	{ /* Line comments to aid the humans */
-		collect_comment(input);
-		command_done = 1;
-		goto collect_token_done;
+		collect_comment(ఆదానం);
+		command_పూర్తి = 1;
+		వెళ్ళు collect_token_పూర్తి;
 	}
-	else if('\\' == c)
+	లేకపోతే ఒకవేళ('\\' == c)
 	{ /* Support for end of line escapes, drops the char after */
-		fgetc(input);
-		goto collect_token_done;
+		fgetc(ఆదానం);
+		వెళ్ళు collect_token_పూర్తి;
 	}
 	token[i] = c;
 	i = i + 1;
-	goto collect_token_loop;
+	వెళ్ళు collect_token_loop;
 
-collect_token_done:
-	if(0 == i) return NULL;
-	return token;
+collect_token_పూర్తి:
+	ఒకవేళ(0 == i) తిరిగి ఖాళీ;
+	తిరిగి token;
 }
 
-int main(int argc, char** argv, char** envp)
+పూర్ణాంకం ప్రధాన(పూర్ణాంకం argc, అక్షరం** argv, అక్షరం** envp)
 {
-	char* filename = "kaem.run";
-	FILE* script = NULL;
+	అక్షరం* filename = "kaem.run";
+	FILE* script = ఖాళీ;
 
-	if(NULL != argv[1])
+	ఒకవేళ(ఖాళీ != argv[1])
 	{
 		filename = argv[1];
 	}
 
 	script = fopen(filename, "r");
 
-	if(NULL == script) exit(EXIT_FAILURE);
+	ఒకవేళ(ఖాళీ == script) నిష్క్రమించు(EXIT_FAILURE);
 
 main_loop:
-	tokens = calloc(max_args, sizeof(char*));
+	టోకెన్లు = సున్నా_జ్ఞాపకం_ఇవ్వు(max_వాదనలు, పరిమాణం(అక్షరం*));
 
-	int i = 0;
-	int status = 0;
-	command_done = 0;
-	do
+	పూర్ణాంకం i = 0;
+	పూర్ణాంకం స్థితి_2 = 0;
+	command_పూర్తి = 0;
+	చేయి
 	{
-		char* result = collect_token(script);
-		if(0 != result)
+		అక్షరం* ఫలితం = collect_token(script);
+		ఒకవేళ(0 != ఫలితం)
 		{ /* Not a comment string but an actual argument */
-			tokens[i] = result;
+			టోకెన్లు[i] = ఫలితం;
 			i = i + 1;
 		}
-	} while(0 == command_done);
+	} అయితే(0 == command_పూర్తి);
 
-	if(0 > i) goto main_loop;
+	ఒకవేళ(0 > i) వెళ్ళు main_loop;
 
 	fputs(" +> ", stdout);
-	int j;
-	for(j = 0; j < i; j = j + 1)
+	పూర్ణాంకం j;
+	కొరకు(j = 0; j < i; j = j + 1)
 	{
-		fputs(tokens[j], stdout);
+		fputs(టోకెన్లు[j], stdout);
 		fputc(' ', stdout);
 	}
 	fputs("\n", stdout);
 
-	char* program = tokens[0];
-	if(NULL == program) exit(EXIT_FAILURE);
+	అక్షరం* కార్యక్రమం = టోకెన్లు[0];
+	ఒకవేళ(ఖాళీ == కార్యక్రమం) నిష్క్రమించు(EXIT_FAILURE);
 
-	int f = fork();
-	if (f == -1) exit(EXIT_FAILURE);
-	else if (f == 0)
-	{ /* child */
+	పూర్ణాంకం f = fork();
+	ఒకవేళ (f == -1) నిష్క్రమించు(EXIT_FAILURE);
+	లేకపోతే ఒకవేళ (f == 0)
+	{ /*బిడ్డ*/
 		/* execve() returns only on error */
-		execve(program, tokens, envp);
+		execve(కార్యక్రమం, టోకెన్లు, envp);
 		/* Prevent infinite loops */
-		exit(EXIT_FAILURE);
+		నిష్క్రమించు(EXIT_FAILURE);
 	}
 
 	/* Otherwise we are the parent */
 	/* And we should wait for it to complete */
-	waitpid(f, &status, 0);
+	waitpid(f, &స్థితి_2, 0);
 
-	if(0 == status) goto main_loop;
+	ఒకవేళ(0 == స్థితి_2) వెళ్ళు main_loop;
 
 	/* Clearly the script hit an issue that should never have happened */
 	fputs("Subprocess error\nABORTING HARD\n", stderr);
 	/* stop to prevent damage */
-	exit(EXIT_FAILURE);
+	నిష్క్రమించు(EXIT_FAILURE);
 }

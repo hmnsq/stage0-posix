@@ -16,179 +16,179 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include "../M2libc/bootstrappable.h"
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <string.h>
+#అన్తర్భావ <unistd.h>
+#అన్తర్భావ <sys/stat.h>
+#అన్తర్భావ "../M2libc/bootstrappable.h"
 
-#define max_string 4096
+#నిర్వచించు max_string 4096
 
-struct entry
+నిర్మాణం నమోదు_2
 {
-	struct entry* next;
-	unsigned target;
-	char name;
+	నిర్మాణం నమోదు_2* తదుపరి;
+	గుర్తులేని లక్ష్యం;
+	అక్షరం name;
 };
 
 
 /* Globals */
 FILE* output;
-struct entry* jump_table;
-int ip;
+నిర్మాణం నమోదు_2* jump_పట్టిక;
+పూర్ణాంకం ip;
 
-unsigned GetTarget(char c)
+గుర్తులేని Get_లక్ష్యం(అక్షరం c)
 {
-	struct entry* i;
-	for(i = jump_table; NULL != i; i = i->next)
+	నిర్మాణం నమోదు_2* i;
+	కొరకు(i = jump_పట్టిక; ఖాళీ != i; i = i->తదుపరి)
 	{
-		if(c == i->name)
+		ఒకవేళ(c == i->name)
 		{
-			return i->target;
+			తిరిగి i->లక్ష్యం;
 		}
 	}
-	return 0;
+	తిరిగి 0;
 }
 
-int storeLabel(FILE* source_file, int ip)
+పూర్ణాంకం storeLabel(FILE* ఆధారం_file, పూర్ణాంకం ip)
 {
-	struct entry* entry = calloc(1, sizeof(struct entry));
+	నిర్మాణం నమోదు_2* నమోదు_2 = సున్నా_జ్ఞాపకం_ఇవ్వు(1, పరిమాణం(నిర్మాణం నమోదు_2));
 
 	/* Ensure we have target address */
-	entry->target = ip;
+	నమోదు_2->లక్ష్యం = ip;
 
 	/* Prepend to list */
-	entry->next = jump_table;
-	jump_table = entry;
+	నమోదు_2->తదుపరి = jump_పట్టిక;
+	jump_పట్టిక = నమోదు_2;
 
 	/* Store string */
-	entry->name = fgetc(source_file);
-	return -1;
+	నమోదు_2->name = fgetc(ఆధారం_file);
+	తిరిగి -1;
 }
 
 
-void outputPointer(int displacement, int number_of_bytes)
+శూన్య output_సూచిక(పూర్ణాంకం displacement, పూర్ణాంకం సంఖ్య_యొక్క_బైట్లు)
 {
-	unsigned value = displacement;
+	గుర్తులేని విలువ = displacement;
 
-	while(number_of_bytes > 0)
+	అయితే(సంఖ్య_యొక్క_బైట్లు > 0)
 	{
-		unsigned byte = value % 256;
-		value = value / 256;
+		గుర్తులేని byte = విలువ % 256;
+		విలువ = విలువ / 256;
 		fputc(byte, output);
-		number_of_bytes = number_of_bytes - 1;
+		సంఖ్య_యొక్క_బైట్లు = సంఖ్య_యొక్క_బైట్లు - 1;
 	}
 }
 
-void Update_Pointer(char ch)
+శూన్య Update_సూచిక(అక్షరం ch)
 {
 	/* Calculate pointer size*/
-	if(in_set(ch, "%")) ip = ip + 4;
-	else exit(EXIT_FAILURE);
+	ఒకవేళ(లోపల_సమితి(ch, "%")) ip = ip + 4;
+	లేకపోతే నిష్క్రమించు(EXIT_FAILURE);
 }
 
-void storePointer(char ch)
+శూన్య store_సూచిక(అక్షరం ch)
 {
 	/* Get string of pointer */
-	Update_Pointer(ch);
+	Update_సూచిక(ch);
 
 	/* Lookup token */
-	int target = GetTarget(ch);
-	int displacement;
+	పూర్ణాంకం లక్ష్యం = Get_లక్ష్యం(ch);
+	పూర్ణాంకం displacement;
 
 	/* Change relative base address to :<base> */
-	displacement = (target - ip);
+	displacement = (లక్ష్యం - ip);
 
 	/* output calculated difference */
-	if('%' == ch) outputPointer(displacement, 4);  /* Deal with % */
-	else exit(EXIT_FAILURE);
+	ఒకవేళ('%' == ch) output_సూచిక(displacement, 4);  /* Deal with % */
+	లేకపోతే నిష్క్రమించు(EXIT_FAILURE);
 }
 
-void line_Comment(FILE* source_file)
+శూన్య పంక్తి_Comment(FILE* ఆధారం_file)
 {
-	int c = fgetc(source_file);
-	while(!in_set(c, "\n\r"))
+	పూర్ణాంకం c = fgetc(ఆధారం_file);
+	అయితే(!లోపల_సమితి(c, "\n\r"))
 	{
-		if(EOF == c) break;
-		c = fgetc(source_file);
+		ఒకవేళ(EOF == c) ఆపు;
+		c = fgetc(ఆధారం_file);
 	}
 }
 
-int hex(int c, FILE* source_file)
+పూర్ణాంకం hex(పూర్ణాంకం c, FILE* ఆధారం_file)
 {
-	if (in_set(c, "0123456789")) return (c - 48);
-	else if (in_set(c, "abcdef")) return (c - 87);
-	else if (in_set(c, "ABCDEF")) return (c - 55);
-	else if (in_set(c, "#;")) line_Comment(source_file);
-	return -1;
+	ఒకవేళ (లోపల_సమితి(c, "0123456789")) తిరిగి (c - 48);
+	లేకపోతే ఒకవేళ (లోపల_సమితి(c, "abcdef")) తిరిగి (c - 87);
+	లేకపోతే ఒకవేళ (లోపల_సమితి(c, "ABCDEF")) తిరిగి (c - 55);
+	లేకపోతే ఒకవేళ (లోపల_సమితి(c, "#;")) పంక్తి_Comment(ఆధారం_file);
+	తిరిగి -1;
 }
 
-int hold;
-int toggle;
-void process_byte(char c, FILE* source_file, int write)
+పూర్ణాంకం hold;
+పూర్ణాంకం toggle;
+శూన్య process_byte(అక్షరం c, FILE* ఆధారం_file, పూర్ణాంకం లిఖ)
 {
-	if(0 <= hex(c, source_file))
+	ఒకవేళ(0 <= hex(c, ఆధారం_file))
 	{
-		if(toggle)
+		ఒకవేళ(toggle)
 		{
-			if(write) fputc(((hold * 16)) + hex(c, source_file), output);
+			ఒకవేళ(లిఖ) fputc(((hold * 16)) + hex(c, ఆధారం_file), output);
 			ip = ip + 1;
 			hold = 0;
 		}
-		else
+		లేకపోతే
 		{
-			hold = hex(c, source_file);
+			hold = hex(c, ఆధారం_file);
 		}
 		toggle = !toggle;
 	}
 }
 
-void first_pass(FILE* input)
+శూన్య మొదటి_pass(FILE* ఆదానం)
 {
 	toggle = FALSE;
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	పూర్ణాంకం c;
+	కొరకు(c = fgetc(ఆదానం); EOF != c; c = fgetc(ఆదానం))
 	{
 		/* Check for and deal with label */
-		if(':' == c)
+		ఒకవేళ(':' == c)
 		{
-			c = storeLabel(input, ip);
+			c = storeLabel(ఆదానం, ip);
 		}
 
 		/* check for and deal with relative/absolute pointers to labels */
-		if(in_set(c, "%"))
+		ఒకవేళ(లోపల_సమితి(c, "%"))
 		{ /* deal 4byte pointer (%) */
-			Update_Pointer(c);
-			c = fgetc(input);
+			Update_సూచిక(c);
+			c = fgetc(ఆదానం);
 		}
-		else process_byte(c, input, FALSE);
+		లేకపోతే process_byte(c, ఆదానం, FALSE);
 	}
 }
 
-void second_pass(FILE* input)
+శూన్య రెండవ_pass(FILE* ఆదానం)
 {
 	toggle = FALSE;
 	hold = 0;
 
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	పూర్ణాంకం c;
+	కొరకు(c = fgetc(ఆదానం); EOF != c; c = fgetc(ఆదానం))
 	{
-		if(':' == c) c = fgetc(input); /* Deal with : */
-		else if(in_set(c, "%")) storePointer(c);  /* Deal with %*/
-		else process_byte(c, input, TRUE);
+		ఒకవేళ(':' == c) c = fgetc(ఆదానం); /* Deal with : */
+		లేకపోతే ఒకవేళ(లోపల_సమితి(c, "%")) store_సూచిక(c);  /* Deal with %*/
+		లేకపోతే process_byte(c, ఆదానం, TRUE);
 	}
 }
 
 /* Standard C main program */
-int main(int argc, char **argv)
+పూర్ణాంకం ప్రధాన(పూర్ణాంకం argc, అక్షరం **argv)
 {
-	jump_table = NULL;
+	jump_పట్టిక = ఖాళీ;
 	output = stdout;
 
-	FILE* input = fopen(argv[1], "r");
+	FILE* ఆదానం = fopen(argv[1], "r");
 	output = stdout;
-	if(NULL != argv[2])
+	ఒకవేళ(ఖాళీ != argv[2])
 	{
 		output = fopen(argv[2], "w");
 		chmod(argv[2], 0700);
@@ -196,13 +196,13 @@ int main(int argc, char **argv)
 
 	/* Get all of the labels */
 	ip = 0;
-	first_pass(input);
-	rewind(input);
+	మొదటి_pass(ఆదానం);
+	rewind(ఆదానం);
 
 	/* Fix all the references*/
 	ip = 0;
-	second_pass(input);
+	రెండవ_pass(ఆదానం);
 
 	/* Set file as executable */
-	return EXIT_SUCCESS;
+	తిరిగి EXIT_SUCCESS;
 }

@@ -15,329 +15,329 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <string.h>
-#define max_string 63
+#అన్తర్భావ <stdio.h>
+#అన్తర్భావ <stdlib.h>
+#అన్తర్భావ <stdint.h>
+#అన్తర్భావ <stdbool.h>
+#అన్తర్భావ <string.h>
+#నిర్వచించు max_string 63
 
-FILE* source_file;
+FILE* ఆధారం_file;
 bool Reached_EOF;
 
-struct Token
+నిర్మాణం Token
 {
-	struct Token* next;
+	నిర్మాణం Token* తదుపరి;
 	uint8_t type;
-	char* Text;
-	char* Expression;
+	అక్షరం* పాఠ్యం;
+	అక్షరం* వ్యక్తీకరణ;
 };
 
-enum type
+గణన type
 {
 	macro = 1,
 	str = (1 << 1)
 };
 
-struct Token* newToken()
+నిర్మాణం Token* newToken()
 {
-	struct Token* p;
+	నిర్మాణం Token* p;
 
-	p = calloc (1, sizeof (struct Token));
-	if (NULL == p)
+	p = సున్నా_జ్ఞాపకం_ఇవ్వు (1, పరిమాణం (నిర్మాణం Token));
+	ఒకవేళ (ఖాళీ == p)
 	{
 		fprintf (stderr, "calloc failed.\n");
-		exit (EXIT_FAILURE);
+		నిష్క్రమించు (EXIT_FAILURE);
 	}
 
-	return p;
+	తిరిగి p;
 }
 
-struct Token* addToken(struct Token* head, struct Token* p)
+నిర్మాణం Token* కూడు_Token(నిర్మాణం Token* తల, నిర్మాణం Token* p)
 {
-	if(NULL == head)
+	ఒకవేళ(ఖాళీ == తల)
 	{
-		return p;
+		తిరిగి p;
 	}
-	if(NULL == head->next)
+	ఒకవేళ(ఖాళీ == తల->తదుపరి)
 	{
-		head->next = p;
+		తల->తదుపరి = p;
 	}
-	else
+	లేకపోతే
 	{
-		addToken(head->next, p);
+		కూడు_Token(తల->తదుపరి, p);
 	}
-	return head;
+	తిరిగి తల;
 }
 
-void purge_lineComment()
+శూన్య purge_పంక్తి_Comment()
 {
-	int c = fgetc(source_file);
-	while((10 != c) && (13 != c))
+	పూర్ణాంకం c = fgetc(ఆధారం_file);
+	అయితే((10 != c) && (13 != c))
 	{
-		c = fgetc(source_file);
+		c = fgetc(ఆధారం_file);
 	}
 }
 
-char* store_atom(char c)
+అక్షరం* store_atom(అక్షరం c)
 {
-	char* store = calloc(max_string + 1, sizeof(char));
+	అక్షరం* store = సున్నా_జ్ఞాపకం_ఇవ్వు(max_string + 1, పరిమాణం(అక్షరం));
 	int32_t ch;
 	uint32_t i = 0;
 	ch = c;
-	do
+	చేయి
 	{
-		store[i] = (char)ch;
-		ch = fgetc(source_file);
+		store[i] = (అక్షరం)ch;
+		ch = fgetc(ఆధారం_file);
 		i = i + 1;
-	} while ((9 != ch) && (10 != ch) && (32 != ch));
+	} అయితే ((9 != ch) && (10 != ch) && (32 != ch));
 
-	return store;
+	తిరిగి store;
 }
 
-char* store_string(char c)
+అక్షరం* store_string(అక్షరం c)
 {
-	char* store = calloc(max_string + 1, sizeof(char));
+	అక్షరం* store = సున్నా_జ్ఞాపకం_ఇవ్వు(max_string + 1, పరిమాణం(అక్షరం));
 	int32_t ch;
 	uint32_t i = 0;
 	ch = c;
-	do
+	చేయి
 	{
-		store[i] = (char)ch;
+		store[i] = (అక్షరం)ch;
 		i = i + 1;
-		ch = fgetc(source_file);
-	} while(ch != c);
+		ch = fgetc(ఆధారం_file);
+	} అయితే(ch != c);
 
-	return store;
+	తిరిగి store;
 }
 
-struct Token* Tokenize_Line(struct Token* head)
+నిర్మాణం Token* Tokenize_పంక్తి(నిర్మాణం Token* తల)
 {
 
 	int32_t c;
-	c = fgetc(source_file);
+	c = fgetc(ఆధారం_file);
 
-	if((35 == c) || (59 == c))
+	ఒకవేళ((35 == c) || (59 == c))
 	{
-		purge_lineComment();
-		return Tokenize_Line(head);
+		purge_పంక్తి_Comment();
+		తిరిగి Tokenize_పంక్తి(తల);
 	}
 
-	if((9 == c) || (10 == c) || (32 == c))
+	ఒకవేళ((9 == c) || (10 == c) || (32 == c))
 	{
-		return Tokenize_Line(head);
+		తిరిగి Tokenize_పంక్తి(తల);
 	}
 
-	struct Token* p = newToken();
-	if(-1 == c)
+	నిర్మాణం Token* p = newToken();
+	ఒకవేళ(-1 == c)
 	{
 		Reached_EOF = true;
-		free(p);
-		return head;
+		విడుదల(p);
+		తిరిగి తల;
 	}
-	else if((34 == c) || (39 == c))
+	లేకపోతే ఒకవేళ((34 == c) || (39 == c))
 	{
-		p->Text = store_string(c);
+		p->పాఠ్యం = store_string(c);
 		p->type = str;
 	}
-	else
+	లేకపోతే
 	{
-		p->Text = store_atom(c);
+		p->పాఠ్యం = store_atom(c);
 	}
 
-	return addToken(head, p);
+	తిరిగి కూడు_Token(తల, p);
 }
 
-void setExpression(struct Token* p, char match[], char Exp[])
+శూన్య సమితి_వ్యక్తీకరణ(నిర్మాణం Token* p, అక్షరం సరిపోలిక[], అక్షరం Exp[])
 {
 	/* Leave macros alone */
-	if((p->type & macro))
+	ఒకవేళ((p->type & macro))
 	{
-		setExpression(p->next, match, Exp);
-		return;
+		సమితి_వ్యక్తీకరణ(p->తదుపరి, సరిపోలిక, Exp);
+		తిరిగి;
 	}
 
 	/* Only if there is an exact match replace */
-	if(0 == strncmp(p->Text, match, max_string))
+	ఒకవేళ(0 == అక్షరశ్రేణి_పోలిక(p->పాఠ్యం, సరిపోలిక, max_string))
 	{
-		p->Expression = Exp;
+		p->వ్యక్తీకరణ = Exp;
 	}
 
-	if(NULL != p->next)
+	ఒకవేళ(ఖాళీ != p->తదుపరి)
 	{
-		setExpression(p->next, match, Exp);
+		సమితి_వ్యక్తీకరణ(p->తదుపరి, సరిపోలిక, Exp);
 	}
 
 }
 
-void identify_macros(struct Token* p)
+శూన్య identify_macros(నిర్మాణం Token* p)
 {
-	if(0 == strncmp(p->Text, "DEFINE", max_string))
+	ఒకవేళ(0 == అక్షరశ్రేణి_పోలిక(p->పాఠ్యం, "DEFINE", max_string))
 	{
 		p->type = macro;
-		p->Text = p->next->Text;
-		if(p->next->next->type & str)
+		p->పాఠ్యం = p->తదుపరి->పాఠ్యం;
+		ఒకవేళ(p->తదుపరి->తదుపరి->type & str)
 		{
-			p->Expression = p->next->next->Text + 1;
+			p->వ్యక్తీకరణ = p->తదుపరి->తదుపరి->పాఠ్యం + 1;
 		}
-		else
+		లేకపోతే
 		{
-			p->Expression = p->next->next->Text;
+			p->వ్యక్తీకరణ = p->తదుపరి->తదుపరి->పాఠ్యం;
 		}
-		p->next = p->next->next->next;
+		p->తదుపరి = p->తదుపరి->తదుపరి->తదుపరి;
 	}
 
-	if(NULL != p->next)
+	ఒకవేళ(ఖాళీ != p->తదుపరి)
 	{
-		identify_macros(p->next);
+		identify_macros(p->తదుపరి);
 	}
 }
 
-void line_macro(struct Token* p)
+శూన్య పంక్తి_macro(నిర్మాణం Token* p)
 {
-	if(p->type & macro)
+	ఒకవేళ(p->type & macro)
 	{
-		setExpression(p->next, p->Text, p->Expression);
+		సమితి_వ్యక్తీకరణ(p->తదుపరి, p->పాఠ్యం, p->వ్యక్తీకరణ);
 	}
 
-	if(NULL != p->next)
+	ఒకవేళ(ఖాళీ != p->తదుపరి)
 	{
-		line_macro(p->next);
+		పంక్తి_macro(p->తదుపరి);
 	}
 }
 
-void hexify_string(struct Token* p)
+శూన్య hexify_string(నిర్మాణం Token* p)
 {
-	char table[16] = {0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46};
-	int i = ((strnlen(p->Text + 1 , max_string)/4) + 1) * 8;
+	అక్షరం పట్టిక[16] = {0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46};
+	పూర్ణాంకం i = ((strnlen(p->పాఠ్యం + 1 , max_string)/4) + 1) * 8;
 
-	char* d = calloc(max_string, sizeof(char));
-	p->Expression = d;
+	అక్షరం* d = సున్నా_జ్ఞాపకం_ఇవ్వు(max_string, పరిమాణం(అక్షరం));
+	p->వ్యక్తీకరణ = d;
 
-	while(0 < i)
+	అయితే(0 < i)
 	{
 		i = i - 1;
 		d[i] = 0x30;
 	}
 
-	while( i < max_string)
+	అయితే( i < max_string)
 	{
-		if(0 == p->Text[i+1])
+		ఒకవేళ(0 == p->పాఠ్యం[i+1])
 		{
 			i = max_string;
 		}
-		else
+		లేకపోతే
 		{
-			d[2*i]  = table[p->Text[i+1] / 16];
-			d[2*i + 1] = table[p->Text[i+1] % 16];
+			d[2*i]  = పట్టిక[p->పాఠ్యం[i+1] / 16];
+			d[2*i + 1] = పట్టిక[p->పాఠ్యం[i+1] % 16];
 			i = i + 1;
 		}
 	}
 }
 
-void process_string(struct Token* p)
+శూన్య process_string(నిర్మాణం Token* p)
 {
-	if(p->type & str)
+	ఒకవేళ(p->type & str)
 	{
-		if('\'' == p->Text[0])
+		ఒకవేళ('\'' == p->పాఠ్యం[0])
 		{
-			p->Expression = p->Text + 1;
+			p->వ్యక్తీకరణ = p->పాఠ్యం + 1;
 		}
-		else if('"' == p->Text[0])
+		లేకపోతే ఒకవేళ('"' == p->పాఠ్యం[0])
 		{
 			hexify_string(p);
 		}
 	}
 
-	if(NULL != p->next)
+	ఒకవేళ(ఖాళీ != p->తదుపరి)
 	{
-		process_string(p->next);
+		process_string(p->తదుపరి);
 	}
 }
 
 
-void preserve_other(struct Token* p)
+శూన్య preserve_other(నిర్మాణం Token* p)
 {
-	if(NULL != p->next)
+	ఒకవేళ(ఖాళీ != p->తదుపరి)
 	{
-		preserve_other(p->next);
+		preserve_other(p->తదుపరి);
 	}
 
-	if((NULL == p->Expression) && !(p->type & macro))
+	ఒకవేళ((ఖాళీ == p->వ్యక్తీకరణ) && !(p->type & macro))
 	{
-		p->Expression = p->Text;
+		p->వ్యక్తీకరణ = p->పాఠ్యం;
 	}
 }
 
-uint16_t numerate_string(char a[])
+uint16_t numerate_string(అక్షరం a[])
 {
-	char *ptr;
-	return (uint16_t)strtol(a, &ptr, 0);
+	అక్షరం *ptr;
+	తిరిగి (uint16_t)strtol(a, &ptr, 0);
 }
 
-void eval_immediates(struct Token* p)
+శూన్య eval_immediates(నిర్మాణం Token* p)
 {
-	if(NULL != p->next)
+	ఒకవేళ(ఖాళీ != p->తదుపరి)
 	{
-		eval_immediates(p->next);
+		eval_immediates(p->తదుపరి);
 	}
 
-	if((NULL == p->Expression) && !(p->type & macro))
+	ఒకవేళ((ఖాళీ == p->వ్యక్తీకరణ) && !(p->type & macro))
 	{
-		uint16_t value;
-		value = numerate_string(p->Text);
+		uint16_t విలువ;
+		విలువ = numerate_string(p->పాఠ్యం);
 
-		if(('0' == p->Text[0]) || (0 != value))
+		ఒకవేళ(('0' == p->పాఠ్యం[0]) || (0 != విలువ))
 		{
-			char* c = calloc(5, sizeof(char));
-			sprintf(c, "%04x", value);
-			p->Expression = c;
+			అక్షరం* c = సున్నా_జ్ఞాపకం_ఇవ్వు(5, పరిమాణం(అక్షరం));
+			sprintf(c, "%04x", విలువ);
+			p->వ్యక్తీకరణ = c;
 		}
 	}
 }
 
-void print_hex(struct Token* p)
+శూన్య print_hex(నిర్మాణం Token* p)
 {
-	if(p->type ^ macro)
+	ఒకవేళ(p->type ^ macro)
 	{
-		fprintf(stdout, "\n%s", p->Expression);
+		fprintf(stdout, "\n%s", p->వ్యక్తీకరణ);
 	}
 
-	if(NULL != p->next)
+	ఒకవేళ(ఖాళీ != p->తదుపరి)
 	{
-		print_hex(p->next);
+		print_hex(p->తదుపరి);
 	}
-	else
+	లేకపోతే
 	{
 		fprintf(stdout, "\n");
 	}
 }
 
 /* Standard C main program */
-int main(int argc, char **argv)
+పూర్ణాంకం ప్రధాన(పూర్ణాంకం argc, అక్షరం **argv)
 {
 	/* Make sure we have a program tape to run */
-	if (argc < 2)
+	ఒకవేళ (argc < 2)
 	{
 		fprintf(stderr, "Usage: %s $FileName\nWhere $FileName is the name of the paper tape of the program being run\n", argv[0]);
-		return EXIT_FAILURE;
+		తిరిగి EXIT_FAILURE;
 	}
 
-	source_file = fopen(argv[1], "r");
+	ఆధారం_file = fopen(argv[1], "r");
 
 	Reached_EOF = false;
-	struct Token* head = NULL;
-	while(!Reached_EOF)
+	నిర్మాణం Token* తల = ఖాళీ;
+	అయితే(!Reached_EOF)
 	{
-		head = Tokenize_Line(head);
+		తల = Tokenize_పంక్తి(తల);
 	}
 
-	identify_macros(head);
-	line_macro(head);
-	process_string(head);
-	eval_immediates(head);
-	preserve_other(head);
-	print_hex(head);
+	identify_macros(తల);
+	పంక్తి_macro(తల);
+	process_string(తల);
+	eval_immediates(తల);
+	preserve_other(తల);
+	print_hex(తల);
 
-	return EXIT_SUCCESS;
+	తిరిగి EXIT_SUCCESS;
 }
