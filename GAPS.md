@@ -1,0 +1,211 @@
+# What is still missing
+
+76 languages. Each line says in how many languages it is missing.
+
+## Files in languages BURP cannot read yet
+
+- `.sh`: 2 files
+
+## Keywords with no word in a language's table
+
+- guru:fgetc: 71
+- guru:FILE: 71
+- guru:stdout: 71
+- guru:EXIT_FAILURE: 71
+- guru:EOF: 71
+- guru:fputc: 71
+- guru:fputs: 71
+- guru:stderr: 71
+- guru:fopen: 71
+- guru:EXIT_SUCCESS: 71
+- guru:fprintf: 71
+- guru:rewind: 71
+- guru:strtol: 71
+- guru:sprintf: 71
+- guru:fork: 71
+- guru:getchar: 70
+- guru:#define: 66
+- guru:exit: 62
+- guru:calloc: 62
+- guru:unsigned: 62
+- guru:strncmp: 62
+- guru:printf: 62
+- guru:main: 54
+- yantra:global: 45
+- yantra:call: 26
+- guru:void: 25
+- guru:NULL: 25
+- guru:goto: 25
+- guru:do: 25
+- guru:write: 25
+- guru:free: 25
+- guru:for: 9
+- guru:char: 9
+- guru:struct: 9
+- guru:sizeof: 9
+- guru:break: 9
+- guru:enum: 9
+- guru:if: 1
+- guru:int: 1
+- guru:else: 1
+- guru:return: 1
+- guru:while: 1
+
+## Names with no dictionary entry (the most common first)
+
+- `c`: 76
+- `p`: 76
+- `i`: 76
+- `ch`: 76
+- `ip`: 76
+- `argv`: 76
+- `output`: 76
+- `toggle`: 76
+- `Token`: 76
+- `hex`: 76
+- `max_string`: 76
+- `hold`: 76
+- `displacement`: 76
+- `type`: 76
+- `scratch`: 76
+- `argc`: 76
+- `process_byte`: 76
+- `FALSE`: 76
+- `macro`: 76
+- `a`: 76
+- `name`: 76
+- `s`: 76
+- `Bail`: 76
+- `store`: 76
+- `j`: 76
+- `loop`: 76
+- `d`: 76
+- `Reached_EOF`: 76
+- `str`: 76
+- `Exp`: 76
+- `storeLabel`: 76
+- `byte`: 76
+- `consume_token`: 76
+- `Throwaway_token`: 76
+- `Clear_Scratch`: 76
+- `b`: 76
+- `token`: 76
+- `script`: 76
+- `f`: 76
+- `identify_macros`: 76
+- `process_string`: 76
+- `preserve_other`: 76
+- `eval_immediates`: 76
+- `TRUE`: 76
+- `filename`: 76
+- `main_loop`: 76
+- `newToken`: 76
+- `store_atom`: 76
+- `store_string`: 76
+- `hexify_string`: 76
+- `numerate_string`: 76
+- `ptr`: 76
+- `Copy_String`: 76
+- `collect_comment`: 76
+- `collect_string`: 76
+- `collect_string_loop`: 76
+- `collect_token`: 76
+- `collect_token_loop`: 76
+- `envp`: 76
+- `Circle`: 76
+- `require`: 76
+- `print_hex`: 71
+- `print`: 71
+- `source_file`: 68
+- `Text`: 68
+- `target`: 68
+- `Expression`: 68
+- `outputPointer`: 68
+- `first_pass`: 68
+- `Update_Pointer`: 68
+- `tokens`: 68
+- `GetTarget`: 68
+- `col`: 68
+- `storePointer`: 68
+- `second_pass`: 68
+- `in_set`: 67
+- `entry`: 67
+- `jump_table`: 67
+- `Done`: 67
+- `table`: 67
+- `collect_token_done`: 67
+- `match`: 67
+- `command_done`: 67
+- `setExpression`: 67
+- `Base_Address`: 67
+- `base`: 67
+- `in`: 67
+- `addToken`: 67
+- `status`: 67
+- `program`: 67
+- `base_sep_p`: 67
+- `next`: 65
+- `head`: 65
+- `sum`: 65
+- `result`: 65
+- `length`: 65
+- `buffer`: 65
+- `max_args`: 62
+- `input`: 28
+- `value`: 28
+- `number_of_bytes`: 28
+- `line_Comment`: 28
+- `Tokenize_Line`: 28
+- `line_macro`: 28
+- `purge_lineComment`: 28
+- `purge_line_comments`: 28
+
+## Comments with no translation
+
+- Standard C main program: 76
+- Globals: 76
+- Set file as executable: 76
+- Deal with %: 76
+- Ensure we have target address: 76
+- Prepend to list: 76
+- Store string: 76
+- Calculate pointer size: 76
+- Get string of pointer: 76
+- Lookup token: 76
+- Change relative base address to :<base>: 76
+- output calculated difference: 76
+- Check for and deal with label: 76
+- check for and deal with relative/absolute pointers to labels: 76
+- Deal with :: 76
+- Get all of the labels: 76
+- Fix all the references: 76
+- Deal with !: 76
+- Leave macros alone: 76
+- Only if there is an exact match replace: 76
+- Make sure we have a program tape to run: 76
+- do the work: 76
+- deal 4byte pointer (%): 76
+- Deal with % and &: 76
+- Deal with @ and $: 76
+- Force universality of behavior: 76
+- Deal with $: 76
+- Deal with @: 76
+- Deal with &: 76
+- deal with 1byte pointer !; 2byte pointers (@ and $); 3byte pointers ~; 4byte pointers (% and &): 76
+- deal with label>base: 76
+- Deal with !, @, $, ~, % and &: 76
+- Function for purging line comments: 76
+- Function for collecting RAW strings and removing the " that goes with them: 76
+- Function to collect an individual argument or purge a comment: 76
+- Command terminates at end of line: 76
+- RAW strings are everything between a pair of "": 76
+- Line comments to aid the humans: 76
+- Support for end of line escapes, drops the char after: 76
+- Not a comment string but an actual argument: 76
+- execve() returns only on error: 76
+- Prevent infinite loops: 76
+- Otherwise we are the parent: 76
+- And we should wait for it to complete: 76
+- Clearly the script hit an issue that should never have happened: 76
+- stop to prevent damage: 76
+- child: 68
