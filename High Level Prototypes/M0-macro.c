@@ -15,218 +15,218 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <string.h>
+#અન્તર્ભાવ <stdio.h>
+#અન્તર્ભાવ <stdlib.h>
+#અન્તર્ભાવ <stdint.h>
+#અન્તર્ભાવ <stdbool.h>
+#અન્તર્ભાવ <string.h>
 #define max_string 63
 
 FILE* source_file;
 bool Reached_EOF;
 
-struct Token
+સંરચના Token
 {
-	struct Token* next;
+	સંરચના Token* next;
 	uint8_t type;
-	char* Text;
-	char* Expression;
+	અક્ષર* Text;
+	અક્ષર* Expression;
 };
 
-enum type
+ગણના type
 {
 	macro = 1,
 	str = (1 << 1)
 };
 
-struct Token* newToken()
+સંરચના Token* newToken()
 {
-	struct Token* p;
+	સંરચના Token* p;
 
-	p = calloc (1, sizeof (struct Token));
-	if (NULL == p)
+	p = calloc (1, કદ (સંરચના Token));
+	જો (ખાલી == p)
 	{
 		fprintf (stderr, "calloc failed.\n");
 		exit (EXIT_FAILURE);
 	}
 
-	return p;
+	પાછા p;
 }
 
-struct Token* addToken(struct Token* head, struct Token* p)
+સંરચના Token* addToken(સંરચના Token* head, સંરચના Token* p)
 {
-	if(NULL == head)
+	જો(ખાલી == head)
 	{
-		return p;
+		પાછા p;
 	}
-	if(NULL == head->next)
+	જો(ખાલી == head->next)
 	{
 		head->next = p;
 	}
-	else
+	નહીંતર
 	{
 		addToken(head->next, p);
 	}
-	return head;
+	પાછા head;
 }
 
-void purge_lineComment()
+શૂન્ય purge_લીટી_Comment()
 {
-	int c = fgetc(source_file);
-	while((10 != c) && (13 != c))
+	પૂર્ણાંક c = fgetc(source_file);
+	જ્યારે((10 != c) && (13 != c))
 	{
 		c = fgetc(source_file);
 	}
 }
 
-char* store_atom(char c)
+અક્ષર* store_atom(અક્ષર c)
 {
-	char* store = calloc(max_string + 1, sizeof(char));
+	અક્ષર* store = calloc(max_string + 1, કદ(અક્ષર));
 	int32_t ch;
 	uint32_t i = 0;
 	ch = c;
-	do
+	કરો
 	{
-		store[i] = (char)ch;
+		store[i] = (અક્ષર)ch;
 		ch = fgetc(source_file);
 		i = i + 1;
-	} while ((9 != ch) && (10 != ch) && (32 != ch));
+	} જ્યારે ((9 != ch) && (10 != ch) && (32 != ch));
 
-	return store;
+	પાછા store;
 }
 
-char* store_string(char c)
+અક્ષર* store_string(અક્ષર c)
 {
-	char* store = calloc(max_string + 1, sizeof(char));
+	અક્ષર* store = calloc(max_string + 1, કદ(અક્ષર));
 	int32_t ch;
 	uint32_t i = 0;
 	ch = c;
-	do
+	કરો
 	{
-		store[i] = (char)ch;
+		store[i] = (અક્ષર)ch;
 		i = i + 1;
 		ch = fgetc(source_file);
-	} while(ch != c);
+	} જ્યારે(ch != c);
 
-	return store;
+	પાછા store;
 }
 
-struct Token* Tokenize_Line(struct Token* head)
+સંરચના Token* Tokenize_લીટી(સંરચના Token* head)
 {
 
 	int32_t c;
 	c = fgetc(source_file);
 
-	if((35 == c) || (59 == c))
+	જો((35 == c) || (59 == c))
 	{
-		purge_lineComment();
-		return Tokenize_Line(head);
+		purge_લીટી_Comment();
+		પાછા Tokenize_લીટી(head);
 	}
 
-	if((9 == c) || (10 == c) || (32 == c))
+	જો((9 == c) || (10 == c) || (32 == c))
 	{
-		return Tokenize_Line(head);
+		પાછા Tokenize_લીટી(head);
 	}
 
-	struct Token* p = newToken();
-	if(-1 == c)
+	સંરચના Token* p = newToken();
+	જો(-1 == c)
 	{
 		Reached_EOF = true;
-		free(p);
-		return head;
+		મુક્ત(p);
+		પાછા head;
 	}
-	else if((34 == c) || (39 == c))
+	નહીંતર જો((34 == c) || (39 == c))
 	{
 		p->Text = store_string(c);
 		p->type = str;
 	}
-	else
+	નહીંતર
 	{
 		p->Text = store_atom(c);
 	}
 
-	return addToken(head, p);
+	પાછા addToken(head, p);
 }
 
-void setExpression(struct Token* p, char match[], char Exp[])
+શૂન્ય setExpression(સંરચના Token* p, અક્ષર match[], અક્ષર Exp[])
 {
 	/* Leave macros alone */
-	if((p->type & macro))
+	જો((p->type & macro))
 	{
 		setExpression(p->next, match, Exp);
-		return;
+		પાછા;
 	}
 
 	/* Only if there is an exact match replace */
-	if(0 == strncmp(p->Text, match, max_string))
+	જો(0 == strncmp(p->Text, match, max_string))
 	{
 		p->Expression = Exp;
 	}
 
-	if(NULL != p->next)
+	જો(ખાલી != p->next)
 	{
 		setExpression(p->next, match, Exp);
 	}
 
 }
 
-void identify_macros(struct Token* p)
+શૂન્ય identify_macros(સંરચના Token* p)
 {
-	if(0 == strncmp(p->Text, "DEFINE", max_string))
+	જો(0 == strncmp(p->Text, "DEFINE", max_string))
 	{
 		p->type = macro;
 		p->Text = p->next->Text;
-		if(p->next->next->type & str)
+		જો(p->next->next->type & str)
 		{
 			p->Expression = p->next->next->Text + 1;
 		}
-		else
+		નહીંતર
 		{
 			p->Expression = p->next->next->Text;
 		}
 		p->next = p->next->next->next;
 	}
 
-	if(NULL != p->next)
+	જો(ખાલી != p->next)
 	{
 		identify_macros(p->next);
 	}
 }
 
-void line_macro(struct Token* p)
+શૂન્ય લીટી_macro(સંરચના Token* p)
 {
-	if(p->type & macro)
+	જો(p->type & macro)
 	{
 		setExpression(p->next, p->Text, p->Expression);
 	}
 
-	if(NULL != p->next)
+	જો(ખાલી != p->next)
 	{
-		line_macro(p->next);
+		લીટી_macro(p->next);
 	}
 }
 
-void hexify_string(struct Token* p)
+શૂન્ય hexify_string(સંરચના Token* p)
 {
-	char table[16] = {0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46};
-	int i = ((strnlen(p->Text + 1 , max_string)/4) + 1) * 8;
+	અક્ષર table[16] = {0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46};
+	પૂર્ણાંક i = ((strnlen(p->Text + 1 , max_string)/4) + 1) * 8;
 
-	char* d = calloc(max_string, sizeof(char));
+	અક્ષર* d = calloc(max_string, કદ(અક્ષર));
 	p->Expression = d;
 
-	while(0 < i)
+	જ્યારે(0 < i)
 	{
 		i = i - 1;
 		d[i] = 0x30;
 	}
 
-	while( i < max_string)
+	જ્યારે( i < max_string)
 	{
-		if(0 == p->Text[i+1])
+		જો(0 == p->Text[i+1])
 		{
 			i = max_string;
 		}
-		else
+		નહીંતર
 		{
 			d[2*i]  = table[p->Text[i+1] / 16];
 			d[2*i + 1] = table[p->Text[i+1] % 16];
@@ -235,109 +235,109 @@ void hexify_string(struct Token* p)
 	}
 }
 
-void process_string(struct Token* p)
+શૂન્ય process_string(સંરચના Token* p)
 {
-	if(p->type & str)
+	જો(p->type & str)
 	{
-		if('\'' == p->Text[0])
+		જો('\'' == p->Text[0])
 		{
 			p->Expression = p->Text + 1;
 		}
-		else if('"' == p->Text[0])
+		નહીંતર જો('"' == p->Text[0])
 		{
 			hexify_string(p);
 		}
 	}
 
-	if(NULL != p->next)
+	જો(ખાલી != p->next)
 	{
 		process_string(p->next);
 	}
 }
 
 
-void preserve_other(struct Token* p)
+શૂન્ય preserve_other(સંરચના Token* p)
 {
-	if(NULL != p->next)
+	જો(ખાલી != p->next)
 	{
 		preserve_other(p->next);
 	}
 
-	if((NULL == p->Expression) && !(p->type & macro))
+	જો((ખાલી == p->Expression) && !(p->type & macro))
 	{
 		p->Expression = p->Text;
 	}
 }
 
-uint16_t numerate_string(char a[])
+uint16_t numerate_string(અક્ષર a[])
 {
-	char *ptr;
-	return (uint16_t)strtol(a, &ptr, 0);
+	અક્ષર *ptr;
+	પાછા (uint16_t)strtol(a, &ptr, 0);
 }
 
-void eval_immediates(struct Token* p)
+શૂન્ય eval_immediates(સંરચના Token* p)
 {
-	if(NULL != p->next)
+	જો(ખાલી != p->next)
 	{
 		eval_immediates(p->next);
 	}
 
-	if((NULL == p->Expression) && !(p->type & macro))
+	જો((ખાલી == p->Expression) && !(p->type & macro))
 	{
-		uint16_t value;
-		value = numerate_string(p->Text);
+		uint16_t કિંમત;
+		કિંમત = numerate_string(p->Text);
 
-		if(('0' == p->Text[0]) || (0 != value))
+		જો(('0' == p->Text[0]) || (0 != કિંમત))
 		{
-			char* c = calloc(5, sizeof(char));
-			sprintf(c, "%04x", value);
+			અક્ષર* c = calloc(5, કદ(અક્ષર));
+			sprintf(c, "%04x", કિંમત);
 			p->Expression = c;
 		}
 	}
 }
 
-void print_hex(struct Token* p)
+શૂન્ય print_hex(સંરચના Token* p)
 {
-	if(p->type ^ macro)
+	જો(p->type ^ macro)
 	{
 		fprintf(stdout, "\n%s", p->Expression);
 	}
 
-	if(NULL != p->next)
+	જો(ખાલી != p->next)
 	{
 		print_hex(p->next);
 	}
-	else
+	નહીંતર
 	{
 		fprintf(stdout, "\n");
 	}
 }
 
 /* Standard C main program */
-int main(int argc, char **argv)
+પૂર્ણાંક મુખ્ય(પૂર્ણાંક argc, અક્ષર **argv)
 {
 	/* Make sure we have a program tape to run */
-	if (argc < 2)
+	જો (argc < 2)
 	{
 		fprintf(stderr, "Usage: %s $FileName\nWhere $FileName is the name of the paper tape of the program being run\n", argv[0]);
-		return EXIT_FAILURE;
+		પાછા EXIT_FAILURE;
 	}
 
 	source_file = fopen(argv[1], "r");
 
 	Reached_EOF = false;
-	struct Token* head = NULL;
-	while(!Reached_EOF)
+	સંરચના Token* head = ખાલી;
+	જ્યારે(!Reached_EOF)
 	{
-		head = Tokenize_Line(head);
+		head = Tokenize_લીટી(head);
 	}
 
 	identify_macros(head);
-	line_macro(head);
+	લીટી_macro(head);
 	process_string(head);
 	eval_immediates(head);
 	preserve_other(head);
 	print_hex(head);
 
-	return EXIT_SUCCESS;
+	પાછા EXIT_SUCCESS;
 }

@@ -15,130 +15,130 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <sys/wait.h>
+#અન્તર્ભાવ <stdlib.h>
+#અન્તર્ભાવ <stdio.h>
+#અન્તર્ભાવ <unistd.h>
+#અન્તર્ભાવ <sys/wait.h>
 
 #define FALSE 0
 #define TRUE 1
 #define max_string 4096
 #define max_args 256
 
-char** tokens;
-int command_done;
+અક્ષર** tokens;
+પૂર્ણાંક command_done;
 
 /* Function for purging line comments */
-void collect_comment(FILE* input)
+શૂન્ય collect_comment(FILE* આગત)
 {
-	int c;
-	do
+	પૂર્ણાંક c;
+	કરો
 	{
-		c = fgetc(input);
-		if(EOF == c) exit(EXIT_FAILURE);
-	} while('\n' != c);
+		c = fgetc(આગત);
+		જો(EOF == c) exit(EXIT_FAILURE);
+	} જ્યારે('\n' != c);
 }
 
 /* Function for collecting RAW strings and removing the " that goes with them */
-int collect_string(FILE* input, int index, char* target)
+પૂર્ણાંક collect_string(FILE* આગત, પૂર્ણાંક index, અક્ષર* target)
 {
-	int c;
+	પૂર્ણાંક c;
 collect_string_loop:
-	c = fgetc(input);
-	if(EOF == c) exit(EXIT_FAILURE);
-	else if('"' == c) return index;
+	c = fgetc(આગત);
+	જો(EOF == c) exit(EXIT_FAILURE);
+	નહીંતર જો('"' == c) પાછા index;
 	target[index] = c;
 	index = index + 1;
-	goto collect_string_loop;
+	જાઓ collect_string_loop;
 }
 
 /* Function to collect an individual argument or purge a comment */
-char* collect_token(FILE* input)
+અક્ષર* collect_token(FILE* આગત)
 {
-	char* token = calloc(max_string, sizeof(char));
-	int c;
-	int i = 0;
+	અક્ષર* token = calloc(max_string, કદ(અક્ષર));
+	પૂર્ણાંક c;
+	પૂર્ણાંક i = 0;
 collect_token_loop:
-	c = fgetc(input);
-	if(EOF == c) exit(EXIT_SUCCESS);
-	else if((' ' == c) || ('\t' == c)) goto collect_token_done;
-	else if('\n' == c)
+	c = fgetc(આગત);
+	જો(EOF == c) exit(EXIT_SUCCESS);
+	નહીંતર જો((' ' == c) || ('\t' == c)) જાઓ collect_token_done;
+	નહીંતર જો('\n' == c)
 	{ /* Command terminates at end of line */
 		command_done = 1;
-		goto collect_token_done;
+		જાઓ collect_token_done;
 	}
-	else if('"' == c)
+	નહીંતર જો('"' == c)
 	{ /* RAW strings are everything between a pair of "" */
-		i = collect_string(input, i, token);
-		goto collect_token_done;
+		i = collect_string(આગત, i, token);
+		જાઓ collect_token_done;
 	}
-	else if('#' == c)
+	નહીંતર જો('#' == c)
 	{ /* Line comments to aid the humans */
-		collect_comment(input);
+		collect_comment(આગત);
 		command_done = 1;
-		goto collect_token_done;
+		જાઓ collect_token_done;
 	}
-	else if('\\' == c)
+	નહીંતર જો('\\' == c)
 	{ /* Support for end of line escapes, drops the char after */
-		fgetc(input);
-		goto collect_token_done;
+		fgetc(આગત);
+		જાઓ collect_token_done;
 	}
 	token[i] = c;
 	i = i + 1;
-	goto collect_token_loop;
+	જાઓ collect_token_loop;
 
 collect_token_done:
-	if(0 == i) return NULL;
-	return token;
+	જો(0 == i) પાછા ખાલી;
+	પાછા token;
 }
 
-int main(int argc, char** argv, char** envp)
+પૂર્ણાંક મુખ્ય(પૂર્ણાંક argc, અક્ષર** argv, અક્ષર** envp)
 {
-	char* filename = "kaem.run";
-	FILE* script = NULL;
+	અક્ષર* filename = "kaem.run";
+	FILE* script = ખાલી;
 
-	if(NULL != argv[1])
+	જો(ખાલી != argv[1])
 	{
 		filename = argv[1];
 	}
 
 	script = fopen(filename, "r");
 
-	if(NULL == script) exit(EXIT_FAILURE);
+	જો(ખાલી == script) exit(EXIT_FAILURE);
 
 main_loop:
-	tokens = calloc(max_args, sizeof(char*));
+	tokens = calloc(max_args, કદ(અક્ષર*));
 
-	int i = 0;
-	int status = 0;
+	પૂર્ણાંક i = 0;
+	પૂર્ણાંક status = 0;
 	command_done = 0;
-	do
+	કરો
 	{
-		char* result = collect_token(script);
-		if(0 != result)
+		અક્ષર* result = collect_token(script);
+		જો(0 != result)
 		{ /* Not a comment string but an actual argument */
 			tokens[i] = result;
 			i = i + 1;
 		}
-	} while(0 == command_done);
+	} જ્યારે(0 == command_done);
 
-	if(0 > i) goto main_loop;
+	જો(0 > i) જાઓ main_loop;
 
 	fputs(" +> ", stdout);
-	int j;
-	for(j = 0; j < i; j = j + 1)
+	પૂર્ણાંક j;
+	માટે(j = 0; j < i; j = j + 1)
 	{
 		fputs(tokens[j], stdout);
 		fputc(' ', stdout);
 	}
 	fputs("\n", stdout);
 
-	char* program = tokens[0];
-	if(NULL == program) exit(EXIT_FAILURE);
+	અક્ષર* program = tokens[0];
+	જો(ખાલી == program) exit(EXIT_FAILURE);
 
-	int f = fork();
-	if (f == -1) exit(EXIT_FAILURE);
-	else if (f == 0)
+	પૂર્ણાંક f = fork();
+	જો (f == -1) exit(EXIT_FAILURE);
+	નહીંતર જો (f == 0)
 	{ /* child */
 		/* execve() returns only on error */
 		execve(program, tokens, envp);
@@ -150,7 +150,7 @@ main_loop:
 	/* And we should wait for it to complete */
 	waitpid(f, &status, 0);
 
-	if(0 == status) goto main_loop;
+	જો(0 == status) જાઓ main_loop;
 
 	/* Clearly the script hit an issue that should never have happened */
 	fputs("Subprocess error\nABORTING HARD\n", stderr);

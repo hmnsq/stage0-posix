@@ -15,69 +15,69 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include<stdio.h>
-#include<stdlib.h>
-#include<stdbool.h>
+#અન્તર્ભાવ<stdio.h>
+#અન્તર્ભાવ<stdlib.h>
+#અન્તર્ભાવ<stdbool.h>
 
-void purge_line_comments()
+શૂન્ય purge_લીટી_comments()
 {
-	int c;
-	do
+	પૂર્ણાંક c;
+	કરો
 	{
 		c = getchar();
 
-		if (EOF == c)
+		જો (EOF == c)
 		{
 			exit(EXIT_SUCCESS);
 		}
-	} while ( '\n' != c );
+	} જ્યારે ( '\n' != c );
 }
 
-int hex(int c)
+પૂર્ણાંક hex(પૂર્ણાંક c)
 {
-	if (c >= '0' && c <= '9')
+	જો (c >= '0' && c <= '9')
 	{
-		return (c - 48);
+		પાછા (c - 48);
 	}
-	else if (c >= 'a' && c <= 'z')
+	નહીંતર જો (c >= 'a' && c <= 'z')
 	{
-		return (c - 87);
+		પાછા (c - 87);
 	}
-	else if (c >= 'A' && c <= 'Z')
+	નહીંતર જો (c >= 'A' && c <= 'Z')
 	{
-		return (c - 55);
+		પાછા (c - 55);
 	}
 
 	printf("You managed to call a hex function without a hex value!!!\n");
 	exit(EXIT_FAILURE);
 }
 
-int main(int argc, char *argv[])
+પૂર્ણાંક મુખ્ય(પૂર્ણાંક argc, અક્ષર *argv[])
 {
-	int c;
-	int sum = 0;
+	પૂર્ણાંક c;
+	પૂર્ણાંક sum = 0;
 	bool toggle;
 	toggle = false;
 
-	do
+	કરો
 	{
 		c = getchar();
-		if ((c == '#') || (c == ';')) purge_line_comments();
-		else if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+		જો ((c == '#') || (c == ';')) purge_લીટી_comments();
+		નહીંતર જો ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
 		{
-			if(!toggle)
+			જો(!toggle)
 			{
 				sum = hex(c);
 				toggle = true;
 			}
-			else
+			નહીંતર
 			{
 				sum = (sum << 4) + hex(c);
 				toggle = false;
 				fputc(sum, stdout);
 			}
 		}
-	}while(c != EOF);
+	}જ્યારે(c != EOF);
 
 	exit(EXIT_SUCCESS);
 }

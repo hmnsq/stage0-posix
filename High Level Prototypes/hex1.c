@@ -16,44 +16,44 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include "../M2libc/bootstrappable.h"
+#અન્તર્ભાવ <stdio.h>
+#અન્તર્ભાવ <stdlib.h>
+#અન્તર્ભાવ <string.h>
+#અન્તર્ભાવ <unistd.h>
+#અન્તર્ભાવ <sys/stat.h>
+#અન્તર્ભાવ "../M2libc/bootstrappable.h"
 
 #define max_string 4096
 
-struct entry
+સંરચના entry
 {
-	struct entry* next;
+	સંરચના entry* next;
 	unsigned target;
-	char name;
+	અક્ષર name;
 };
 
 
 /* Globals */
 FILE* output;
-struct entry* jump_table;
-int ip;
+સંરચના entry* jump_table;
+પૂર્ણાંક ip;
 
-unsigned GetTarget(char c)
+unsigned GetTarget(અક્ષર c)
 {
-	struct entry* i;
-	for(i = jump_table; NULL != i; i = i->next)
+	સંરચના entry* i;
+	માટે(i = jump_table; ખાલી != i; i = i->next)
 	{
-		if(c == i->name)
+		જો(c == i->name)
 		{
-			return i->target;
+			પાછા i->target;
 		}
 	}
-	return 0;
+	પાછા 0;
 }
 
-int storeLabel(FILE* source_file, int ip)
+પૂર્ણાંક storeLabel(FILE* source_file, પૂર્ણાંક ip)
 {
-	struct entry* entry = calloc(1, sizeof(struct entry));
+	સંરચના entry* entry = calloc(1, કદ(સંરચના entry));
 
 	/* Ensure we have target address */
 	entry->target = ip;
@@ -64,79 +64,79 @@ int storeLabel(FILE* source_file, int ip)
 
 	/* Store string */
 	entry->name = fgetc(source_file);
-	return -1;
+	પાછા -1;
 }
 
 
-void outputPointer(int displacement, int number_of_bytes)
+શૂન્ય outputPointer(પૂર્ણાંક displacement, પૂર્ણાંક સંખ્યા_of_bytes)
 {
-	unsigned value = displacement;
+	unsigned કિંમત = displacement;
 
-	while(number_of_bytes > 0)
+	જ્યારે(સંખ્યા_of_bytes > 0)
 	{
-		unsigned byte = value % 256;
-		value = value / 256;
+		unsigned byte = કિંમત % 256;
+		કિંમત = કિંમત / 256;
 		fputc(byte, output);
-		number_of_bytes = number_of_bytes - 1;
+		સંખ્યા_of_bytes = સંખ્યા_of_bytes - 1;
 	}
 }
 
-void Update_Pointer(char ch)
+શૂન્ય Update_Pointer(અક્ષર ch)
 {
 	/* Calculate pointer size*/
-	if(in_set(ch, "%")) ip = ip + 4;
-	else exit(EXIT_FAILURE);
+	જો(in_set(ch, "%")) ip = ip + 4;
+	નહીંતર exit(EXIT_FAILURE);
 }
 
-void storePointer(char ch)
+શૂન્ય storePointer(અક્ષર ch)
 {
 	/* Get string of pointer */
 	Update_Pointer(ch);
 
 	/* Lookup token */
-	int target = GetTarget(ch);
-	int displacement;
+	પૂર્ણાંક target = GetTarget(ch);
+	પૂર્ણાંક displacement;
 
 	/* Change relative base address to :<base> */
 	displacement = (target - ip);
 
 	/* output calculated difference */
-	if('%' == ch) outputPointer(displacement, 4);  /* Deal with % */
-	else exit(EXIT_FAILURE);
+	જો('%' == ch) outputPointer(displacement, 4);  /* Deal with % */
+	નહીંતર exit(EXIT_FAILURE);
 }
 
-void line_Comment(FILE* source_file)
+શૂન્ય લીટી_Comment(FILE* source_file)
 {
-	int c = fgetc(source_file);
-	while(!in_set(c, "\n\r"))
+	પૂર્ણાંક c = fgetc(source_file);
+	જ્યારે(!in_set(c, "\n\r"))
 	{
-		if(EOF == c) break;
+		જો(EOF == c) તોડો;
 		c = fgetc(source_file);
 	}
 }
 
-int hex(int c, FILE* source_file)
+પૂર્ણાંક hex(પૂર્ણાંક c, FILE* source_file)
 {
-	if (in_set(c, "0123456789")) return (c - 48);
-	else if (in_set(c, "abcdef")) return (c - 87);
-	else if (in_set(c, "ABCDEF")) return (c - 55);
-	else if (in_set(c, "#;")) line_Comment(source_file);
-	return -1;
+	જો (in_set(c, "0123456789")) પાછા (c - 48);
+	નહીંતર જો (in_set(c, "abcdef")) પાછા (c - 87);
+	નહીંતર જો (in_set(c, "ABCDEF")) પાછા (c - 55);
+	નહીંતર જો (in_set(c, "#;")) લીટી_Comment(source_file);
+	પાછા -1;
 }
 
-int hold;
-int toggle;
-void process_byte(char c, FILE* source_file, int write)
+પૂર્ણાંક hold;
+પૂર્ણાંક toggle;
+શૂન્ય process_byte(અક્ષર c, FILE* source_file, પૂર્ણાંક લિખ)
 {
-	if(0 <= hex(c, source_file))
+	જો(0 <= hex(c, source_file))
 	{
-		if(toggle)
+		જો(toggle)
 		{
-			if(write) fputc(((hold * 16)) + hex(c, source_file), output);
+			જો(લિખ) fputc(((hold * 16)) + hex(c, source_file), output);
 			ip = ip + 1;
 			hold = 0;
 		}
-		else
+		નહીંતર
 		{
 			hold = hex(c, source_file);
 		}
@@ -144,51 +144,51 @@ void process_byte(char c, FILE* source_file, int write)
 	}
 }
 
-void first_pass(FILE* input)
+શૂન્ય first_pass(FILE* આગત)
 {
 	toggle = FALSE;
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	પૂર્ણાંક c;
+	માટે(c = fgetc(આગત); EOF != c; c = fgetc(આગત))
 	{
 		/* Check for and deal with label */
-		if(':' == c)
+		જો(':' == c)
 		{
-			c = storeLabel(input, ip);
+			c = storeLabel(આગત, ip);
 		}
 
 		/* check for and deal with relative/absolute pointers to labels */
-		if(in_set(c, "%"))
+		જો(in_set(c, "%"))
 		{ /* deal 4byte pointer (%) */
 			Update_Pointer(c);
-			c = fgetc(input);
+			c = fgetc(આગત);
 		}
-		else process_byte(c, input, FALSE);
+		નહીંતર process_byte(c, આગત, FALSE);
 	}
 }
 
-void second_pass(FILE* input)
+શૂન્ય second_pass(FILE* આગત)
 {
 	toggle = FALSE;
 	hold = 0;
 
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	પૂર્ણાંક c;
+	માટે(c = fgetc(આગત); EOF != c; c = fgetc(આગત))
 	{
-		if(':' == c) c = fgetc(input); /* Deal with : */
-		else if(in_set(c, "%")) storePointer(c);  /* Deal with %*/
-		else process_byte(c, input, TRUE);
+		જો(':' == c) c = fgetc(આગત); /* Deal with : */
+		નહીંતર જો(in_set(c, "%")) storePointer(c);  /* Deal with %*/
+		નહીંતર process_byte(c, આગત, TRUE);
 	}
 }
 
 /* Standard C main program */
-int main(int argc, char **argv)
+પૂર્ણાંક મુખ્ય(પૂર્ણાંક argc, અક્ષર **argv)
 {
-	jump_table = NULL;
+	jump_table = ખાલી;
 	output = stdout;
 
-	FILE* input = fopen(argv[1], "r");
+	FILE* આગત = fopen(argv[1], "r");
 	output = stdout;
-	if(NULL != argv[2])
+	જો(ખાલી != argv[2])
 	{
 		output = fopen(argv[2], "w");
 		chmod(argv[2], 0700);
@@ -196,13 +196,13 @@ int main(int argc, char **argv)
 
 	/* Get all of the labels */
 	ip = 0;
-	first_pass(input);
-	rewind(input);
+	first_pass(આગત);
+	rewind(આગત);
 
 	/* Fix all the references*/
 	ip = 0;
-	second_pass(input);
+	second_pass(આગત);
 
 	/* Set file as executable */
-	return EXIT_SUCCESS;
+	પાછા EXIT_SUCCESS;
 }

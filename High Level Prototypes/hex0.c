@@ -16,49 +16,49 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include "../M2libc/bootstrappable.h"
+#અન્તર્ભાવ <stdio.h>
+#અન્તર્ભાવ <stdlib.h>
+#અન્તર્ભાવ <string.h>
+#અન્તર્ભાવ <unistd.h>
+#અન્તર્ભાવ <sys/stat.h>
+#અન્તર્ભાવ "../M2libc/bootstrappable.h"
 
 #define max_string 4096
 
 /* Globals */
 FILE* output;
 
-void line_Comment(FILE* source_file)
+શૂન્ય લીટી_Comment(FILE* source_file)
 {
-	int c = fgetc(source_file);
-	while(!in_set(c, "\n\r"))
+	પૂર્ણાંક c = fgetc(source_file);
+	જ્યારે(!in_set(c, "\n\r"))
 	{
-		if(EOF == c) break;
+		જો(EOF == c) તોડો;
 		c = fgetc(source_file);
 	}
 }
 
-int hex(int c, FILE* source_file)
+પૂર્ણાંક hex(પૂર્ણાંક c, FILE* source_file)
 {
-	if (in_set(c, "0123456789")) return (c - 48);
-	else if (in_set(c, "abcdef")) return (c - 87);
-	else if (in_set(c, "ABCDEF")) return (c - 55);
-	else if (in_set(c, "#;")) line_Comment(source_file);
-	return -1;
+	જો (in_set(c, "0123456789")) પાછા (c - 48);
+	નહીંતર જો (in_set(c, "abcdef")) પાછા (c - 87);
+	નહીંતર જો (in_set(c, "ABCDEF")) પાછા (c - 55);
+	નહીંતર જો (in_set(c, "#;")) લીટી_Comment(source_file);
+	પાછા -1;
 }
 
-int hold;
-int toggle;
-void process_byte(char c, FILE* source_file)
+પૂર્ણાંક hold;
+પૂર્ણાંક toggle;
+શૂન્ય process_byte(અક્ષર c, FILE* source_file)
 {
-	if(0 <= hex(c, source_file))
+	જો(0 <= hex(c, source_file))
 	{
-		if(toggle)
+		જો(toggle)
 		{
 			fputc(((hold * 16)) + hex(c, source_file), output);
 			hold = 0;
 		}
-		else
+		નહીંતર
 		{
 			hold = hex(c, source_file);
 		}
@@ -66,32 +66,32 @@ void process_byte(char c, FILE* source_file)
 	}
 }
 
-void first_pass(FILE* input)
+શૂન્ય first_pass(FILE* આગત)
 {
 	toggle = FALSE;
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	પૂર્ણાંક c;
+	માટે(c = fgetc(આગત); EOF != c; c = fgetc(આગત))
 	{
-		process_byte(c, input);
+		process_byte(c, આગત);
 	}
 }
 
 /* Standard C main program */
-int main(int argc, char **argv)
+પૂર્ણાંક મુખ્ય(પૂર્ણાંક argc, અક્ષર **argv)
 {
 	output = stdout;
 
-	FILE* input = fopen(argv[1], "r");
+	FILE* આગત = fopen(argv[1], "r");
 	output = stdout;
-	if(NULL != argv[2])
+	જો(ખાલી != argv[2])
 	{
 		output = fopen(argv[2], "w");
 		chmod(argv[2], 0700);
 	}
 
 	/* do the work */
-	first_pass(input);
+	first_pass(આગત);
 
 	/* Set file as executable */
-	return EXIT_SUCCESS;
+	પાછા EXIT_SUCCESS;
 }
