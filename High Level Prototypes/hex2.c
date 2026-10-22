@@ -36,43 +36,43 @@ struct entry
 /* Globals */
 FILE* output;
 struct entry* jump_table;
-int Base_Address;
-int ip;
+целое Base_Address;
+целое ip;
 char* scratch;
 
-int consume_token(FILE* source_file)
+целое consume_token(FILE* source_file)
 {
-	int i = 0;
-	int c = fgetc(source_file);
-	while(!in_set(c, " \t\n>"))
+	целое i = 0;
+	целое c = fgetc(source_file);
+	пока(!in_set(c, " \t\n>"))
 	{
 		scratch[i] = c;
 		i = i + 1;
 		c = fgetc(source_file);
 		require(max_string > i, "Consumed token exceeds length restriction\n");
-		if(EOF == c) break;
+		если(EOF == c) break;
 	}
 
-	return c;
+	вернуть c;
 }
 
-int Throwaway_token(FILE* source_file)
+целое Throwaway_token(FILE* source_file)
 {
-	int c;
+	целое c;
 	do
 	{
 		c = fgetc(source_file);
-		if(EOF == c) break;
-	} while(!in_set(c, " \t\n>"));
+		если(EOF == c) break;
+	} пока(!in_set(c, " \t\n>"));
 
-	return c;
+	вернуть c;
 }
 
-int length(char* s)
+целое length(char* s)
 {
-	int i = 0;
-	while(0 != s[i]) i = i + 1;
-	return i;
+	целое i = 0;
+	пока(0 != s[i]) i = i + 1;
+	вернуть i;
 }
 
 void Clear_Scratch(char* s)
@@ -81,12 +81,12 @@ void Clear_Scratch(char* s)
 	{
 		s[0] = 0;
 		s = s + 1;
-	} while(0 != s[0]);
+	} пока(0 != s[0]);
 }
 
 void Copy_String(char* a, char* b)
 {
-	while(0 != a[0])
+	пока(0 != a[0])
 	{
 		b[0] = a[0];
 		a = a + 1;
@@ -97,11 +97,11 @@ void Copy_String(char* a, char* b)
 unsigned GetTarget(char* c)
 {
 	struct entry* i;
-	for(i = jump_table; NULL != i; i = i->next)
+	для(i = jump_table; NULL != i; i = i->next)
 	{
-		if(match(c, i->name))
+		если(match(c, i->name))
 		{
-			return i->target;
+			вернуть i->target;
 		}
 	}
 	fputs("Target label ", stderr);
@@ -110,7 +110,7 @@ unsigned GetTarget(char* c)
 	exit(EXIT_FAILURE);
 }
 
-int storeLabel(FILE* source_file, int ip)
+целое storeLabel(FILE* source_file, целое ip)
 {
 	struct entry* entry = calloc(1, sizeof(struct entry));
 
@@ -122,19 +122,19 @@ int storeLabel(FILE* source_file, int ip)
 	jump_table = entry;
 
 	/* Store string */
-	int c = consume_token(source_file);
+	целое c = consume_token(source_file);
 	entry->name = calloc(length(scratch) + 1, sizeof(char));
 	Copy_String(scratch, entry->name);
 	Clear_Scratch(scratch);
 
-	return c;
+	вернуть c;
 }
 
-void outputPointer(int displacement, int number_of_bytes)
+void outputPointer(целое displacement, целое number_of_bytes)
 {
 	unsigned value = displacement;
 
-	while(number_of_bytes > 0)
+	пока(number_of_bytes > 0)
 	{
 		unsigned byte = value % 256;
 		value = value / 256;
@@ -146,10 +146,10 @@ void outputPointer(int displacement, int number_of_bytes)
 void Update_Pointer(char ch)
 {
 	/* Calculate pointer size*/
-	if(in_set(ch, "%&")) ip = ip + 4; /* Deal with % and & */
-	else if(in_set(ch, "@$")) ip = ip + 2; /* Deal with @ and $ */
-	else if('!' == ch) ip = ip + 1; /* Deal with ! */
-	else exit(EXIT_FAILURE);
+	если(in_set(ch, "%&")) ip = ip + 4; /* Deal with % and & */
+	иначе если(in_set(ch, "@$")) ip = ip + 2; /* Deal with @ and $ */
+	иначе если('!' == ch) ip = ip + 1; /* Deal with ! */
+	иначе exit(EXIT_FAILURE);
 }
 
 void storePointer(char ch, FILE* source_file)
@@ -157,16 +157,16 @@ void storePointer(char ch, FILE* source_file)
 	/* Get string of pointer */
 	Clear_Scratch(scratch);
 	Update_Pointer(ch);
-	int base_sep_p = consume_token(source_file);
+	целое base_sep_p = consume_token(source_file);
 
 	/* Lookup token */
-	int target = GetTarget(scratch);
-	int displacement;
+	целое target = GetTarget(scratch);
+	целое displacement;
 
-	int base = ip;
+	целое base = ip;
 
 	/* Change relative base address to :<base> */
-	if ('>' == base_sep_p)
+	если ('>' == base_sep_p)
 	{
 		Clear_Scratch(scratch);
 		consume_token (source_file);
@@ -175,52 +175,52 @@ void storePointer(char ch, FILE* source_file)
 		/* Force universality of behavior */
 		displacement = (target - base);
 	}
-	else
+	иначе
 	{
 		displacement = base - target;
 	}
 
 	/* output calculated difference */
-	if('!' == ch) outputPointer(displacement, 1); /* Deal with ! */
-	else if('$' == ch) outputPointer(target, 2); /* Deal with $ */
-	else if('@' == ch) outputPointer(displacement, 2); /* Deal with @ */
-	else if('&' == ch) outputPointer(target, 4); /* Deal with & */
-	else if('%' == ch) outputPointer(displacement, 4);  /* Deal with % */
-	else exit(EXIT_FAILURE);
+	если('!' == ch) outputPointer(displacement, 1); /* Deal with ! */
+	иначе если('$' == ch) outputPointer(target, 2); /* Deal with $ */
+	иначе если('@' == ch) outputPointer(displacement, 2); /* Deal with @ */
+	иначе если('&' == ch) outputPointer(target, 4); /* Deal with & */
+	иначе если('%' == ch) outputPointer(displacement, 4);  /* Deal with % */
+	иначе exit(EXIT_FAILURE);
 }
 
 void line_Comment(FILE* source_file)
 {
-	int c = fgetc(source_file);
-	while(!in_set(c, "\n\r"))
+	целое c = fgetc(source_file);
+	пока(!in_set(c, "\n\r"))
 	{
-		if(EOF == c) break;
+		если(EOF == c) break;
 		c = fgetc(source_file);
 	}
 }
 
-int hex(int c, FILE* source_file)
+целое hex(целое c, FILE* source_file)
 {
-	if (in_set(c, "0123456789")) return (c - 48);
-	else if (in_set(c, "abcdef")) return (c - 87);
-	else if (in_set(c, "ABCDEF")) return (c - 55);
-	else if (in_set(c, "#;")) line_Comment(source_file);
-	return -1;
+	если (in_set(c, "0123456789")) вернуть (c - 48);
+	иначе если (in_set(c, "abcdef")) вернуть (c - 87);
+	иначе если (in_set(c, "ABCDEF")) вернуть (c - 55);
+	иначе если (in_set(c, "#;")) line_Comment(source_file);
+	вернуть -1;
 }
 
-int hold;
-int toggle;
-void process_byte(char c, FILE* source_file, int write)
+целое hold;
+целое toggle;
+void process_byte(char c, FILE* source_file, целое write)
 {
-	if(0 <= hex(c, source_file))
+	если(0 <= hex(c, source_file))
 	{
-		if(toggle)
+		если(toggle)
 		{
-			if(write) fputc(((hold * 16)) + hex(c, source_file), output);
+			если(write) fputc(((hold * 16)) + hex(c, source_file), output);
 			ip = ip + 1;
 			hold = 0;
 		}
-		else
+		иначе
 		{
 			hold = hex(c, source_file);
 		}
@@ -231,26 +231,26 @@ void process_byte(char c, FILE* source_file, int write)
 void first_pass(FILE* input)
 {
 	toggle = FALSE;
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	целое c;
+	для(c = fgetc(input); EOF != c; c = fgetc(input))
 	{
 		/* Check for and deal with label */
-		if(':' == c)
+		если(':' == c)
 		{
 			c = storeLabel(input, ip);
 		}
 
 		/* check for and deal with relative/absolute pointers to labels */
-		if(in_set(c, "!@$~%&"))
+		если(in_set(c, "!@$~%&"))
 		{ /* deal with 1byte pointer !; 2byte pointers (@ and $); 3byte pointers ~; 4byte pointers (% and &) */
 			Update_Pointer(c);
 			c = Throwaway_token(input);
-			if ('>' == c)
+			если ('>' == c)
 			{ /* deal with label>base */
 				c = Throwaway_token(input);
 			}
 		}
-		else process_byte(c, input, FALSE);
+		иначе process_byte(c, input, FALSE);
 	}
 }
 
@@ -259,17 +259,17 @@ void second_pass(FILE* input)
 	toggle = FALSE;
 	hold = 0;
 
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	целое c;
+	для(c = fgetc(input); EOF != c; c = fgetc(input))
 	{
-		if(':' == c) c = Throwaway_token(input); /* Deal with : */
-		else if(in_set(c, "!@$~%&")) storePointer(c, input);  /* Deal with !, @, $, ~, % and & */
-		else process_byte(c, input, TRUE);
+		если(':' == c) c = Throwaway_token(input); /* Deal with : */
+		иначе если(in_set(c, "!@$~%&")) storePointer(c, input);  /* Deal with !, @, $, ~, % and & */
+		иначе process_byte(c, input, TRUE);
 	}
 }
 
 /* Standard C main program */
-int main(int argc, char **argv)
+целое основной(целое argc, char **argv)
 {
 	jump_table = NULL;
 	Base_Address = 0x8048000;
@@ -278,7 +278,7 @@ int main(int argc, char **argv)
 
 	FILE* input = fopen(argv[1], "r");
 	output = stdout;
-	if(NULL != argv[2])
+	если(NULL != argv[2])
 	{
 		output = fopen(argv[2], "w");
 		chmod(argv[2], 0700);
@@ -294,5 +294,5 @@ int main(int argc, char **argv)
 	second_pass(input);
 
 	/* Set file as executable */
-	return EXIT_SUCCESS;
+	вернуть EXIT_SUCCESS;
 }
