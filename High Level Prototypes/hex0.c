@@ -30,35 +30,35 @@ FILE* output;
 
 void line_Comment(FILE* source_file)
 {
-	int c = fgetc(source_file);
-	while(!in_set(c, "\n\r"))
+	整数 c = fgetc(source_file);
+	ながら(!in_set(c, "\n\r"))
 	{
-		if(EOF == c) break;
+		もし(EOF == c) break;
 		c = fgetc(source_file);
 	}
 }
 
-int hex(int c, FILE* source_file)
+整数 hex(整数 c, FILE* source_file)
 {
-	if (in_set(c, "0123456789")) return (c - 48);
-	else if (in_set(c, "abcdef")) return (c - 87);
-	else if (in_set(c, "ABCDEF")) return (c - 55);
-	else if (in_set(c, "#;")) line_Comment(source_file);
-	return -1;
+	もし (in_set(c, "0123456789")) 戻る (c - 48);
+	否则 もし (in_set(c, "abcdef")) 戻る (c - 87);
+	否则 もし (in_set(c, "ABCDEF")) 戻る (c - 55);
+	否则 もし (in_set(c, "#;")) line_Comment(source_file);
+	戻る -1;
 }
 
-int hold;
-int toggle;
+整数 hold;
+整数 toggle;
 void process_byte(char c, FILE* source_file)
 {
-	if(0 <= hex(c, source_file))
+	もし(0 <= hex(c, source_file))
 	{
-		if(toggle)
+		もし(toggle)
 		{
 			fputc(((hold * 16)) + hex(c, source_file), output);
 			hold = 0;
 		}
-		else
+		否则
 		{
 			hold = hex(c, source_file);
 		}
@@ -69,21 +69,21 @@ void process_byte(char c, FILE* source_file)
 void first_pass(FILE* input)
 {
 	toggle = FALSE;
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	整数 c;
+	ために(c = fgetc(input); EOF != c; c = fgetc(input))
 	{
 		process_byte(c, input);
 	}
 }
 
 /* Standard C main program */
-int main(int argc, char **argv)
+整数 メインページ(整数 argc, char **argv)
 {
 	output = stdout;
 
 	FILE* input = fopen(argv[1], "r");
 	output = stdout;
-	if(NULL != argv[2])
+	もし(NULL != argv[2])
 	{
 		output = fopen(argv[2], "w");
 		chmod(argv[2], 0700);
@@ -93,5 +93,5 @@ int main(int argc, char **argv)
 	first_pass(input);
 
 	/* Set file as executable */
-	return EXIT_SUCCESS;
+	戻る EXIT_SUCCESS;
 }

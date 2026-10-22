@@ -21,63 +21,63 @@
 
 void purge_line_comments()
 {
-	int c;
+	整数 c;
 	do
 	{
 		c = getchar();
 
-		if (EOF == c)
+		もし (EOF == c)
 		{
 			exit(EXIT_SUCCESS);
 		}
-	} while ( '\n' != c );
+	} ながら ( '\n' != c );
 }
 
-int hex(int c)
+整数 hex(整数 c)
 {
-	if (c >= '0' && c <= '9')
+	もし (c >= '0' && c <= '9')
 	{
-		return (c - 48);
+		戻る (c - 48);
 	}
-	else if (c >= 'a' && c <= 'z')
+	否则 もし (c >= 'a' && c <= 'z')
 	{
-		return (c - 87);
+		戻る (c - 87);
 	}
-	else if (c >= 'A' && c <= 'Z')
+	否则 もし (c >= 'A' && c <= 'Z')
 	{
-		return (c - 55);
+		戻る (c - 55);
 	}
 
 	printf("You managed to call a hex function without a hex value!!!\n");
 	exit(EXIT_FAILURE);
 }
 
-int main(int argc, char *argv[])
+整数 メインページ(整数 argc, char *argv[])
 {
-	int c;
-	int sum = 0;
+	整数 c;
+	整数 sum = 0;
 	bool toggle;
 	toggle = false;
 
 	do
 	{
 		c = getchar();
-		if ((c == '#') || (c == ';')) purge_line_comments();
-		else if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+		もし ((c == '#') || (c == ';')) purge_line_comments();
+		否则 もし ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
 		{
-			if(!toggle)
+			もし(!toggle)
 			{
 				sum = hex(c);
 				toggle = true;
 			}
-			else
+			否则
 			{
 				sum = (sum << 4) + hex(c);
 				toggle = false;
 				fputc(sum, stdout);
 			}
 		}
-	}while(c != EOF);
+	}ながら(c != EOF);
 
 	exit(EXIT_SUCCESS);
 }
