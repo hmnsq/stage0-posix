@@ -18,16 +18,16 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-int main (int argc, char** argv)
+整数 主要 (整数 argc, char** argv)
 {
-	if(argc != 2)
+	如果(argc != 2)
 	{
 		fputs("xeh $filename is the only valid input form\n", stderr);
 		exit(EXIT_FAILURE);
 	}
 
 	FILE* in = fopen(argv[1], "r");
-	if(NULL == in)
+	如果(NULL == in)
 	{
 		fputs("Unable to open file: ", stderr);
 		fputs(argv[1], stderr);
@@ -36,19 +36,19 @@ int main (int argc, char** argv)
 	}
 
 	char* table = "0123456789ABCDEF";
-	int c = fgetc(in);
-	int col = 40;
-	while(EOF != c)
+	整数 c = fgetc(in);
+	整数 col = 40;
+	当(EOF != c)
 	{
 		fputc(table[c / 16], stdout);
 		fputc(table[c % 16], stdout);
 		col = col - 2;
-		if(0 == col)
+		如果(0 == col)
 		{
 			col = 40;
 			fputc('\n', stdout);
 		}
-		else fputc(' ', stdout);
+		否则 fputc(' ', stdout);
 		c = fgetc(in);
 	}
 	fputc('\n', stdout);
