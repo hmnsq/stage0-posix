@@ -42,7 +42,7 @@ _start:
 	# Call the kernel
 	syscall
 
-Done:
+پورو:
 	# program completed Successfully
 	mov $0, %rdi        # All is well
 	mov $60, %rax       # put the exit syscall number in eax

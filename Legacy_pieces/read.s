@@ -36,7 +36,7 @@ _start:
 	mov $0, %rsi          # prepare read_only
 	                      # we already have what we need in ebx
 	mov $2, %rax          # the syscall number for open()
-	syscall               # call the Kernel
+	syscall               # نادي the Kernel
 
 	# Check if we have a valid file
 	test %rax, %rax
@@ -48,13 +48,13 @@ _start:
 
 Circle: # print contents of file
 	mov $read_size, %rdx  # set the size of chars we want
-	mov $buffer, %rsi     # Where to put it
+	mov $بفر, %rsi     # Where to put it
 	                      # We already have what we need in ebx
 	mov $0, %rax          # the syscall number for read
-	syscall               # call the Kernel
+	syscall               # نادي the Kernel
 
 	test %rax, %rax       # check what we got
-	jz Done               # Got EOF call it done
+	jz پورو               # Got EOF نادي it done
 
 	# Make sure we don't write a bunch of NULLs
 	mov %rax, %rdx
@@ -65,13 +65,13 @@ Circle: # print contents of file
 	                      # edx was already setup
 	mov $1, %rdi          # setup stdout write
 	mov $1, %rax          # setup the write
-	syscall               # call the Kernel
+	syscall               # نادي the Kernel
 
 	# now to prepare for next loop
 	movq %rsp, %rdi
 	jmp Circle
 
-Done:
+پورو:
 	# program completed Successfully
 	mov $0, %rdi          # All is well
 	mov $60, %rax         # put the exit syscall number in eax
@@ -86,5 +86,5 @@ Bail:
 # Our writable space
 # 2^ 30 Should be enough per read
 read_size = 1073741824
-buffer:
+بفر:
 	.space 1
