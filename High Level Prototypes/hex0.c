@@ -16,82 +16,82 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include "../M2libc/bootstrappable.h"
+#شامل <stdio.h>
+#شامل <stdlib.h>
+#شامل <string.h>
+#شامل <unistd.h>
+#شامل <sys/stat.h>
+#شامل "../M2libc/bootstrappable.h"
 
-#define max_string 4096
+#تعریف_کرو max_string 4096
 
 /* Globals */
 FILE* output;
 
-void line_Comment(FILE* source_file)
+خالی سطر_Comment(FILE* ماخذ_file)
 {
-	int c = fgetc(source_file);
-	while(!in_set(c, "\n\r"))
+	صحیح c = fgetc(ماخذ_file);
+	جب(!اندر_سیٹ(c, "\n\r"))
 	{
-		if(EOF == c) break;
-		c = fgetc(source_file);
+		اگر(EOF == c) توڑو;
+		c = fgetc(ماخذ_file);
 	}
 }
 
-int hex(int c, FILE* source_file)
+صحیح hex(صحیح c, FILE* ماخذ_file)
 {
-	if (in_set(c, "0123456789")) return (c - 48);
-	else if (in_set(c, "abcdef")) return (c - 87);
-	else if (in_set(c, "ABCDEF")) return (c - 55);
-	else if (in_set(c, "#;")) line_Comment(source_file);
-	return -1;
+	اگر (اندر_سیٹ(c, "0123456789")) واپس (c - 48);
+	ورنہ اگر (اندر_سیٹ(c, "abcdef")) واپس (c - 87);
+	ورنہ اگر (اندر_سیٹ(c, "ABCDEF")) واپس (c - 55);
+	ورنہ اگر (اندر_سیٹ(c, "#;")) سطر_Comment(ماخذ_file);
+	واپس -1;
 }
 
-int hold;
-int toggle;
-void process_byte(char c, FILE* source_file)
+صحیح hold;
+صحیح toggle;
+خالی process_byte(حرف c, FILE* ماخذ_file)
 {
-	if(0 <= hex(c, source_file))
+	اگر(0 <= hex(c, ماخذ_file))
 	{
-		if(toggle)
+		اگر(toggle)
 		{
-			fputc(((hold * 16)) + hex(c, source_file), output);
+			fputc(((hold * 16)) + hex(c, ماخذ_file), output);
 			hold = 0;
 		}
-		else
+		ورنہ
 		{
-			hold = hex(c, source_file);
+			hold = hex(c, ماخذ_file);
 		}
 		toggle = !toggle;
 	}
 }
 
-void first_pass(FILE* input)
+خالی پہلا_pass(FILE* داخلہ)
 {
 	toggle = FALSE;
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	صحیح c;
+	برائے(c = fgetc(داخلہ); EOF != c; c = fgetc(داخلہ))
 	{
-		process_byte(c, input);
+		process_byte(c, داخلہ);
 	}
 }
 
 /* Standard C main program */
-int main(int argc, char **argv)
+صحیح مین(صحیح argc, حرف **argv)
 {
 	output = stdout;
 
-	FILE* input = fopen(argv[1], "r");
+	FILE* داخلہ = fopen(argv[1], "r");
 	output = stdout;
-	if(NULL != argv[2])
+	اگر(تہی != argv[2])
 	{
 		output = fopen(argv[2], "w");
 		chmod(argv[2], 0700);
 	}
 
 	/* do the work */
-	first_pass(input);
+	پہلا_pass(داخلہ);
 
 	/* Set file as executable */
-	return EXIT_SUCCESS;
+	واپس EXIT_SUCCESS;
 }

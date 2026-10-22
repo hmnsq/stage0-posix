@@ -15,145 +15,145 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <sys/wait.h>
+#شامل <stdlib.h>
+#شامل <stdio.h>
+#شامل <unistd.h>
+#شامل <sys/wait.h>
 
-#define FALSE 0
-#define TRUE 1
-#define max_string 4096
-#define max_args 256
+#تعریف_کرو FALSE 0
+#تعریف_کرو TRUE 1
+#تعریف_کرو max_string 4096
+#تعریف_کرو max_دلائل 256
 
-char** tokens;
-int command_done;
+حرف** علامات;
+صحیح command_مکمل;
 
 /* Function for purging line comments */
-void collect_comment(FILE* input)
+خالی collect_comment(FILE* داخلہ)
 {
-	int c;
-	do
+	صحیح c;
+	کرو
 	{
-		c = fgetc(input);
-		if(EOF == c) exit(EXIT_FAILURE);
-	} while('\n' != c);
+		c = fgetc(داخلہ);
+		اگر(EOF == c) باہر_نکلو(EXIT_FAILURE);
+	} جب('\n' != c);
 }
 
 /* Function for collecting RAW strings and removing the " that goes with them */
-int collect_string(FILE* input, int index, char* target)
+صحیح collect_string(FILE* داخلہ, صحیح index, حرف* ہدف)
 {
-	int c;
+	صحیح c;
 collect_string_loop:
-	c = fgetc(input);
-	if(EOF == c) exit(EXIT_FAILURE);
-	else if('"' == c) return index;
-	target[index] = c;
+	c = fgetc(داخلہ);
+	اگر(EOF == c) باہر_نکلو(EXIT_FAILURE);
+	ورنہ اگر('"' == c) واپس index;
+	ہدف[index] = c;
 	index = index + 1;
-	goto collect_string_loop;
+	جاؤ collect_string_loop;
 }
 
 /* Function to collect an individual argument or purge a comment */
-char* collect_token(FILE* input)
+حرف* collect_token(FILE* داخلہ)
 {
-	char* token = calloc(max_string, sizeof(char));
-	int c;
-	int i = 0;
+	حرف* token = صفر_حافظہ_دو(max_string, حجم(حرف));
+	صحیح c;
+	صحیح i = 0;
 collect_token_loop:
-	c = fgetc(input);
-	if(EOF == c) exit(EXIT_SUCCESS);
-	else if((' ' == c) || ('\t' == c)) goto collect_token_done;
-	else if('\n' == c)
+	c = fgetc(داخلہ);
+	اگر(EOF == c) باہر_نکلو(EXIT_SUCCESS);
+	ورنہ اگر((' ' == c) || ('\t' == c)) جاؤ collect_token_مکمل;
+	ورنہ اگر('\n' == c)
 	{ /* Command terminates at end of line */
-		command_done = 1;
-		goto collect_token_done;
+		command_مکمل = 1;
+		جاؤ collect_token_مکمل;
 	}
-	else if('"' == c)
+	ورنہ اگر('"' == c)
 	{ /* RAW strings are everything between a pair of "" */
-		i = collect_string(input, i, token);
-		goto collect_token_done;
+		i = collect_string(داخلہ, i, token);
+		جاؤ collect_token_مکمل;
 	}
-	else if('#' == c)
+	ورنہ اگر('#' == c)
 	{ /* Line comments to aid the humans */
-		collect_comment(input);
-		command_done = 1;
-		goto collect_token_done;
+		collect_comment(داخلہ);
+		command_مکمل = 1;
+		جاؤ collect_token_مکمل;
 	}
-	else if('\\' == c)
+	ورنہ اگر('\\' == c)
 	{ /* Support for end of line escapes, drops the char after */
-		fgetc(input);
-		goto collect_token_done;
+		fgetc(داخلہ);
+		جاؤ collect_token_مکمل;
 	}
 	token[i] = c;
 	i = i + 1;
-	goto collect_token_loop;
+	جاؤ collect_token_loop;
 
-collect_token_done:
-	if(0 == i) return NULL;
-	return token;
+collect_token_مکمل:
+	اگر(0 == i) واپس تہی;
+	واپس token;
 }
 
-int main(int argc, char** argv, char** envp)
+صحیح مین(صحیح argc, حرف** argv, حرف** envp)
 {
-	char* filename = "kaem.run";
-	FILE* script = NULL;
+	حرف* filename = "kaem.run";
+	FILE* script = تہی;
 
-	if(NULL != argv[1])
+	اگر(تہی != argv[1])
 	{
 		filename = argv[1];
 	}
 
 	script = fopen(filename, "r");
 
-	if(NULL == script) exit(EXIT_FAILURE);
+	اگر(تہی == script) باہر_نکلو(EXIT_FAILURE);
 
 main_loop:
-	tokens = calloc(max_args, sizeof(char*));
+	علامات = صفر_حافظہ_دو(max_دلائل, حجم(حرف*));
 
-	int i = 0;
-	int status = 0;
-	command_done = 0;
-	do
+	صحیح i = 0;
+	صحیح حالت_2 = 0;
+	command_مکمل = 0;
+	کرو
 	{
-		char* result = collect_token(script);
-		if(0 != result)
+		حرف* نتیجہ = collect_token(script);
+		اگر(0 != نتیجہ)
 		{ /* Not a comment string but an actual argument */
-			tokens[i] = result;
+			علامات[i] = نتیجہ;
 			i = i + 1;
 		}
-	} while(0 == command_done);
+	} جب(0 == command_مکمل);
 
-	if(0 > i) goto main_loop;
+	اگر(0 > i) جاؤ main_loop;
 
 	fputs(" +> ", stdout);
-	int j;
-	for(j = 0; j < i; j = j + 1)
+	صحیح j;
+	برائے(j = 0; j < i; j = j + 1)
 	{
-		fputs(tokens[j], stdout);
+		fputs(علامات[j], stdout);
 		fputc(' ', stdout);
 	}
 	fputs("\n", stdout);
 
-	char* program = tokens[0];
-	if(NULL == program) exit(EXIT_FAILURE);
+	حرف* پروگرام = علامات[0];
+	اگر(تہی == پروگرام) باہر_نکلو(EXIT_FAILURE);
 
-	int f = fork();
-	if (f == -1) exit(EXIT_FAILURE);
-	else if (f == 0)
-	{ /* child */
+	صحیح f = fork();
+	اگر (f == -1) باہر_نکلو(EXIT_FAILURE);
+	ورنہ اگر (f == 0)
+	{ /*بچہ*/
 		/* execve() returns only on error */
-		execve(program, tokens, envp);
+		execve(پروگرام, علامات, envp);
 		/* Prevent infinite loops */
-		exit(EXIT_FAILURE);
+		باہر_نکلو(EXIT_FAILURE);
 	}
 
 	/* Otherwise we are the parent */
 	/* And we should wait for it to complete */
-	waitpid(f, &status, 0);
+	waitpid(f, &حالت_2, 0);
 
-	if(0 == status) goto main_loop;
+	اگر(0 == حالت_2) جاؤ main_loop;
 
 	/* Clearly the script hit an issue that should never have happened */
 	fputs("Subprocess error\nABORTING HARD\n", stderr);
 	/* stop to prevent damage */
-	exit(EXIT_FAILURE);
+	باہر_نکلو(EXIT_FAILURE);
 }

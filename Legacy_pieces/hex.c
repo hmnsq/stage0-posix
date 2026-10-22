@@ -15,69 +15,69 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include<stdio.h>
-#include<stdlib.h>
-#include<stdbool.h>
+#شامل<stdio.h>
+#شامل<stdlib.h>
+#شامل<stdbool.h>
 
-void purge_line_comments()
+خالی purge_سطر_comments()
 {
-	int c;
-	do
+	صحیح c;
+	کرو
 	{
 		c = getchar();
 
-		if (EOF == c)
+		اگر (EOF == c)
 		{
-			exit(EXIT_SUCCESS);
+			باہر_نکلو(EXIT_SUCCESS);
 		}
-	} while ( '\n' != c );
+	} جب ( '\n' != c );
 }
 
-int hex(int c)
+صحیح hex(صحیح c)
 {
-	if (c >= '0' && c <= '9')
+	اگر (c >= '0' && c <= '9')
 	{
-		return (c - 48);
+		واپس (c - 48);
 	}
-	else if (c >= 'a' && c <= 'z')
+	ورنہ اگر (c >= 'a' && c <= 'z')
 	{
-		return (c - 87);
+		واپس (c - 87);
 	}
-	else if (c >= 'A' && c <= 'Z')
+	ورنہ اگر (c >= 'A' && c <= 'Z')
 	{
-		return (c - 55);
+		واپس (c - 55);
 	}
 
-	printf("You managed to call a hex function without a hex value!!!\n");
-	exit(EXIT_FAILURE);
+	لکھو("You managed to call a hex function without a hex value!!!\n");
+	باہر_نکلو(EXIT_FAILURE);
 }
 
-int main(int argc, char *argv[])
+صحیح مین(صحیح argc, حرف *argv[])
 {
-	int c;
-	int sum = 0;
+	صحیح c;
+	صحیح مجموع = 0;
 	bool toggle;
 	toggle = false;
 
-	do
+	کرو
 	{
 		c = getchar();
-		if ((c == '#') || (c == ';')) purge_line_comments();
-		else if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+		اگر ((c == '#') || (c == ';')) purge_سطر_comments();
+		ورنہ اگر ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
 		{
-			if(!toggle)
+			اگر(!toggle)
 			{
-				sum = hex(c);
+				مجموع = hex(c);
 				toggle = true;
 			}
-			else
+			ورنہ
 			{
-				sum = (sum << 4) + hex(c);
+				مجموع = (مجموع << 4) + hex(c);
 				toggle = false;
-				fputc(sum, stdout);
+				fputc(مجموع, stdout);
 			}
 		}
-	}while(c != EOF);
+	}جب(c != EOF);
 
-	exit(EXIT_SUCCESS);
+	باہر_نکلو(EXIT_SUCCESS);
 }
