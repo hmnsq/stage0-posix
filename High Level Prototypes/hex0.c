@@ -30,35 +30,35 @@ FILE* output;
 
 void line_Comment(FILE* source_file)
 {
-	int c = fgetc(source_file);
-	while(!in_set(c, "\n\r"))
+	số_nguyên c = fgetc(source_file);
+	trong_khi(!in_set(c, "\n\r"))
 	{
-		if(EOF == c) break;
+		nếu(EOF == c) break;
 		c = fgetc(source_file);
 	}
 }
 
-int hex(int c, FILE* source_file)
+số_nguyên hex(số_nguyên c, FILE* source_file)
 {
-	if (in_set(c, "0123456789")) return (c - 48);
-	else if (in_set(c, "abcdef")) return (c - 87);
-	else if (in_set(c, "ABCDEF")) return (c - 55);
-	else if (in_set(c, "#;")) line_Comment(source_file);
-	return -1;
+	nếu (in_set(c, "0123456789")) trả_về (c - 48);
+	không_thì nếu (in_set(c, "abcdef")) trả_về (c - 87);
+	không_thì nếu (in_set(c, "ABCDEF")) trả_về (c - 55);
+	không_thì nếu (in_set(c, "#;")) line_Comment(source_file);
+	trả_về -1;
 }
 
-int hold;
-int toggle;
+số_nguyên hold;
+số_nguyên toggle;
 void process_byte(char c, FILE* source_file)
 {
-	if(0 <= hex(c, source_file))
+	nếu(0 <= hex(c, source_file))
 	{
-		if(toggle)
+		nếu(toggle)
 		{
 			fputc(((hold * 16)) + hex(c, source_file), output);
 			hold = 0;
 		}
-		else
+		không_thì
 		{
 			hold = hex(c, source_file);
 		}
@@ -69,21 +69,21 @@ void process_byte(char c, FILE* source_file)
 void first_pass(FILE* input)
 {
 	toggle = FALSE;
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	số_nguyên c;
+	cho(c = fgetc(input); EOF != c; c = fgetc(input))
 	{
 		process_byte(c, input);
 	}
 }
 
 /* Standard C main program */
-int main(int argc, char **argv)
+số_nguyên main(số_nguyên argc, char **argv)
 {
 	output = stdout;
 
 	FILE* input = fopen(argv[1], "r");
 	output = stdout;
-	if(NULL != argv[2])
+	nếu(NULL != argv[2])
 	{
 		output = fopen(argv[2], "w");
 		chmod(argv[2], 0700);
@@ -93,5 +93,5 @@ int main(int argc, char **argv)
 	first_pass(input);
 
 	/* Set file as executable */
-	return EXIT_SUCCESS;
+	trả_về EXIT_SUCCESS;
 }

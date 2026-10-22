@@ -21,63 +21,63 @@
 
 void purge_line_comments()
 {
-	int c;
+	số_nguyên c;
 	do
 	{
 		c = getchar();
 
-		if (EOF == c)
+		nếu (EOF == c)
 		{
 			exit(EXIT_SUCCESS);
 		}
-	} while ( '\n' != c );
+	} trong_khi ( '\n' != c );
 }
 
-int hex(int c)
+số_nguyên hex(số_nguyên c)
 {
-	if (c >= '0' && c <= '9')
+	nếu (c >= '0' && c <= '9')
 	{
-		return (c - 48);
+		trả_về (c - 48);
 	}
-	else if (c >= 'a' && c <= 'z')
+	không_thì nếu (c >= 'a' && c <= 'z')
 	{
-		return (c - 87);
+		trả_về (c - 87);
 	}
-	else if (c >= 'A' && c <= 'Z')
+	không_thì nếu (c >= 'A' && c <= 'Z')
 	{
-		return (c - 55);
+		trả_về (c - 55);
 	}
 
 	printf("You managed to call a hex function without a hex value!!!\n");
 	exit(EXIT_FAILURE);
 }
 
-int main(int argc, char *argv[])
+số_nguyên main(số_nguyên argc, char *argv[])
 {
-	int c;
-	int sum = 0;
+	số_nguyên c;
+	số_nguyên sum = 0;
 	bool toggle;
 	toggle = false;
 
 	do
 	{
 		c = getchar();
-		if ((c == '#') || (c == ';')) purge_line_comments();
-		else if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+		nếu ((c == '#') || (c == ';')) purge_line_comments();
+		không_thì nếu ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
 		{
-			if(!toggle)
+			nếu(!toggle)
 			{
 				sum = hex(c);
 				toggle = true;
 			}
-			else
+			không_thì
 			{
 				sum = (sum << 4) + hex(c);
 				toggle = false;
 				fputc(sum, stdout);
 			}
 		}
-	}while(c != EOF);
+	}trong_khi(c != EOF);
 
 	exit(EXIT_SUCCESS);
 }
