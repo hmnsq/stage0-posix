@@ -21,63 +21,63 @@
 
 void purge_line_comments()
 {
-	int c;
+	puur_naa_nka c;
 	do
 	{
 		c = getchar();
 
-		if (EOF == c)
+		ꦪꦼꦤ꧀ (EOF == c)
 		{
 			exit(EXIT_SUCCESS);
 		}
-	} while ( '\n' != c );
+	} ꦱꦼꦢꦼꦭ ( '\n' != c );
 }
 
-int hex(int c)
+puur_naa_nka hex(puur_naa_nka c)
 {
-	if (c >= '0' && c <= '9')
+	ꦪꦼꦤ꧀ (c >= '0' && c <= '9')
 	{
-		return (c - 48);
+		ꦮꦭꦶ (c - 48);
 	}
-	else if (c >= 'a' && c <= 'z')
+	ꦭꦶꦪ ꦪꦼꦤ꧀ (c >= 'a' && c <= 'z')
 	{
-		return (c - 87);
+		ꦮꦭꦶ (c - 87);
 	}
-	else if (c >= 'A' && c <= 'Z')
+	ꦭꦶꦪ ꦪꦼꦤ꧀ (c >= 'A' && c <= 'Z')
 	{
-		return (c - 55);
+		ꦮꦭꦶ (c - 55);
 	}
 
 	printf("You managed to call a hex function without a hex value!!!\n");
 	exit(EXIT_FAILURE);
 }
 
-int main(int argc, char *argv[])
+puur_naa_nka main(puur_naa_nka argc, var_na *argv[])
 {
-	int c;
-	int sum = 0;
+	puur_naa_nka c;
+	puur_naa_nka sum = 0;
 	bool toggle;
 	toggle = false;
 
 	do
 	{
 		c = getchar();
-		if ((c == '#') || (c == ';')) purge_line_comments();
-		else if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+		ꦪꦼꦤ꧀ ((c == '#') || (c == ';')) purge_line_comments();
+		ꦭꦶꦪ ꦪꦼꦤ꧀ ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
 		{
-			if(!toggle)
+			ꦪꦼꦤ꧀(!toggle)
 			{
 				sum = hex(c);
 				toggle = true;
 			}
-			else
+			ꦭꦶꦪ
 			{
 				sum = (sum << 4) + hex(c);
 				toggle = false;
 				fputc(sum, stdout);
 			}
 		}
-	}while(c != EOF);
+	}ꦱꦼꦢꦼꦭ(c != EOF);
 
 	exit(EXIT_SUCCESS);
 }
