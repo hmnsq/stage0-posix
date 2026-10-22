@@ -48,7 +48,7 @@ _start:
 
 Circle: # print contents of file
 	mov $read_size, %rdx  # set the size of chars we want
-	mov $buffer, %rsi     # Where to put it
+	mov $बफर, %rsi     # Where to put it
 	                      # We already have what we need in ebx
 	mov $0, %rax          # the syscall number for read
 	syscall               # call the Kernel
@@ -86,5 +86,5 @@ Bail:
 # Our writable space
 # 2^ 30 Should be enough per read
 read_size = 1073741824
-buffer:
+बफर:
 	.space 1

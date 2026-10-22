@@ -15,145 +15,145 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <sys/wait.h>
+#समावेश <stdlib.h>
+#समावेश <stdio.h>
+#समावेश <unistd.h>
+#समावेश <sys/wait.h>
 
-#define FALSE 0
-#define TRUE 1
-#define max_string 4096
-#define max_args 256
+#घोषणा FALSE 0
+#घोषणा TRUE 1
+#घोषणा max_string 4096
+#घोषणा max_args 256
 
-char** tokens;
-int command_done;
+अक्षर** tokens;
+पूर्णांक command_done;
 
 /* Function for purging line comments */
-void collect_comment(FILE* input)
+व्योम collect_comment(खाता* निवेश)
 {
-	int c;
-	do
+	पूर्णांक c;
+	करो
 	{
-		c = fgetc(input);
-		if(EOF == c) exit(EXIT_FAILURE);
-	} while('\n' != c);
+		c = ख_अक्षर_लो(निवेश);
+		अगर(खातापूर्ण == c) निकास(निकास_त्रुटि);
+	} जबतक('\n' != c);
 }
 
 /* Function for collecting RAW strings and removing the " that goes with them */
-int collect_string(FILE* input, int index, char* target)
+पूर्णांक collect_string(खाता* निवेश, पूर्णांक index, अक्षर* target)
 {
-	int c;
+	पूर्णांक c;
 collect_string_loop:
-	c = fgetc(input);
-	if(EOF == c) exit(EXIT_FAILURE);
-	else if('"' == c) return index;
+	c = ख_अक्षर_लो(निवेश);
+	अगर(खातापूर्ण == c) निकास(निकास_त्रुटि);
+	अन्यथा अगर('"' == c) वापस index;
 	target[index] = c;
 	index = index + 1;
-	goto collect_string_loop;
+	जाओ collect_string_loop;
 }
 
 /* Function to collect an individual argument or purge a comment */
-char* collect_token(FILE* input)
+अक्षर* collect_token(खाता* निवेश)
 {
-	char* token = calloc(max_string, sizeof(char));
-	int c;
-	int i = 0;
+	अक्षर* token = सुस्मृति(max_string, माप(अक्षर));
+	पूर्णांक c;
+	पूर्णांक i = 0;
 collect_token_loop:
-	c = fgetc(input);
-	if(EOF == c) exit(EXIT_SUCCESS);
-	else if((' ' == c) || ('\t' == c)) goto collect_token_done;
-	else if('\n' == c)
+	c = ख_अक्षर_लो(निवेश);
+	अगर(खातापूर्ण == c) निकास(निकास_सफल);
+	अन्यथा अगर((' ' == c) || ('\t' == c)) जाओ collect_token_done;
+	अन्यथा अगर('\n' == c)
 	{ /* Command terminates at end of line */
 		command_done = 1;
-		goto collect_token_done;
+		जाओ collect_token_done;
 	}
-	else if('"' == c)
+	अन्यथा अगर('"' == c)
 	{ /* RAW strings are everything between a pair of "" */
-		i = collect_string(input, i, token);
-		goto collect_token_done;
+		i = collect_string(निवेश, i, token);
+		जाओ collect_token_done;
 	}
-	else if('#' == c)
+	अन्यथा अगर('#' == c)
 	{ /* Line comments to aid the humans */
-		collect_comment(input);
+		collect_comment(निवेश);
 		command_done = 1;
-		goto collect_token_done;
+		जाओ collect_token_done;
 	}
-	else if('\\' == c)
+	अन्यथा अगर('\\' == c)
 	{ /* Support for end of line escapes, drops the char after */
-		fgetc(input);
-		goto collect_token_done;
+		ख_अक्षर_लो(निवेश);
+		जाओ collect_token_done;
 	}
 	token[i] = c;
 	i = i + 1;
-	goto collect_token_loop;
+	जाओ collect_token_loop;
 
 collect_token_done:
-	if(0 == i) return NULL;
-	return token;
+	अगर(0 == i) वापस शून्य;
+	वापस token;
 }
 
-int main(int argc, char** argv, char** envp)
+पूर्णांक मुख्य(पूर्णांक argc, अक्षर** argv, अक्षर** envp)
 {
-	char* filename = "kaem.run";
-	FILE* script = NULL;
+	अक्षर* filename = "kaem.run";
+	खाता* script = शून्य;
 
-	if(NULL != argv[1])
+	अगर(शून्य != argv[1])
 	{
 		filename = argv[1];
 	}
 
-	script = fopen(filename, "r");
+	script = ख_खोलो(filename, "r");
 
-	if(NULL == script) exit(EXIT_FAILURE);
+	अगर(शून्य == script) निकास(निकास_त्रुटि);
 
 main_loop:
-	tokens = calloc(max_args, sizeof(char*));
+	tokens = सुस्मृति(max_args, माप(अक्षर*));
 
-	int i = 0;
-	int status = 0;
+	पूर्णांक i = 0;
+	पूर्णांक status = 0;
 	command_done = 0;
-	do
+	करो
 	{
-		char* result = collect_token(script);
-		if(0 != result)
+		अक्षर* परिणाम = collect_token(script);
+		अगर(0 != परिणाम)
 		{ /* Not a comment string but an actual argument */
-			tokens[i] = result;
+			tokens[i] = परिणाम;
 			i = i + 1;
 		}
-	} while(0 == command_done);
+	} जबतक(0 == command_done);
 
-	if(0 > i) goto main_loop;
+	अगर(0 > i) जाओ main_loop;
 
-	fputs(" +> ", stdout);
-	int j;
-	for(j = 0; j < i; j = j + 1)
+	ख_माला_दो(" +> ", मानक_निकास);
+	पूर्णांक j;
+	क्रम(j = 0; j < i; j = j + 1)
 	{
-		fputs(tokens[j], stdout);
-		fputc(' ', stdout);
+		ख_माला_दो(tokens[j], मानक_निकास);
+		ख_अक्षर_दो(' ', मानक_निकास);
 	}
-	fputs("\n", stdout);
+	ख_माला_दो("\n", मानक_निकास);
 
-	char* program = tokens[0];
-	if(NULL == program) exit(EXIT_FAILURE);
+	अक्षर* program = tokens[0];
+	अगर(शून्य == program) निकास(निकास_त्रुटि);
 
-	int f = fork();
-	if (f == -1) exit(EXIT_FAILURE);
-	else if (f == 0)
+	पूर्णांक f = विभाजन();
+	अगर (f == -1) निकास(निकास_त्रुटि);
+	अन्यथा अगर (f == 0)
 	{ /* child */
 		/* execve() returns only on error */
 		execve(program, tokens, envp);
 		/* Prevent infinite loops */
-		exit(EXIT_FAILURE);
+		निकास(निकास_त्रुटि);
 	}
 
 	/* Otherwise we are the parent */
 	/* And we should wait for it to complete */
 	waitpid(f, &status, 0);
 
-	if(0 == status) goto main_loop;
+	अगर(0 == status) जाओ main_loop;
 
 	/* Clearly the script hit an issue that should never have happened */
-	fputs("Subprocess error\nABORTING HARD\n", stderr);
+	ख_माला_दो("Subprocess error\nABORTING HARD\n", मानक_त्रुटि);
 	/* stop to prevent damage */
-	exit(EXIT_FAILURE);
+	निकास(निकास_त्रुटि);
 }

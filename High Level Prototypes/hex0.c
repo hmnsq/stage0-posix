@@ -16,49 +16,49 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include "../M2libc/bootstrappable.h"
+#समावेश <stdio.h>
+#समावेश <stdlib.h>
+#समावेश <string.h>
+#समावेश <unistd.h>
+#समावेश <sys/stat.h>
+#समावेश "../M2libc/bootstrappable.h"
 
-#define max_string 4096
+#घोषणा max_string 4096
 
 /* Globals */
-FILE* output;
+खाता* output;
 
-void line_Comment(FILE* source_file)
+व्योम पंक्ति_Comment(खाता* source_file)
 {
-	int c = fgetc(source_file);
-	while(!in_set(c, "\n\r"))
+	पूर्णांक c = ख_अक्षर_लो(source_file);
+	जबतक(!in_set(c, "\n\r"))
 	{
-		if(EOF == c) break;
-		c = fgetc(source_file);
+		अगर(खातापूर्ण == c) अवरोध;
+		c = ख_अक्षर_लो(source_file);
 	}
 }
 
-int hex(int c, FILE* source_file)
+पूर्णांक hex(पूर्णांक c, खाता* source_file)
 {
-	if (in_set(c, "0123456789")) return (c - 48);
-	else if (in_set(c, "abcdef")) return (c - 87);
-	else if (in_set(c, "ABCDEF")) return (c - 55);
-	else if (in_set(c, "#;")) line_Comment(source_file);
-	return -1;
+	अगर (in_set(c, "0123456789")) वापस (c - 48);
+	अन्यथा अगर (in_set(c, "abcdef")) वापस (c - 87);
+	अन्यथा अगर (in_set(c, "ABCDEF")) वापस (c - 55);
+	अन्यथा अगर (in_set(c, "#;")) पंक्ति_Comment(source_file);
+	वापस -1;
 }
 
-int hold;
-int toggle;
-void process_byte(char c, FILE* source_file)
+पूर्णांक hold;
+पूर्णांक toggle;
+व्योम process_byte(अक्षर c, खाता* source_file)
 {
-	if(0 <= hex(c, source_file))
+	अगर(0 <= hex(c, source_file))
 	{
-		if(toggle)
+		अगर(toggle)
 		{
-			fputc(((hold * 16)) + hex(c, source_file), output);
+			ख_अक्षर_दो(((hold * 16)) + hex(c, source_file), output);
 			hold = 0;
 		}
-		else
+		अन्यथा
 		{
 			hold = hex(c, source_file);
 		}
@@ -66,32 +66,32 @@ void process_byte(char c, FILE* source_file)
 	}
 }
 
-void first_pass(FILE* input)
+व्योम first_pass(खाता* निवेश)
 {
 	toggle = FALSE;
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	पूर्णांक c;
+	क्रम(c = ख_अक्षर_लो(निवेश); खातापूर्ण != c; c = ख_अक्षर_लो(निवेश))
 	{
-		process_byte(c, input);
+		process_byte(c, निवेश);
 	}
 }
 
 /* Standard C main program */
-int main(int argc, char **argv)
+पूर्णांक मुख्य(पूर्णांक argc, अक्षर **argv)
 {
-	output = stdout;
+	output = मानक_निकास;
 
-	FILE* input = fopen(argv[1], "r");
-	output = stdout;
-	if(NULL != argv[2])
+	खाता* निवेश = ख_खोलो(argv[1], "r");
+	output = मानक_निकास;
+	अगर(शून्य != argv[2])
 	{
-		output = fopen(argv[2], "w");
+		output = ख_खोलो(argv[2], "w");
 		chmod(argv[2], 0700);
 	}
 
 	/* do the work */
-	first_pass(input);
+	first_pass(निवेश);
 
 	/* Set file as executable */
-	return EXIT_SUCCESS;
+	वापस निकास_सफल;
 }

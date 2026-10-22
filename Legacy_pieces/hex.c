@@ -15,69 +15,69 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include<stdio.h>
-#include<stdlib.h>
-#include<stdbool.h>
+#समावेश<stdio.h>
+#समावेश<stdlib.h>
+#समावेश<stdbool.h>
 
-void purge_line_comments()
+व्योम purge_पंक्ति_comments()
 {
-	int c;
-	do
+	पूर्णांक c;
+	करो
 	{
-		c = getchar();
+		c = अक्षर_लो();
 
-		if (EOF == c)
+		अगर (खातापूर्ण == c)
 		{
-			exit(EXIT_SUCCESS);
+			निकास(निकास_सफल);
 		}
-	} while ( '\n' != c );
+	} जबतक ( '\n' != c );
 }
 
-int hex(int c)
+पूर्णांक hex(पूर्णांक c)
 {
-	if (c >= '0' && c <= '9')
+	अगर (c >= '0' && c <= '9')
 	{
-		return (c - 48);
+		वापस (c - 48);
 	}
-	else if (c >= 'a' && c <= 'z')
+	अन्यथा अगर (c >= 'a' && c <= 'z')
 	{
-		return (c - 87);
+		वापस (c - 87);
 	}
-	else if (c >= 'A' && c <= 'Z')
+	अन्यथा अगर (c >= 'A' && c <= 'Z')
 	{
-		return (c - 55);
+		वापस (c - 55);
 	}
 
-	printf("You managed to call a hex function without a hex value!!!\n");
-	exit(EXIT_FAILURE);
+	म_लिखो("You managed to call a hex function without a hex value!!!\n");
+	निकास(निकास_त्रुटि);
 }
 
-int main(int argc, char *argv[])
+पूर्णांक मुख्य(पूर्णांक argc, अक्षर *argv[])
 {
-	int c;
-	int sum = 0;
+	पूर्णांक c;
+	पूर्णांक योग = 0;
 	bool toggle;
 	toggle = false;
 
-	do
+	करो
 	{
-		c = getchar();
-		if ((c == '#') || (c == ';')) purge_line_comments();
-		else if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+		c = अक्षर_लो();
+		अगर ((c == '#') || (c == ';')) purge_पंक्ति_comments();
+		अन्यथा अगर ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
 		{
-			if(!toggle)
+			अगर(!toggle)
 			{
-				sum = hex(c);
+				योग = hex(c);
 				toggle = true;
 			}
-			else
+			अन्यथा
 			{
-				sum = (sum << 4) + hex(c);
+				योग = (योग << 4) + hex(c);
 				toggle = false;
-				fputc(sum, stdout);
+				ख_अक्षर_दो(योग, मानक_निकास);
 			}
 		}
-	}while(c != EOF);
+	}जबतक(c != खातापूर्ण);
 
-	exit(EXIT_SUCCESS);
+	निकास(निकास_सफल);
 }
