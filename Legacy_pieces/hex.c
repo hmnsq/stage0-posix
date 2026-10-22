@@ -21,63 +21,63 @@
 
 void purge_line_comments()
 {
-	int c;
+	จำนวนเต็ม c;
 	do
 	{
 		c = getchar();
 
-		if (EOF == c)
+		ถ้า (EOF == c)
 		{
 			exit(EXIT_SUCCESS);
 		}
-	} while ( '\n' != c );
+	} ขณะ ( '\n' != c );
 }
 
-int hex(int c)
+จำนวนเต็ม hex(จำนวนเต็ม c)
 {
-	if (c >= '0' && c <= '9')
+	ถ้า (c >= '0' && c <= '9')
 	{
-		return (c - 48);
+		คืน (c - 48);
 	}
-	else if (c >= 'a' && c <= 'z')
+	มิฉะนั้น ถ้า (c >= 'a' && c <= 'z')
 	{
-		return (c - 87);
+		คืน (c - 87);
 	}
-	else if (c >= 'A' && c <= 'Z')
+	มิฉะนั้น ถ้า (c >= 'A' && c <= 'Z')
 	{
-		return (c - 55);
+		คืน (c - 55);
 	}
 
 	printf("You managed to call a hex function without a hex value!!!\n");
 	exit(EXIT_FAILURE);
 }
 
-int main(int argc, char *argv[])
+จำนวนเต็ม หลัก(จำนวนเต็ม argc, var_na *argv[])
 {
-	int c;
-	int sum = 0;
+	จำนวนเต็ม c;
+	จำนวนเต็ม sum = 0;
 	bool toggle;
 	toggle = false;
 
 	do
 	{
 		c = getchar();
-		if ((c == '#') || (c == ';')) purge_line_comments();
-		else if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+		ถ้า ((c == '#') || (c == ';')) purge_line_comments();
+		มิฉะนั้น ถ้า ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
 		{
-			if(!toggle)
+			ถ้า(!toggle)
 			{
 				sum = hex(c);
 				toggle = true;
 			}
-			else
+			มิฉะนั้น
 			{
 				sum = (sum << 4) + hex(c);
 				toggle = false;
 				fputc(sum, stdout);
 			}
 		}
-	}while(c != EOF);
+	}ขณะ(c != EOF);
 
 	exit(EXIT_SUCCESS);
 }

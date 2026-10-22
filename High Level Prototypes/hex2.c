@@ -25,68 +25,68 @@
 
 #define max_string 4096
 
-struct entry
+sa_nracanaa entry
 {
-	struct entry* next;
+	sa_nracanaa entry* next;
 	unsigned target;
-	char* name;
+	var_na* name;
 };
 
 
 /* Globals */
 FILE* output;
-struct entry* jump_table;
-int Base_Address;
-int ip;
-char* scratch;
+sa_nracanaa entry* jump_table;
+จำนวนเต็ม Base_Address;
+จำนวนเต็ม ip;
+var_na* scratch;
 
-int consume_token(FILE* source_file)
+จำนวนเต็ม consume_token(FILE* source_file)
 {
-	int i = 0;
-	int c = fgetc(source_file);
-	while(!in_set(c, " \t\n>"))
+	จำนวนเต็ม i = 0;
+	จำนวนเต็ม c = fgetc(source_file);
+	ขณะ(!in_set(c, " \t\n>"))
 	{
 		scratch[i] = c;
 		i = i + 1;
 		c = fgetc(source_file);
 		require(max_string > i, "Consumed token exceeds length restriction\n");
-		if(EOF == c) break;
+		ถ้า(EOF == c) bha_nga;
 	}
 
-	return c;
+	คืน c;
 }
 
-int Throwaway_token(FILE* source_file)
+จำนวนเต็ม Throwaway_token(FILE* source_file)
 {
-	int c;
+	จำนวนเต็ม c;
 	do
 	{
 		c = fgetc(source_file);
-		if(EOF == c) break;
-	} while(!in_set(c, " \t\n>"));
+		ถ้า(EOF == c) bha_nga;
+	} ขณะ(!in_set(c, " \t\n>"));
 
-	return c;
+	คืน c;
 }
 
-int length(char* s)
+จำนวนเต็ม length(var_na* s)
 {
-	int i = 0;
-	while(0 != s[i]) i = i + 1;
-	return i;
+	จำนวนเต็ม i = 0;
+	ขณะ(0 != s[i]) i = i + 1;
+	คืน i;
 }
 
-void Clear_Scratch(char* s)
+void Clear_Scratch(var_na* s)
 {
 	do
 	{
 		s[0] = 0;
 		s = s + 1;
-	} while(0 != s[0]);
+	} ขณะ(0 != s[0]);
 }
 
-void Copy_String(char* a, char* b)
+void Copy_String(var_na* a, var_na* b)
 {
-	while(0 != a[0])
+	ขณะ(0 != a[0])
 	{
 		b[0] = a[0];
 		a = a + 1;
@@ -94,14 +94,14 @@ void Copy_String(char* a, char* b)
 	}
 }
 
-unsigned GetTarget(char* c)
+unsigned GetTarget(var_na* c)
 {
-	struct entry* i;
-	for(i = jump_table; NULL != i; i = i->next)
+	sa_nracanaa entry* i;
+	สำหรับ(i = jump_table; NULL != i; i = i->next)
 	{
-		if(match(c, i->name))
+		ถ้า(match(c, i->name))
 		{
-			return i->target;
+			คืน i->target;
 		}
 	}
 	fputs("Target label ", stderr);
@@ -110,9 +110,9 @@ unsigned GetTarget(char* c)
 	exit(EXIT_FAILURE);
 }
 
-int storeLabel(FILE* source_file, int ip)
+จำนวนเต็ม storeLabel(FILE* source_file, จำนวนเต็ม ip)
 {
-	struct entry* entry = calloc(1, sizeof(struct entry));
+	sa_nracanaa entry* entry = calloc(1, parimaa_na(sa_nracanaa entry));
 
 	/* Ensure we have target address */
 	entry->target = ip;
@@ -122,19 +122,19 @@ int storeLabel(FILE* source_file, int ip)
 	jump_table = entry;
 
 	/* Store string */
-	int c = consume_token(source_file);
-	entry->name = calloc(length(scratch) + 1, sizeof(char));
+	จำนวนเต็ม c = consume_token(source_file);
+	entry->name = calloc(length(scratch) + 1, parimaa_na(var_na));
 	Copy_String(scratch, entry->name);
 	Clear_Scratch(scratch);
 
-	return c;
+	คืน c;
 }
 
-void outputPointer(int displacement, int number_of_bytes)
+void outputPointer(จำนวนเต็ม displacement, จำนวนเต็ม number_of_bytes)
 {
 	unsigned value = displacement;
 
-	while(number_of_bytes > 0)
+	ขณะ(number_of_bytes > 0)
 	{
 		unsigned byte = value % 256;
 		value = value / 256;
@@ -143,30 +143,30 @@ void outputPointer(int displacement, int number_of_bytes)
 	}
 }
 
-void Update_Pointer(char ch)
+void Update_Pointer(var_na ch)
 {
 	/* Calculate pointer size*/
-	if(in_set(ch, "%&")) ip = ip + 4; /* Deal with % and & */
-	else if(in_set(ch, "@$")) ip = ip + 2; /* Deal with @ and $ */
-	else if('!' == ch) ip = ip + 1; /* Deal with ! */
-	else exit(EXIT_FAILURE);
+	ถ้า(in_set(ch, "%&")) ip = ip + 4; /* Deal with % and & */
+	มิฉะนั้น ถ้า(in_set(ch, "@$")) ip = ip + 2; /* Deal with @ and $ */
+	มิฉะนั้น ถ้า('!' == ch) ip = ip + 1; /* Deal with ! */
+	มิฉะนั้น exit(EXIT_FAILURE);
 }
 
-void storePointer(char ch, FILE* source_file)
+void storePointer(var_na ch, FILE* source_file)
 {
 	/* Get string of pointer */
 	Clear_Scratch(scratch);
 	Update_Pointer(ch);
-	int base_sep_p = consume_token(source_file);
+	จำนวนเต็ม base_sep_p = consume_token(source_file);
 
 	/* Lookup token */
-	int target = GetTarget(scratch);
-	int displacement;
+	จำนวนเต็ม target = GetTarget(scratch);
+	จำนวนเต็ม displacement;
 
-	int base = ip;
+	จำนวนเต็ม base = ip;
 
 	/* Change relative base address to :<base> */
-	if ('>' == base_sep_p)
+	ถ้า ('>' == base_sep_p)
 	{
 		Clear_Scratch(scratch);
 		consume_token (source_file);
@@ -175,52 +175,52 @@ void storePointer(char ch, FILE* source_file)
 		/* Force universality of behavior */
 		displacement = (target - base);
 	}
-	else
+	มิฉะนั้น
 	{
 		displacement = base - target;
 	}
 
 	/* output calculated difference */
-	if('!' == ch) outputPointer(displacement, 1); /* Deal with ! */
-	else if('$' == ch) outputPointer(target, 2); /* Deal with $ */
-	else if('@' == ch) outputPointer(displacement, 2); /* Deal with @ */
-	else if('&' == ch) outputPointer(target, 4); /* Deal with & */
-	else if('%' == ch) outputPointer(displacement, 4);  /* Deal with % */
-	else exit(EXIT_FAILURE);
+	ถ้า('!' == ch) outputPointer(displacement, 1); /* Deal with ! */
+	มิฉะนั้น ถ้า('$' == ch) outputPointer(target, 2); /* Deal with $ */
+	มิฉะนั้น ถ้า('@' == ch) outputPointer(displacement, 2); /* Deal with @ */
+	มิฉะนั้น ถ้า('&' == ch) outputPointer(target, 4); /* Deal with & */
+	มิฉะนั้น ถ้า('%' == ch) outputPointer(displacement, 4);  /* Deal with % */
+	มิฉะนั้น exit(EXIT_FAILURE);
 }
 
 void line_Comment(FILE* source_file)
 {
-	int c = fgetc(source_file);
-	while(!in_set(c, "\n\r"))
+	จำนวนเต็ม c = fgetc(source_file);
+	ขณะ(!in_set(c, "\n\r"))
 	{
-		if(EOF == c) break;
+		ถ้า(EOF == c) bha_nga;
 		c = fgetc(source_file);
 	}
 }
 
-int hex(int c, FILE* source_file)
+จำนวนเต็ม hex(จำนวนเต็ม c, FILE* source_file)
 {
-	if (in_set(c, "0123456789")) return (c - 48);
-	else if (in_set(c, "abcdef")) return (c - 87);
-	else if (in_set(c, "ABCDEF")) return (c - 55);
-	else if (in_set(c, "#;")) line_Comment(source_file);
-	return -1;
+	ถ้า (in_set(c, "0123456789")) คืน (c - 48);
+	มิฉะนั้น ถ้า (in_set(c, "abcdef")) คืน (c - 87);
+	มิฉะนั้น ถ้า (in_set(c, "ABCDEF")) คืน (c - 55);
+	มิฉะนั้น ถ้า (in_set(c, "#;")) line_Comment(source_file);
+	คืน -1;
 }
 
-int hold;
-int toggle;
-void process_byte(char c, FILE* source_file, int write)
+จำนวนเต็ม hold;
+จำนวนเต็ม toggle;
+void process_byte(var_na c, FILE* source_file, จำนวนเต็ม write)
 {
-	if(0 <= hex(c, source_file))
+	ถ้า(0 <= hex(c, source_file))
 	{
-		if(toggle)
+		ถ้า(toggle)
 		{
-			if(write) fputc(((hold * 16)) + hex(c, source_file), output);
+			ถ้า(write) fputc(((hold * 16)) + hex(c, source_file), output);
 			ip = ip + 1;
 			hold = 0;
 		}
-		else
+		มิฉะนั้น
 		{
 			hold = hex(c, source_file);
 		}
@@ -231,26 +231,26 @@ void process_byte(char c, FILE* source_file, int write)
 void first_pass(FILE* input)
 {
 	toggle = FALSE;
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	จำนวนเต็ม c;
+	สำหรับ(c = fgetc(input); EOF != c; c = fgetc(input))
 	{
 		/* Check for and deal with label */
-		if(':' == c)
+		ถ้า(':' == c)
 		{
 			c = storeLabel(input, ip);
 		}
 
 		/* check for and deal with relative/absolute pointers to labels */
-		if(in_set(c, "!@$~%&"))
+		ถ้า(in_set(c, "!@$~%&"))
 		{ /* deal with 1byte pointer !; 2byte pointers (@ and $); 3byte pointers ~; 4byte pointers (% and &) */
 			Update_Pointer(c);
 			c = Throwaway_token(input);
-			if ('>' == c)
+			ถ้า ('>' == c)
 			{ /* deal with label>base */
 				c = Throwaway_token(input);
 			}
 		}
-		else process_byte(c, input, FALSE);
+		มิฉะนั้น process_byte(c, input, FALSE);
 	}
 }
 
@@ -259,26 +259,26 @@ void second_pass(FILE* input)
 	toggle = FALSE;
 	hold = 0;
 
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	จำนวนเต็ม c;
+	สำหรับ(c = fgetc(input); EOF != c; c = fgetc(input))
 	{
-		if(':' == c) c = Throwaway_token(input); /* Deal with : */
-		else if(in_set(c, "!@$~%&")) storePointer(c, input);  /* Deal with !, @, $, ~, % and & */
-		else process_byte(c, input, TRUE);
+		ถ้า(':' == c) c = Throwaway_token(input); /* Deal with : */
+		มิฉะนั้น ถ้า(in_set(c, "!@$~%&")) storePointer(c, input);  /* Deal with !, @, $, ~, % and & */
+		มิฉะนั้น process_byte(c, input, TRUE);
 	}
 }
 
 /* Standard C main program */
-int main(int argc, char **argv)
+จำนวนเต็ม หลัก(จำนวนเต็ม argc, var_na **argv)
 {
 	jump_table = NULL;
 	Base_Address = 0x8048000;
 	output = stdout;
-	scratch = calloc(max_string + 1, sizeof(char));
+	scratch = calloc(max_string + 1, parimaa_na(var_na));
 
 	FILE* input = fopen(argv[1], "r");
 	output = stdout;
-	if(NULL != argv[2])
+	ถ้า(NULL != argv[2])
 	{
 		output = fopen(argv[2], "w");
 		chmod(argv[2], 0700);
@@ -294,5 +294,5 @@ int main(int argc, char **argv)
 	second_pass(input);
 
 	/* Set file as executable */
-	return EXIT_SUCCESS;
+	คืน EXIT_SUCCESS;
 }

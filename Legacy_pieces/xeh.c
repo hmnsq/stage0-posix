@@ -18,16 +18,16 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-int main (int argc, char** argv)
+จำนวนเต็ม หลัก (จำนวนเต็ม argc, var_na** argv)
 {
-	if(argc != 2)
+	ถ้า(argc != 2)
 	{
 		fputs("xeh $filename is the only valid input form\n", stderr);
 		exit(EXIT_FAILURE);
 	}
 
 	FILE* in = fopen(argv[1], "r");
-	if(NULL == in)
+	ถ้า(NULL == in)
 	{
 		fputs("Unable to open file: ", stderr);
 		fputs(argv[1], stderr);
@@ -35,20 +35,20 @@ int main (int argc, char** argv)
 		exit(EXIT_FAILURE);
 	}
 
-	char* table = "0123456789ABCDEF";
-	int c = fgetc(in);
-	int col = 40;
-	while(EOF != c)
+	var_na* table = "0123456789ABCDEF";
+	จำนวนเต็ม c = fgetc(in);
+	จำนวนเต็ม col = 40;
+	ขณะ(EOF != c)
 	{
 		fputc(table[c / 16], stdout);
 		fputc(table[c % 16], stdout);
 		col = col - 2;
-		if(0 == col)
+		ถ้า(0 == col)
 		{
 			col = 40;
 			fputc('\n', stdout);
 		}
-		else fputc(' ', stdout);
+		มิฉะนั้น fputc(' ', stdout);
 		c = fgetc(in);
 	}
 	fputc('\n', stdout);

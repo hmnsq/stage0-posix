@@ -30,35 +30,35 @@ FILE* output;
 
 void line_Comment(FILE* source_file)
 {
-	int c = fgetc(source_file);
-	while(!in_set(c, "\n\r"))
+	จำนวนเต็ม c = fgetc(source_file);
+	ขณะ(!in_set(c, "\n\r"))
 	{
-		if(EOF == c) break;
+		ถ้า(EOF == c) bha_nga;
 		c = fgetc(source_file);
 	}
 }
 
-int hex(int c, FILE* source_file)
+จำนวนเต็ม hex(จำนวนเต็ม c, FILE* source_file)
 {
-	if (in_set(c, "0123456789")) return (c - 48);
-	else if (in_set(c, "abcdef")) return (c - 87);
-	else if (in_set(c, "ABCDEF")) return (c - 55);
-	else if (in_set(c, "#;")) line_Comment(source_file);
-	return -1;
+	ถ้า (in_set(c, "0123456789")) คืน (c - 48);
+	มิฉะนั้น ถ้า (in_set(c, "abcdef")) คืน (c - 87);
+	มิฉะนั้น ถ้า (in_set(c, "ABCDEF")) คืน (c - 55);
+	มิฉะนั้น ถ้า (in_set(c, "#;")) line_Comment(source_file);
+	คืน -1;
 }
 
-int hold;
-int toggle;
-void process_byte(char c, FILE* source_file)
+จำนวนเต็ม hold;
+จำนวนเต็ม toggle;
+void process_byte(var_na c, FILE* source_file)
 {
-	if(0 <= hex(c, source_file))
+	ถ้า(0 <= hex(c, source_file))
 	{
-		if(toggle)
+		ถ้า(toggle)
 		{
 			fputc(((hold * 16)) + hex(c, source_file), output);
 			hold = 0;
 		}
-		else
+		มิฉะนั้น
 		{
 			hold = hex(c, source_file);
 		}
@@ -69,21 +69,21 @@ void process_byte(char c, FILE* source_file)
 void first_pass(FILE* input)
 {
 	toggle = FALSE;
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	จำนวนเต็ม c;
+	สำหรับ(c = fgetc(input); EOF != c; c = fgetc(input))
 	{
 		process_byte(c, input);
 	}
 }
 
 /* Standard C main program */
-int main(int argc, char **argv)
+จำนวนเต็ม หลัก(จำนวนเต็ม argc, var_na **argv)
 {
 	output = stdout;
 
 	FILE* input = fopen(argv[1], "r");
 	output = stdout;
-	if(NULL != argv[2])
+	ถ้า(NULL != argv[2])
 	{
 		output = fopen(argv[2], "w");
 		chmod(argv[2], 0700);
@@ -93,5 +93,5 @@ int main(int argc, char **argv)
 	first_pass(input);
 
 	/* Set file as executable */
-	return EXIT_SUCCESS;
+	คืน EXIT_SUCCESS;
 }
