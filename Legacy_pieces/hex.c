@@ -15,69 +15,69 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include<stdio.h>
-#include<stdlib.h>
-#include<stdbool.h>
+#ضمن<stdio.h>
+#ضمن<stdlib.h>
+#ضمن<stdbool.h>
 
-void purge_line_comments()
+فراغ purge_line_comments()
 {
-	int c;
-	do
+	صحيح c;
+	עשה
 	{
 		c = getchar();
 
-		if (EOF == c)
+		אם (EOF == c)
 		{
 			exit(EXIT_SUCCESS);
 		}
-	} while ( '\n' != c );
+	} כלעוד ( '\n' != c );
 }
 
-int hex(int c)
+صحيح hex(صحيح c)
 {
-	if (c >= '0' && c <= '9')
+	אם (c >= '0' && c <= '9')
 	{
-		return (c - 48);
+		החזר (c - 48);
 	}
-	else if (c >= 'a' && c <= 'z')
+	אחרת אם (c >= 'a' && c <= 'z')
 	{
-		return (c - 87);
+		החזר (c - 87);
 	}
-	else if (c >= 'A' && c <= 'Z')
+	אחרת אם (c >= 'A' && c <= 'Z')
 	{
-		return (c - 55);
+		החזר (c - 55);
 	}
 
 	printf("You managed to call a hex function without a hex value!!!\n");
 	exit(EXIT_FAILURE);
 }
 
-int main(int argc, char *argv[])
+صحيح main(صحيح argc, حرف *argv[])
 {
-	int c;
-	int sum = 0;
+	صحيح c;
+	صحيح sum = 0;
 	bool toggle;
 	toggle = false;
 
-	do
+	עשה
 	{
 		c = getchar();
-		if ((c == '#') || (c == ';')) purge_line_comments();
-		else if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+		אם ((c == '#') || (c == ';')) purge_line_comments();
+		אחרת אם ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
 		{
-			if(!toggle)
+			אם(!toggle)
 			{
 				sum = hex(c);
 				toggle = true;
 			}
-			else
+			אחרת
 			{
 				sum = (sum << 4) + hex(c);
 				toggle = false;
 				fputc(sum, stdout);
 			}
 		}
-	}while(c != EOF);
+	}כלעוד(c != EOF);
 
 	exit(EXIT_SUCCESS);
 }
