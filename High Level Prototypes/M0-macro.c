@@ -15,218 +15,218 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <string.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <stdint.h>
+#അന്തര്ഭാവ <stdbool.h>
+#അന്തര്ഭാവ <string.h>
 #define max_string 63
 
 FILE* source_file;
 bool Reached_EOF;
 
-struct Token
+ഘടന Token
 {
-	struct Token* next;
+	ഘടന Token* next;
 	uint8_t type;
-	char* Text;
-	char* Expression;
+	അക്ഷരം* Text;
+	അക്ഷരം* Expression;
 };
 
-enum type
+എണ്ണൽ type
 {
 	macro = 1,
 	str = (1 << 1)
 };
 
-struct Token* newToken()
+ഘടന Token* newToken()
 {
-	struct Token* p;
+	ഘടന Token* p;
 
-	p = calloc (1, sizeof (struct Token));
-	if (NULL == p)
+	p = calloc (1, വലുപ്പം (ഘടന Token));
+	എങ്കിൽ (ശൂന്യ == p)
 	{
 		fprintf (stderr, "calloc failed.\n");
 		exit (EXIT_FAILURE);
 	}
 
-	return p;
+	തിരികെ p;
 }
 
-struct Token* addToken(struct Token* head, struct Token* p)
+ഘടന Token* addToken(ഘടന Token* head, ഘടന Token* p)
 {
-	if(NULL == head)
+	എങ്കിൽ(ശൂന്യ == head)
 	{
-		return p;
+		തിരികെ p;
 	}
-	if(NULL == head->next)
+	എങ്കിൽ(ശൂന്യ == head->next)
 	{
 		head->next = p;
 	}
-	else
+	അല്ലെങ്കിൽ
 	{
 		addToken(head->next, p);
 	}
-	return head;
+	തിരികെ head;
 }
 
-void purge_lineComment()
+ശൂന്യം purge_വരി_Comment()
 {
-	int c = fgetc(source_file);
-	while((10 != c) && (13 != c))
+	പൂർണ്ണസംഖ്യ c = fgetc(source_file);
+	ആകുമ്പോൾ((10 != c) && (13 != c))
 	{
 		c = fgetc(source_file);
 	}
 }
 
-char* store_atom(char c)
+അക്ഷരം* store_atom(അക്ഷരം c)
 {
-	char* store = calloc(max_string + 1, sizeof(char));
+	അക്ഷരം* store = calloc(max_string + 1, വലുപ്പം(അക്ഷരം));
 	int32_t ch;
 	uint32_t i = 0;
 	ch = c;
-	do
+	ചെയ്യുക
 	{
-		store[i] = (char)ch;
+		store[i] = (അക്ഷരം)ch;
 		ch = fgetc(source_file);
 		i = i + 1;
-	} while ((9 != ch) && (10 != ch) && (32 != ch));
+	} ആകുമ്പോൾ ((9 != ch) && (10 != ch) && (32 != ch));
 
-	return store;
+	തിരികെ store;
 }
 
-char* store_string(char c)
+അക്ഷരം* store_string(അക്ഷരം c)
 {
-	char* store = calloc(max_string + 1, sizeof(char));
+	അക്ഷരം* store = calloc(max_string + 1, വലുപ്പം(അക്ഷരം));
 	int32_t ch;
 	uint32_t i = 0;
 	ch = c;
-	do
+	ചെയ്യുക
 	{
-		store[i] = (char)ch;
+		store[i] = (അക്ഷരം)ch;
 		i = i + 1;
 		ch = fgetc(source_file);
-	} while(ch != c);
+	} ആകുമ്പോൾ(ch != c);
 
-	return store;
+	തിരികെ store;
 }
 
-struct Token* Tokenize_Line(struct Token* head)
+ഘടന Token* Tokenize_വരി(ഘടന Token* head)
 {
 
 	int32_t c;
 	c = fgetc(source_file);
 
-	if((35 == c) || (59 == c))
+	എങ്കിൽ((35 == c) || (59 == c))
 	{
-		purge_lineComment();
-		return Tokenize_Line(head);
+		purge_വരി_Comment();
+		തിരികെ Tokenize_വരി(head);
 	}
 
-	if((9 == c) || (10 == c) || (32 == c))
+	എങ്കിൽ((9 == c) || (10 == c) || (32 == c))
 	{
-		return Tokenize_Line(head);
+		തിരികെ Tokenize_വരി(head);
 	}
 
-	struct Token* p = newToken();
-	if(-1 == c)
+	ഘടന Token* p = newToken();
+	എങ്കിൽ(-1 == c)
 	{
 		Reached_EOF = true;
-		free(p);
-		return head;
+		സ്വതന്ത്രം(p);
+		തിരികെ head;
 	}
-	else if((34 == c) || (39 == c))
+	അല്ലെങ്കിൽ എങ്കിൽ((34 == c) || (39 == c))
 	{
 		p->Text = store_string(c);
 		p->type = str;
 	}
-	else
+	അല്ലെങ്കിൽ
 	{
 		p->Text = store_atom(c);
 	}
 
-	return addToken(head, p);
+	തിരികെ addToken(head, p);
 }
 
-void setExpression(struct Token* p, char match[], char Exp[])
+ശൂന്യം setExpression(ഘടന Token* p, അക്ഷരം match[], അക്ഷരം Exp[])
 {
 	/* Leave macros alone */
-	if((p->type & macro))
+	എങ്കിൽ((p->type & macro))
 	{
 		setExpression(p->next, match, Exp);
-		return;
+		തിരികെ;
 	}
 
 	/* Only if there is an exact match replace */
-	if(0 == strncmp(p->Text, match, max_string))
+	എങ്കിൽ(0 == strncmp(p->Text, match, max_string))
 	{
 		p->Expression = Exp;
 	}
 
-	if(NULL != p->next)
+	എങ്കിൽ(ശൂന്യ != p->next)
 	{
 		setExpression(p->next, match, Exp);
 	}
 
 }
 
-void identify_macros(struct Token* p)
+ശൂന്യം identify_macros(ഘടന Token* p)
 {
-	if(0 == strncmp(p->Text, "DEFINE", max_string))
+	എങ്കിൽ(0 == strncmp(p->Text, "DEFINE", max_string))
 	{
 		p->type = macro;
 		p->Text = p->next->Text;
-		if(p->next->next->type & str)
+		എങ്കിൽ(p->next->next->type & str)
 		{
 			p->Expression = p->next->next->Text + 1;
 		}
-		else
+		അല്ലെങ്കിൽ
 		{
 			p->Expression = p->next->next->Text;
 		}
 		p->next = p->next->next->next;
 	}
 
-	if(NULL != p->next)
+	എങ്കിൽ(ശൂന്യ != p->next)
 	{
 		identify_macros(p->next);
 	}
 }
 
-void line_macro(struct Token* p)
+ശൂന്യം വരി_macro(ഘടന Token* p)
 {
-	if(p->type & macro)
+	എങ്കിൽ(p->type & macro)
 	{
 		setExpression(p->next, p->Text, p->Expression);
 	}
 
-	if(NULL != p->next)
+	എങ്കിൽ(ശൂന്യ != p->next)
 	{
-		line_macro(p->next);
+		വരി_macro(p->next);
 	}
 }
 
-void hexify_string(struct Token* p)
+ശൂന്യം hexify_string(ഘടന Token* p)
 {
-	char table[16] = {0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46};
-	int i = ((strnlen(p->Text + 1 , max_string)/4) + 1) * 8;
+	അക്ഷരം table[16] = {0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46};
+	പൂർണ്ണസംഖ്യ i = ((strnlen(p->Text + 1 , max_string)/4) + 1) * 8;
 
-	char* d = calloc(max_string, sizeof(char));
+	അക്ഷരം* d = calloc(max_string, വലുപ്പം(അക്ഷരം));
 	p->Expression = d;
 
-	while(0 < i)
+	ആകുമ്പോൾ(0 < i)
 	{
 		i = i - 1;
 		d[i] = 0x30;
 	}
 
-	while( i < max_string)
+	ആകുമ്പോൾ( i < max_string)
 	{
-		if(0 == p->Text[i+1])
+		എങ്കിൽ(0 == p->Text[i+1])
 		{
 			i = max_string;
 		}
-		else
+		അല്ലെങ്കിൽ
 		{
 			d[2*i]  = table[p->Text[i+1] / 16];
 			d[2*i + 1] = table[p->Text[i+1] % 16];
@@ -235,109 +235,109 @@ void hexify_string(struct Token* p)
 	}
 }
 
-void process_string(struct Token* p)
+ശൂന്യം process_string(ഘടന Token* p)
 {
-	if(p->type & str)
+	എങ്കിൽ(p->type & str)
 	{
-		if('\'' == p->Text[0])
+		എങ്കിൽ('\'' == p->Text[0])
 		{
 			p->Expression = p->Text + 1;
 		}
-		else if('"' == p->Text[0])
+		അല്ലെങ്കിൽ എങ്കിൽ('"' == p->Text[0])
 		{
 			hexify_string(p);
 		}
 	}
 
-	if(NULL != p->next)
+	എങ്കിൽ(ശൂന്യ != p->next)
 	{
 		process_string(p->next);
 	}
 }
 
 
-void preserve_other(struct Token* p)
+ശൂന്യം preserve_other(ഘടന Token* p)
 {
-	if(NULL != p->next)
+	എങ്കിൽ(ശൂന്യ != p->next)
 	{
 		preserve_other(p->next);
 	}
 
-	if((NULL == p->Expression) && !(p->type & macro))
+	എങ്കിൽ((ശൂന്യ == p->Expression) && !(p->type & macro))
 	{
 		p->Expression = p->Text;
 	}
 }
 
-uint16_t numerate_string(char a[])
+uint16_t numerate_string(അക്ഷരം a[])
 {
-	char *ptr;
-	return (uint16_t)strtol(a, &ptr, 0);
+	അക്ഷരം *ptr;
+	തിരികെ (uint16_t)strtol(a, &ptr, 0);
 }
 
-void eval_immediates(struct Token* p)
+ശൂന്യം eval_immediates(ഘടന Token* p)
 {
-	if(NULL != p->next)
+	എങ്കിൽ(ശൂന്യ != p->next)
 	{
 		eval_immediates(p->next);
 	}
 
-	if((NULL == p->Expression) && !(p->type & macro))
+	എങ്കിൽ((ശൂന്യ == p->Expression) && !(p->type & macro))
 	{
-		uint16_t value;
-		value = numerate_string(p->Text);
+		uint16_t മൂല്യം;
+		മൂല്യം = numerate_string(p->Text);
 
-		if(('0' == p->Text[0]) || (0 != value))
+		എങ്കിൽ(('0' == p->Text[0]) || (0 != മൂല്യം))
 		{
-			char* c = calloc(5, sizeof(char));
-			sprintf(c, "%04x", value);
+			അക്ഷരം* c = calloc(5, വലുപ്പം(അക്ഷരം));
+			sprintf(c, "%04x", മൂല്യം);
 			p->Expression = c;
 		}
 	}
 }
 
-void print_hex(struct Token* p)
+ശൂന്യം print_hex(ഘടന Token* p)
 {
-	if(p->type ^ macro)
+	എങ്കിൽ(p->type ^ macro)
 	{
 		fprintf(stdout, "\n%s", p->Expression);
 	}
 
-	if(NULL != p->next)
+	എങ്കിൽ(ശൂന്യ != p->next)
 	{
 		print_hex(p->next);
 	}
-	else
+	അല്ലെങ്കിൽ
 	{
 		fprintf(stdout, "\n");
 	}
 }
 
 /* Standard C main program */
-int main(int argc, char **argv)
+പൂർണ്ണസംഖ്യ പ്രധാന(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv)
 {
 	/* Make sure we have a program tape to run */
-	if (argc < 2)
+	എങ്കിൽ (argc < 2)
 	{
 		fprintf(stderr, "Usage: %s $FileName\nWhere $FileName is the name of the paper tape of the program being run\n", argv[0]);
-		return EXIT_FAILURE;
+		തിരികെ EXIT_FAILURE;
 	}
 
 	source_file = fopen(argv[1], "r");
 
 	Reached_EOF = false;
-	struct Token* head = NULL;
-	while(!Reached_EOF)
+	ഘടന Token* head = ശൂന്യ;
+	ആകുമ്പോൾ(!Reached_EOF)
 	{
-		head = Tokenize_Line(head);
+		head = Tokenize_വരി(head);
 	}
 
 	identify_macros(head);
-	line_macro(head);
+	വരി_macro(head);
 	process_string(head);
 	eval_immediates(head);
 	preserve_other(head);
 	print_hex(head);
 
-	return EXIT_SUCCESS;
+	തിരികെ EXIT_SUCCESS;
 }

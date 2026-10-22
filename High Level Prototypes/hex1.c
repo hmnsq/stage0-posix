@@ -16,44 +16,44 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include "../M2libc/bootstrappable.h"
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <unistd.h>
+#അന്തര്ഭാവ <sys/stat.h>
+#അന്തര്ഭാവ "../M2libc/bootstrappable.h"
 
 #define max_string 4096
 
-struct entry
+ഘടന entry
 {
-	struct entry* next;
+	ഘടന entry* next;
 	unsigned target;
-	char name;
+	അക്ഷരം name;
 };
 
 
 /* Globals */
 FILE* output;
-struct entry* jump_table;
-int ip;
+ഘടന entry* jump_table;
+പൂർണ്ണസംഖ്യ ip;
 
-unsigned GetTarget(char c)
+unsigned GetTarget(അക്ഷരം c)
 {
-	struct entry* i;
-	for(i = jump_table; NULL != i; i = i->next)
+	ഘടന entry* i;
+	വേണ്ടി(i = jump_table; ശൂന്യ != i; i = i->next)
 	{
-		if(c == i->name)
+		എങ്കിൽ(c == i->name)
 		{
-			return i->target;
+			തിരികെ i->target;
 		}
 	}
-	return 0;
+	തിരികെ 0;
 }
 
-int storeLabel(FILE* source_file, int ip)
+പൂർണ്ണസംഖ്യ storeLabel(FILE* source_file, പൂർണ്ണസംഖ്യ ip)
 {
-	struct entry* entry = calloc(1, sizeof(struct entry));
+	ഘടന entry* entry = calloc(1, വലുപ്പം(ഘടന entry));
 
 	/* Ensure we have target address */
 	entry->target = ip;
@@ -64,79 +64,79 @@ int storeLabel(FILE* source_file, int ip)
 
 	/* Store string */
 	entry->name = fgetc(source_file);
-	return -1;
+	തിരികെ -1;
 }
 
 
-void outputPointer(int displacement, int number_of_bytes)
+ശൂന്യം outputPointer(പൂർണ്ണസംഖ്യ displacement, പൂർണ്ണസംഖ്യ സംഖ്യ_of_bytes)
 {
-	unsigned value = displacement;
+	unsigned മൂല്യം = displacement;
 
-	while(number_of_bytes > 0)
+	ആകുമ്പോൾ(സംഖ്യ_of_bytes > 0)
 	{
-		unsigned byte = value % 256;
-		value = value / 256;
+		unsigned byte = മൂല്യം % 256;
+		മൂല്യം = മൂല്യം / 256;
 		fputc(byte, output);
-		number_of_bytes = number_of_bytes - 1;
+		സംഖ്യ_of_bytes = സംഖ്യ_of_bytes - 1;
 	}
 }
 
-void Update_Pointer(char ch)
+ശൂന്യം Update_Pointer(അക്ഷരം ch)
 {
 	/* Calculate pointer size*/
-	if(in_set(ch, "%")) ip = ip + 4;
-	else exit(EXIT_FAILURE);
+	എങ്കിൽ(in_set(ch, "%")) ip = ip + 4;
+	അല്ലെങ്കിൽ exit(EXIT_FAILURE);
 }
 
-void storePointer(char ch)
+ശൂന്യം storePointer(അക്ഷരം ch)
 {
 	/* Get string of pointer */
 	Update_Pointer(ch);
 
 	/* Lookup token */
-	int target = GetTarget(ch);
-	int displacement;
+	പൂർണ്ണസംഖ്യ target = GetTarget(ch);
+	പൂർണ്ണസംഖ്യ displacement;
 
 	/* Change relative base address to :<base> */
 	displacement = (target - ip);
 
 	/* output calculated difference */
-	if('%' == ch) outputPointer(displacement, 4);  /* Deal with % */
-	else exit(EXIT_FAILURE);
+	എങ്കിൽ('%' == ch) outputPointer(displacement, 4);  /* Deal with % */
+	അല്ലെങ്കിൽ exit(EXIT_FAILURE);
 }
 
-void line_Comment(FILE* source_file)
+ശൂന്യം വരി_Comment(FILE* source_file)
 {
-	int c = fgetc(source_file);
-	while(!in_set(c, "\n\r"))
+	പൂർണ്ണസംഖ്യ c = fgetc(source_file);
+	ആകുമ്പോൾ(!in_set(c, "\n\r"))
 	{
-		if(EOF == c) break;
+		എങ്കിൽ(EOF == c) നിർത്തുക;
 		c = fgetc(source_file);
 	}
 }
 
-int hex(int c, FILE* source_file)
+പൂർണ്ണസംഖ്യ hex(പൂർണ്ണസംഖ്യ c, FILE* source_file)
 {
-	if (in_set(c, "0123456789")) return (c - 48);
-	else if (in_set(c, "abcdef")) return (c - 87);
-	else if (in_set(c, "ABCDEF")) return (c - 55);
-	else if (in_set(c, "#;")) line_Comment(source_file);
-	return -1;
+	എങ്കിൽ (in_set(c, "0123456789")) തിരികെ (c - 48);
+	അല്ലെങ്കിൽ എങ്കിൽ (in_set(c, "abcdef")) തിരികെ (c - 87);
+	അല്ലെങ്കിൽ എങ്കിൽ (in_set(c, "ABCDEF")) തിരികെ (c - 55);
+	അല്ലെങ്കിൽ എങ്കിൽ (in_set(c, "#;")) വരി_Comment(source_file);
+	തിരികെ -1;
 }
 
-int hold;
-int toggle;
-void process_byte(char c, FILE* source_file, int write)
+പൂർണ്ണസംഖ്യ hold;
+പൂർണ്ണസംഖ്യ toggle;
+ശൂന്യം process_byte(അക്ഷരം c, FILE* source_file, പൂർണ്ണസംഖ്യ ലിഖ)
 {
-	if(0 <= hex(c, source_file))
+	എങ്കിൽ(0 <= hex(c, source_file))
 	{
-		if(toggle)
+		എങ്കിൽ(toggle)
 		{
-			if(write) fputc(((hold * 16)) + hex(c, source_file), output);
+			എങ്കിൽ(ലിഖ) fputc(((hold * 16)) + hex(c, source_file), output);
 			ip = ip + 1;
 			hold = 0;
 		}
-		else
+		അല്ലെങ്കിൽ
 		{
 			hold = hex(c, source_file);
 		}
@@ -144,51 +144,51 @@ void process_byte(char c, FILE* source_file, int write)
 	}
 }
 
-void first_pass(FILE* input)
+ശൂന്യം first_pass(FILE* നിവേശം)
 {
 	toggle = FALSE;
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	പൂർണ്ണസംഖ്യ c;
+	വേണ്ടി(c = fgetc(നിവേശം); EOF != c; c = fgetc(നിവേശം))
 	{
 		/* Check for and deal with label */
-		if(':' == c)
+		എങ്കിൽ(':' == c)
 		{
-			c = storeLabel(input, ip);
+			c = storeLabel(നിവേശം, ip);
 		}
 
 		/* check for and deal with relative/absolute pointers to labels */
-		if(in_set(c, "%"))
+		എങ്കിൽ(in_set(c, "%"))
 		{ /* deal 4byte pointer (%) */
 			Update_Pointer(c);
-			c = fgetc(input);
+			c = fgetc(നിവേശം);
 		}
-		else process_byte(c, input, FALSE);
+		അല്ലെങ്കിൽ process_byte(c, നിവേശം, FALSE);
 	}
 }
 
-void second_pass(FILE* input)
+ശൂന്യം second_pass(FILE* നിവേശം)
 {
 	toggle = FALSE;
 	hold = 0;
 
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	പൂർണ്ണസംഖ്യ c;
+	വേണ്ടി(c = fgetc(നിവേശം); EOF != c; c = fgetc(നിവേശം))
 	{
-		if(':' == c) c = fgetc(input); /* Deal with : */
-		else if(in_set(c, "%")) storePointer(c);  /* Deal with %*/
-		else process_byte(c, input, TRUE);
+		എങ്കിൽ(':' == c) c = fgetc(നിവേശം); /* Deal with : */
+		അല്ലെങ്കിൽ എങ്കിൽ(in_set(c, "%")) storePointer(c);  /* Deal with %*/
+		അല്ലെങ്കിൽ process_byte(c, നിവേശം, TRUE);
 	}
 }
 
 /* Standard C main program */
-int main(int argc, char **argv)
+പൂർണ്ണസംഖ്യ പ്രധാന(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv)
 {
-	jump_table = NULL;
+	jump_table = ശൂന്യ;
 	output = stdout;
 
-	FILE* input = fopen(argv[1], "r");
+	FILE* നിവേശം = fopen(argv[1], "r");
 	output = stdout;
-	if(NULL != argv[2])
+	എങ്കിൽ(ശൂന്യ != argv[2])
 	{
 		output = fopen(argv[2], "w");
 		chmod(argv[2], 0700);
@@ -196,13 +196,13 @@ int main(int argc, char **argv)
 
 	/* Get all of the labels */
 	ip = 0;
-	first_pass(input);
-	rewind(input);
+	first_pass(നിവേശം);
+	rewind(നിവേശം);
 
 	/* Fix all the references*/
 	ip = 0;
-	second_pass(input);
+	second_pass(നിവേശം);
 
 	/* Set file as executable */
-	return EXIT_SUCCESS;
+	തിരികെ EXIT_SUCCESS;
 }

@@ -15,19 +15,19 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdlib.h>
-#include <stdio.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <stdio.h>
 
-int main (int argc, char** argv)
+പൂർണ്ണസംഖ്യ പ്രധാന (പൂർണ്ണസംഖ്യ argc, അക്ഷരം** argv)
 {
-	if(argc != 2)
+	എങ്കിൽ(argc != 2)
 	{
 		fputs("xeh $filename is the only valid input form\n", stderr);
 		exit(EXIT_FAILURE);
 	}
 
 	FILE* in = fopen(argv[1], "r");
-	if(NULL == in)
+	എങ്കിൽ(ശൂന്യ == in)
 	{
 		fputs("Unable to open file: ", stderr);
 		fputs(argv[1], stderr);
@@ -35,20 +35,20 @@ int main (int argc, char** argv)
 		exit(EXIT_FAILURE);
 	}
 
-	char* table = "0123456789ABCDEF";
-	int c = fgetc(in);
-	int col = 40;
-	while(EOF != c)
+	അക്ഷരം* table = "0123456789ABCDEF";
+	പൂർണ്ണസംഖ്യ c = fgetc(in);
+	പൂർണ്ണസംഖ്യ col = 40;
+	ആകുമ്പോൾ(EOF != c)
 	{
 		fputc(table[c / 16], stdout);
 		fputc(table[c % 16], stdout);
 		col = col - 2;
-		if(0 == col)
+		എങ്കിൽ(0 == col)
 		{
 			col = 40;
 			fputc('\n', stdout);
 		}
-		else fputc(' ', stdout);
+		അല്ലെങ്കിൽ fputc(' ', stdout);
 		c = fgetc(in);
 	}
 	fputc('\n', stdout);

@@ -15,69 +15,69 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include<stdio.h>
-#include<stdlib.h>
-#include<stdbool.h>
+#അന്തര്ഭാവ<stdio.h>
+#അന്തര്ഭാവ<stdlib.h>
+#അന്തര്ഭാവ<stdbool.h>
 
-void purge_line_comments()
+ശൂന്യം purge_വരി_comments()
 {
-	int c;
-	do
+	പൂർണ്ണസംഖ്യ c;
+	ചെയ്യുക
 	{
 		c = getchar();
 
-		if (EOF == c)
+		എങ്കിൽ (EOF == c)
 		{
 			exit(EXIT_SUCCESS);
 		}
-	} while ( '\n' != c );
+	} ആകുമ്പോൾ ( '\n' != c );
 }
 
-int hex(int c)
+പൂർണ്ണസംഖ്യ hex(പൂർണ്ണസംഖ്യ c)
 {
-	if (c >= '0' && c <= '9')
+	എങ്കിൽ (c >= '0' && c <= '9')
 	{
-		return (c - 48);
+		തിരികെ (c - 48);
 	}
-	else if (c >= 'a' && c <= 'z')
+	അല്ലെങ്കിൽ എങ്കിൽ (c >= 'a' && c <= 'z')
 	{
-		return (c - 87);
+		തിരികെ (c - 87);
 	}
-	else if (c >= 'A' && c <= 'Z')
+	അല്ലെങ്കിൽ എങ്കിൽ (c >= 'A' && c <= 'Z')
 	{
-		return (c - 55);
+		തിരികെ (c - 55);
 	}
 
 	printf("You managed to call a hex function without a hex value!!!\n");
 	exit(EXIT_FAILURE);
 }
 
-int main(int argc, char *argv[])
+പൂർണ്ണസംഖ്യ പ്രധാന(പൂർണ്ണസംഖ്യ argc, അക്ഷരം *argv[])
 {
-	int c;
-	int sum = 0;
+	പൂർണ്ണസംഖ്യ c;
+	പൂർണ്ണസംഖ്യ sum = 0;
 	bool toggle;
 	toggle = false;
 
-	do
+	ചെയ്യുക
 	{
 		c = getchar();
-		if ((c == '#') || (c == ';')) purge_line_comments();
-		else if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+		എങ്കിൽ ((c == '#') || (c == ';')) purge_വരി_comments();
+		അല്ലെങ്കിൽ എങ്കിൽ ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
 		{
-			if(!toggle)
+			എങ്കിൽ(!toggle)
 			{
 				sum = hex(c);
 				toggle = true;
 			}
-			else
+			അല്ലെങ്കിൽ
 			{
 				sum = (sum << 4) + hex(c);
 				toggle = false;
 				fputc(sum, stdout);
 			}
 		}
-	}while(c != EOF);
+	}ആകുമ്പോൾ(c != EOF);
 
 	exit(EXIT_SUCCESS);
 }
