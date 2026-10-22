@@ -15,42 +15,42 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdlib.h>
-#include <stdio.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <stdio.h>
 
-int main (int argc, char** argv)
+पूर्णाङ्क मुख्यम् (पूर्णाङ्क argc, वर्ण** argv)
 {
-	if(argc != 2)
+	यदि(argc != 2)
 	{
 		fputs("xeh $filename is the only valid input form\n", stderr);
-		exit(EXIT_FAILURE);
+		निर्गच्छ(EXIT_FAILURE);
 	}
 
-	FILE* in = fopen(argv[1], "r");
-	if(NULL == in)
+	FILE* अन्तर् = fopen(argv[1], "r");
+	यदि(रिक्त == अन्तर्)
 	{
 		fputs("Unable to open file: ", stderr);
 		fputs(argv[1], stderr);
 		fputs(" aborting to prevent problems\n", stderr);
-		exit(EXIT_FAILURE);
+		निर्गच्छ(EXIT_FAILURE);
 	}
 
-	char* table = "0123456789ABCDEF";
-	int c = fgetc(in);
-	int col = 40;
-	while(EOF != c)
+	वर्ण* सारणी = "0123456789ABCDEF";
+	पूर्णाङ्क c = fgetc(अन्तर्);
+	पूर्णाङ्क col = 40;
+	यावत्(EOF != c)
 	{
-		fputc(table[c / 16], stdout);
-		fputc(table[c % 16], stdout);
+		fputc(सारणी[c / 16], stdout);
+		fputc(सारणी[c % 16], stdout);
 		col = col - 2;
-		if(0 == col)
+		यदि(0 == col)
 		{
 			col = 40;
 			fputc('\n', stdout);
 		}
-		else fputc(' ', stdout);
-		c = fgetc(in);
+		अन्यथा fputc(' ', stdout);
+		c = fgetc(अन्तर्);
 	}
 	fputc('\n', stdout);
-	exit(EXIT_SUCCESS);
+	निर्गच्छ(EXIT_SUCCESS);
 }

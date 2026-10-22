@@ -15,69 +15,69 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include<stdio.h>
-#include<stdlib.h>
-#include<stdbool.h>
+#अन्तर्भाव<stdio.h>
+#अन्तर्भाव<stdlib.h>
+#अन्तर्भाव<stdbool.h>
 
-void purge_line_comments()
+शून्य purge_पङ्क्तिः_comments()
 {
-	int c;
-	do
+	पूर्णाङ्क c;
+	कुरु
 	{
-		c = getchar();
+		c = अक्षरं_पठ();
 
-		if (EOF == c)
+		यदि (EOF == c)
 		{
-			exit(EXIT_SUCCESS);
+			निर्गच्छ(EXIT_SUCCESS);
 		}
-	} while ( '\n' != c );
+	} यावत् ( '\n' != c );
 }
 
-int hex(int c)
+पूर्णाङ्क hex(पूर्णाङ्क c)
 {
-	if (c >= '0' && c <= '9')
+	यदि (c >= '0' && c <= '9')
 	{
-		return (c - 48);
+		प्रत्यागम (c - 48);
 	}
-	else if (c >= 'a' && c <= 'z')
+	अन्यथा यदि (c >= 'a' && c <= 'z')
 	{
-		return (c - 87);
+		प्रत्यागम (c - 87);
 	}
-	else if (c >= 'A' && c <= 'Z')
+	अन्यथा यदि (c >= 'A' && c <= 'Z')
 	{
-		return (c - 55);
+		प्रत्यागम (c - 55);
 	}
 
-	printf("You managed to call a hex function without a hex value!!!\n");
-	exit(EXIT_FAILURE);
+	प्रारूप_लिख("You managed to call a hex function without a hex value!!!\n");
+	निर्गच्छ(EXIT_FAILURE);
 }
 
-int main(int argc, char *argv[])
+पूर्णाङ्क मुख्यम्(पूर्णाङ्क argc, वर्ण *argv[])
 {
-	int c;
-	int sum = 0;
+	पूर्णाङ्क c;
+	पूर्णाङ्क योग = 0;
 	bool toggle;
 	toggle = false;
 
-	do
+	कुरु
 	{
-		c = getchar();
-		if ((c == '#') || (c == ';')) purge_line_comments();
-		else if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+		c = अक्षरं_पठ();
+		यदि ((c == '#') || (c == ';')) purge_पङ्क्तिः_comments();
+		अन्यथा यदि ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
 		{
-			if(!toggle)
+			यदि(!toggle)
 			{
-				sum = hex(c);
+				योग = hex(c);
 				toggle = true;
 			}
-			else
+			अन्यथा
 			{
-				sum = (sum << 4) + hex(c);
+				योग = (योग << 4) + hex(c);
 				toggle = false;
-				fputc(sum, stdout);
+				fputc(योग, stdout);
 			}
 		}
-	}while(c != EOF);
+	}यावत्(c != EOF);
 
-	exit(EXIT_SUCCESS);
+	निर्गच्छ(EXIT_SUCCESS);
 }

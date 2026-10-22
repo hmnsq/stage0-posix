@@ -16,133 +16,133 @@
 
 # Our writable space
 .data
-.global _start
+.वैश्विक _start
 hex:
 	# Purge Comment Lines
-	cmp $35, %rax
+	तुलय $35, %rax
 	je purge_comment
 	# deal all ascii less than 0
-	cmp $48, %rax
+	तुलय $48, %rax
 	jl ascii_other
 	# deal with 0-9
-	cmp $58, %rax
+	तुलय $58, %rax
 	jl ascii_num
 	# deal with all ascii less than A
-	cmp $65, %rax
+	तुलय $65, %rax
 	jl ascii_other
 	# deal with A-F
-	cmp $71, %rax
+	तुलय $71, %rax
 	jl ascii_high
 	# deal with all ascii less than a
-	cmp $97, %rax
+	तुलय $97, %rax
 	jl ascii_other
 	# deal with a-f
-	cmp $103, %rax
+	तुलय $103, %rax
 	jl ascii_low
 	# The rest that remains needs to be ignored
-	jmp ascii_other
+	कूर्द ascii_other
 
 purge_comment:
 	# Attempt to read 1 byte from STDIN
-	mov $1, %rdx          # set the size of chars we want
-	mov $input, %rsi      # Where to put it
-	mov $0, %rdi          # Where are we reading from
-	mov $0, %rax          # the syscall number for read
-	syscall               # call the Kernel
+	चालय $1, %rdx          # set the size of chars we want
+	चालय $निवेशः, %rsi      # Where to put it
+	चालय $0, %rdi          # Where are we reading from
+	चालय $0, %rax          # the syscall number for read
+	syscall               # आह्वान the Kernel
 
 	test %rax, %rax       # check what we got
-	jz Done               # Got EOF call it done
+	jz समाप्तम्               # Got EOF आह्वान it done
 
 	# load byte
-	movb input, %al       # load char
+	movb निवेशः, %al       # load char
 	movzx %al, %rax       # We have to zero extend it to use it
 
 	# Loop if not LF
-	cmp $10, %rax
+	तुलय $10, %rax
 	jne purge_comment
 
 	# Otherwise return -1
-	mov $-1, %rax
-	ret
+	चालय $-1, %rax
+	प्रत्यागच्छ
 
 ascii_num:
-	sub $48, %rax
-	ret
+	वियोजय $48, %rax
+	प्रत्यागच्छ
 ascii_low:
-	sub $87, %rax
-	ret
+	वियोजय $87, %rax
+	प्रत्यागच्छ
 ascii_high:
-	sub $55, %rax
-	ret
+	वियोजय $55, %rax
+	प्रत्यागच्छ
 ascii_other:
-	mov $-1, %rax
-	ret
+	चालय $-1, %rax
+	प्रत्यागच्छ
 
 _start:
 	# Our flag for byte processing
-	mov $-1, %r15
+	चालय $-1, %r15
 
 	# temp storage for the sum
-	mov $0, %r14
+	चालय $0, %r14
 
 loop:
 	# Attempt to read 1 byte from STDIN
-	mov $1, %rdx          # set the size of chars we want
-	mov $input, %rsi      # Where to put it
-	mov $0, %rdi          # Where are we reading from
-	mov $0, %rax          # the syscall number for read
-	syscall               # call the Kernel
+	चालय $1, %rdx          # set the size of chars we want
+	चालय $निवेशः, %rsi      # Where to put it
+	चालय $0, %rdi          # Where are we reading from
+	चालय $0, %rax          # the syscall number for read
+	syscall               # आह्वान the Kernel
 
 	test %rax, %rax       # check what we got
-	jz Done               # Got EOF call it done
+	jz समाप्तम्               # Got EOF आह्वान it done
 
 	# load byte
-	movb input, %al       # load char
+	movb निवेशः, %al       # load char
 	movzx %al, %rax       # We have to zero extend it to use it
 
 	# process byte
-	call hex
+	आह्वान hex
 
 	# deal with -1 values
-	cmp $0, %rax
+	तुलय $0, %rax
 	jl loop
 
 	# deal with toggle
-	cmp $0, %r15
+	तुलय $0, %r15
 	jge print
 
 	# process first byte of pair
-	mov %rax, %r14
-	mov $0, %r15
-	jmp loop
+	चालय %rax, %r14
+	चालय $0, %r15
+	कूर्द loop
 
 # process second byte of pair
 print:
 	# update the sum and store in output
 	shl $4, %r14
-	add %r14, %rax
-	mov %al, output
+	योजय %r14, %rax
+	चालय %al, output
 
 	# flip the toggle
-	mov $-1, %r15
+	चालय $-1, %r15
 
 	# Print our first Hex
-	mov $1, %rdx          # set the size of chars we want
-	mov $output, %rsi     # What we are writing
-	mov $1, %rdi          # Stdout File Descriptor
-	mov $1, %rax          # the syscall number for write
-	syscall               # call the Kernel
+	चालय $1, %rdx          # set the size of chars we want
+	चालय $output, %rsi     # What we are writing
+	चालय $1, %rdi          # Stdout File Descriptor
+	चालय $1, %rax          # the syscall number for write
+	syscall               # आह्वान the Kernel
 
-	jmp loop
+	कूर्द loop
 
-Done:
+समाप्तम्:
 	# program completed Successfully
-	mov $0, %rdi          # All is well
-	mov $60, %rax         # put the exit syscall number in eax
+	चालय $0, %rdi          # All is well
+	चालय $60, %rax         # put the exit syscall number in eax
 	syscall               # Call it a good day
 
 read_size = 2
-input:
+निवेशः:
 	.byte read_size
 output:
 	.byte 0x00

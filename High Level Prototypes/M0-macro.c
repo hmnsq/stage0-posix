@@ -15,329 +15,329 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <string.h>
-#define max_string 63
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <stdint.h>
+#अन्तर्भाव <stdbool.h>
+#अन्तर्भाव <string.h>
+#परिभाषय max_string 63
 
 FILE* source_file;
 bool Reached_EOF;
 
-struct Token
+संरचना Token
 {
-	struct Token* next;
+	संरचना Token* अग्र;
 	uint8_t type;
-	char* Text;
-	char* Expression;
+	वर्ण* Text;
+	वर्ण* Expression;
 };
 
-enum type
+गणना type
 {
 	macro = 1,
 	str = (1 << 1)
 };
 
-struct Token* newToken()
+संरचना Token* newToken()
 {
-	struct Token* p;
+	संरचना Token* p;
 
-	p = calloc (1, sizeof (struct Token));
-	if (NULL == p)
+	p = शून्यस्मृतिं_देहि (1, परिमाण (संरचना Token));
+	यदि (रिक्त == p)
 	{
 		fprintf (stderr, "calloc failed.\n");
-		exit (EXIT_FAILURE);
+		निर्गच्छ (EXIT_FAILURE);
 	}
 
-	return p;
+	प्रत्यागम p;
 }
 
-struct Token* addToken(struct Token* head, struct Token* p)
+संरचना Token* सङ्कलय_Token(संरचना Token* शीर्ष, संरचना Token* p)
 {
-	if(NULL == head)
+	यदि(रिक्त == शीर्ष)
 	{
-		return p;
+		प्रत्यागम p;
 	}
-	if(NULL == head->next)
+	यदि(रिक्त == शीर्ष->अग्र)
 	{
-		head->next = p;
+		शीर्ष->अग्र = p;
 	}
-	else
+	अन्यथा
 	{
-		addToken(head->next, p);
+		सङ्कलय_Token(शीर्ष->अग्र, p);
 	}
-	return head;
+	प्रत्यागम शीर्ष;
 }
 
-void purge_lineComment()
+शून्य purge_पङ्क्तिः_Comment()
 {
-	int c = fgetc(source_file);
-	while((10 != c) && (13 != c))
+	पूर्णाङ्क c = fgetc(source_file);
+	यावत्((10 != c) && (13 != c))
 	{
 		c = fgetc(source_file);
 	}
 }
 
-char* store_atom(char c)
+वर्ण* store_atom(वर्ण c)
 {
-	char* store = calloc(max_string + 1, sizeof(char));
+	वर्ण* store = शून्यस्मृतिं_देहि(max_string + 1, परिमाण(वर्ण));
 	int32_t ch;
 	uint32_t i = 0;
 	ch = c;
-	do
+	कुरु
 	{
-		store[i] = (char)ch;
+		store[i] = (वर्ण)ch;
 		ch = fgetc(source_file);
 		i = i + 1;
-	} while ((9 != ch) && (10 != ch) && (32 != ch));
+	} यावत् ((9 != ch) && (10 != ch) && (32 != ch));
 
-	return store;
+	प्रत्यागम store;
 }
 
-char* store_string(char c)
+वर्ण* store_string(वर्ण c)
 {
-	char* store = calloc(max_string + 1, sizeof(char));
+	वर्ण* store = शून्यस्मृतिं_देहि(max_string + 1, परिमाण(वर्ण));
 	int32_t ch;
 	uint32_t i = 0;
 	ch = c;
-	do
+	कुरु
 	{
-		store[i] = (char)ch;
+		store[i] = (वर्ण)ch;
 		i = i + 1;
 		ch = fgetc(source_file);
-	} while(ch != c);
+	} यावत्(ch != c);
 
-	return store;
+	प्रत्यागम store;
 }
 
-struct Token* Tokenize_Line(struct Token* head)
+संरचना Token* Tokenize_पङ्क्तिः(संरचना Token* शीर्ष)
 {
 
 	int32_t c;
 	c = fgetc(source_file);
 
-	if((35 == c) || (59 == c))
+	यदि((35 == c) || (59 == c))
 	{
-		purge_lineComment();
-		return Tokenize_Line(head);
+		purge_पङ्क्तिः_Comment();
+		प्रत्यागम Tokenize_पङ्क्तिः(शीर्ष);
 	}
 
-	if((9 == c) || (10 == c) || (32 == c))
+	यदि((9 == c) || (10 == c) || (32 == c))
 	{
-		return Tokenize_Line(head);
+		प्रत्यागम Tokenize_पङ्क्तिः(शीर्ष);
 	}
 
-	struct Token* p = newToken();
-	if(-1 == c)
+	संरचना Token* p = newToken();
+	यदि(-1 == c)
 	{
 		Reached_EOF = true;
-		free(p);
-		return head;
+		मुक्त(p);
+		प्रत्यागम शीर्ष;
 	}
-	else if((34 == c) || (39 == c))
+	अन्यथा यदि((34 == c) || (39 == c))
 	{
 		p->Text = store_string(c);
 		p->type = str;
 	}
-	else
+	अन्यथा
 	{
 		p->Text = store_atom(c);
 	}
 
-	return addToken(head, p);
+	प्रत्यागम सङ्कलय_Token(शीर्ष, p);
 }
 
-void setExpression(struct Token* p, char match[], char Exp[])
+शून्य समुच्चयः_Expression(संरचना Token* p, वर्ण मेलनम्[], वर्ण Exp[])
 {
 	/* Leave macros alone */
-	if((p->type & macro))
+	यदि((p->type & macro))
 	{
-		setExpression(p->next, match, Exp);
-		return;
+		समुच्चयः_Expression(p->अग्र, मेलनम्, Exp);
+		प्रत्यागम;
 	}
 
 	/* Only if there is an exact match replace */
-	if(0 == strncmp(p->Text, match, max_string))
+	यदि(0 == वाक्ये_तुलय(p->Text, मेलनम्, max_string))
 	{
 		p->Expression = Exp;
 	}
 
-	if(NULL != p->next)
+	यदि(रिक्त != p->अग्र)
 	{
-		setExpression(p->next, match, Exp);
+		समुच्चयः_Expression(p->अग्र, मेलनम्, Exp);
 	}
 
 }
 
-void identify_macros(struct Token* p)
+शून्य identify_macros(संरचना Token* p)
 {
-	if(0 == strncmp(p->Text, "DEFINE", max_string))
+	यदि(0 == वाक्ये_तुलय(p->Text, "DEFINE", max_string))
 	{
 		p->type = macro;
-		p->Text = p->next->Text;
-		if(p->next->next->type & str)
+		p->Text = p->अग्र->Text;
+		यदि(p->अग्र->अग्र->type & str)
 		{
-			p->Expression = p->next->next->Text + 1;
+			p->Expression = p->अग्र->अग्र->Text + 1;
 		}
-		else
+		अन्यथा
 		{
-			p->Expression = p->next->next->Text;
+			p->Expression = p->अग्र->अग्र->Text;
 		}
-		p->next = p->next->next->next;
+		p->अग्र = p->अग्र->अग्र->अग्र;
 	}
 
-	if(NULL != p->next)
+	यदि(रिक्त != p->अग्र)
 	{
-		identify_macros(p->next);
+		identify_macros(p->अग्र);
 	}
 }
 
-void line_macro(struct Token* p)
+शून्य पङ्क्तिः_macro(संरचना Token* p)
 {
-	if(p->type & macro)
+	यदि(p->type & macro)
 	{
-		setExpression(p->next, p->Text, p->Expression);
+		समुच्चयः_Expression(p->अग्र, p->Text, p->Expression);
 	}
 
-	if(NULL != p->next)
+	यदि(रिक्त != p->अग्र)
 	{
-		line_macro(p->next);
+		पङ्क्तिः_macro(p->अग्र);
 	}
 }
 
-void hexify_string(struct Token* p)
+शून्य hexify_string(संरचना Token* p)
 {
-	char table[16] = {0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46};
-	int i = ((strnlen(p->Text + 1 , max_string)/4) + 1) * 8;
+	वर्ण सारणी[16] = {0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46};
+	पूर्णाङ्क i = ((strnlen(p->Text + 1 , max_string)/4) + 1) * 8;
 
-	char* d = calloc(max_string, sizeof(char));
+	वर्ण* d = शून्यस्मृतिं_देहि(max_string, परिमाण(वर्ण));
 	p->Expression = d;
 
-	while(0 < i)
+	यावत्(0 < i)
 	{
 		i = i - 1;
 		d[i] = 0x30;
 	}
 
-	while( i < max_string)
+	यावत्( i < max_string)
 	{
-		if(0 == p->Text[i+1])
+		यदि(0 == p->Text[i+1])
 		{
 			i = max_string;
 		}
-		else
+		अन्यथा
 		{
-			d[2*i]  = table[p->Text[i+1] / 16];
-			d[2*i + 1] = table[p->Text[i+1] % 16];
+			d[2*i]  = सारणी[p->Text[i+1] / 16];
+			d[2*i + 1] = सारणी[p->Text[i+1] % 16];
 			i = i + 1;
 		}
 	}
 }
 
-void process_string(struct Token* p)
+शून्य process_string(संरचना Token* p)
 {
-	if(p->type & str)
+	यदि(p->type & str)
 	{
-		if('\'' == p->Text[0])
+		यदि('\'' == p->Text[0])
 		{
 			p->Expression = p->Text + 1;
 		}
-		else if('"' == p->Text[0])
+		अन्यथा यदि('"' == p->Text[0])
 		{
 			hexify_string(p);
 		}
 	}
 
-	if(NULL != p->next)
+	यदि(रिक्त != p->अग्र)
 	{
-		process_string(p->next);
+		process_string(p->अग्र);
 	}
 }
 
 
-void preserve_other(struct Token* p)
+शून्य preserve_other(संरचना Token* p)
 {
-	if(NULL != p->next)
+	यदि(रिक्त != p->अग्र)
 	{
-		preserve_other(p->next);
+		preserve_other(p->अग्र);
 	}
 
-	if((NULL == p->Expression) && !(p->type & macro))
+	यदि((रिक्त == p->Expression) && !(p->type & macro))
 	{
 		p->Expression = p->Text;
 	}
 }
 
-uint16_t numerate_string(char a[])
+uint16_t numerate_string(वर्ण a[])
 {
-	char *ptr;
-	return (uint16_t)strtol(a, &ptr, 0);
+	वर्ण *ptr;
+	प्रत्यागम (uint16_t)strtol(a, &ptr, 0);
 }
 
-void eval_immediates(struct Token* p)
+शून्य eval_immediates(संरचना Token* p)
 {
-	if(NULL != p->next)
+	यदि(रिक्त != p->अग्र)
 	{
-		eval_immediates(p->next);
+		eval_immediates(p->अग्र);
 	}
 
-	if((NULL == p->Expression) && !(p->type & macro))
+	यदि((रिक्त == p->Expression) && !(p->type & macro))
 	{
-		uint16_t value;
-		value = numerate_string(p->Text);
+		uint16_t मानम्;
+		मानम् = numerate_string(p->Text);
 
-		if(('0' == p->Text[0]) || (0 != value))
+		यदि(('0' == p->Text[0]) || (0 != मानम्))
 		{
-			char* c = calloc(5, sizeof(char));
-			sprintf(c, "%04x", value);
+			वर्ण* c = शून्यस्मृतिं_देहि(5, परिमाण(वर्ण));
+			sprintf(c, "%04x", मानम्);
 			p->Expression = c;
 		}
 	}
 }
 
-void print_hex(struct Token* p)
+शून्य print_hex(संरचना Token* p)
 {
-	if(p->type ^ macro)
+	यदि(p->type ^ macro)
 	{
 		fprintf(stdout, "\n%s", p->Expression);
 	}
 
-	if(NULL != p->next)
+	यदि(रिक्त != p->अग्र)
 	{
-		print_hex(p->next);
+		print_hex(p->अग्र);
 	}
-	else
+	अन्यथा
 	{
 		fprintf(stdout, "\n");
 	}
 }
 
 /* Standard C main program */
-int main(int argc, char **argv)
+पूर्णाङ्क मुख्यम्(पूर्णाङ्क argc, वर्ण **argv)
 {
 	/* Make sure we have a program tape to run */
-	if (argc < 2)
+	यदि (argc < 2)
 	{
 		fprintf(stderr, "Usage: %s $FileName\nWhere $FileName is the name of the paper tape of the program being run\n", argv[0]);
-		return EXIT_FAILURE;
+		प्रत्यागम EXIT_FAILURE;
 	}
 
 	source_file = fopen(argv[1], "r");
 
 	Reached_EOF = false;
-	struct Token* head = NULL;
-	while(!Reached_EOF)
+	संरचना Token* शीर्ष = रिक्त;
+	यावत्(!Reached_EOF)
 	{
-		head = Tokenize_Line(head);
+		शीर्ष = Tokenize_पङ्क्तिः(शीर्ष);
 	}
 
-	identify_macros(head);
-	line_macro(head);
-	process_string(head);
-	eval_immediates(head);
-	preserve_other(head);
-	print_hex(head);
+	identify_macros(शीर्ष);
+	पङ्क्तिः_macro(शीर्ष);
+	process_string(शीर्ष);
+	eval_immediates(शीर्ष);
+	preserve_other(शीर्ष);
+	print_hex(शीर्ष);
 
-	return EXIT_SUCCESS;
+	प्रत्यागम EXIT_SUCCESS;
 }
