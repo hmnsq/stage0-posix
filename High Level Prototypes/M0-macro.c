@@ -70,7 +70,7 @@ struct Token* addToken(struct Token* head, struct Token* p)
 	return head;
 }
 
-void purge_lineComment()
+void purge_लिन्या_Comment()
 {
 	int c = fgetc(source_file);
 	while((10 != c) && (13 != c))
@@ -111,7 +111,7 @@ char* store_string(char c)
 	return store;
 }
 
-struct Token* Tokenize_Line(struct Token* head)
+struct Token* Tokenize_लिन्या(struct Token* head)
 {
 
 	int32_t c;
@@ -119,13 +119,13 @@ struct Token* Tokenize_Line(struct Token* head)
 
 	if((35 == c) || (59 == c))
 	{
-		purge_lineComment();
-		return Tokenize_Line(head);
+		purge_लिन्या_Comment();
+		return Tokenize_लिन्या(head);
 	}
 
 	if((9 == c) || (10 == c) || (32 == c))
 	{
-		return Tokenize_Line(head);
+		return Tokenize_लिन्या(head);
 	}
 
 	struct Token* p = newToken();
@@ -193,7 +193,7 @@ void identify_macros(struct Token* p)
 	}
 }
 
-void line_macro(struct Token* p)
+void लिन्या_macro(struct Token* p)
 {
 	if(p->type & macro)
 	{
@@ -202,7 +202,7 @@ void line_macro(struct Token* p)
 
 	if(NULL != p->next)
 	{
-		line_macro(p->next);
+		लिन्या_macro(p->next);
 	}
 }
 
@@ -284,19 +284,19 @@ void eval_immediates(struct Token* p)
 
 	if((NULL == p->Expression) && !(p->type & macro))
 	{
-		uint16_t value;
-		value = numerate_string(p->Text);
+		uint16_t हालागा;
+		हालागा = numerate_string(p->Text);
 
-		if(('0' == p->Text[0]) || (0 != value))
+		if(('0' == p->Text[0]) || (0 != हालागा))
 		{
 			char* c = calloc(5, sizeof(char));
-			sprintf(c, "%04x", value);
+			sprintf(c, "%04x", हालागा);
 			p->Expression = c;
 		}
 	}
 }
 
-void print_hex(struct Token* p)
+void इलिम्बाग_hex(struct Token* p)
 {
 	if(p->type ^ macro)
 	{
@@ -305,7 +305,7 @@ void print_hex(struct Token* p)
 
 	if(NULL != p->next)
 	{
-		print_hex(p->next);
+		इलिम्बाग_hex(p->next);
 	}
 	else
 	{
@@ -329,15 +329,15 @@ int main(int argc, char **argv)
 	struct Token* head = NULL;
 	while(!Reached_EOF)
 	{
-		head = Tokenize_Line(head);
+		head = Tokenize_लिन्या(head);
 	}
 
 	identify_macros(head);
-	line_macro(head);
+	लिन्या_macro(head);
 	process_string(head);
 	eval_immediates(head);
 	preserve_other(head);
-	print_hex(head);
+	इलिम्बाग_hex(head);
 
 	return EXIT_SUCCESS;
 }

@@ -23,28 +23,28 @@
 #define FALSE 0
 #define TRUE 1
 #define max_string 4096
-#define max_args 256
+#define max_मगा_कातविरान 256
 
 char** tokens;
 int command_done;
 
 /* Function for purging line comments */
-void collect_comment(FILE* input)
+void collect_comment(FILE* पासोक)
 {
 	int c;
 	do
 	{
-		c = fgetc(input);
+		c = fgetc(पासोक);
 		if(EOF == c) exit(EXIT_FAILURE);
 	} while('\n' != c);
 }
 
 /* Function for collecting RAW strings and removing the " that goes with them */
-int collect_string(FILE* input, int index, char* target)
+int collect_string(FILE* पासोक, int index, char* target)
 {
 	int c;
 collect_string_loop:
-	c = fgetc(input);
+	c = fgetc(पासोक);
 	if(EOF == c) exit(EXIT_FAILURE);
 	else if('"' == c) return index;
 	target[index] = c;
@@ -53,13 +53,13 @@ collect_string_loop:
 }
 
 /* Function to collect an individual argument or purge a comment */
-char* collect_token(FILE* input)
+char* collect_token(FILE* पासोक)
 {
 	char* token = calloc(max_string, sizeof(char));
 	int c;
 	int i = 0;
 collect_token_loop:
-	c = fgetc(input);
+	c = fgetc(पासोक);
 	if(EOF == c) exit(EXIT_SUCCESS);
 	else if((' ' == c) || ('\t' == c)) goto collect_token_done;
 	else if('\n' == c)
@@ -69,18 +69,18 @@ collect_token_loop:
 	}
 	else if('"' == c)
 	{ /* RAW strings are everything between a pair of "" */
-		i = collect_string(input, i, token);
+		i = collect_string(पासोक, i, token);
 		goto collect_token_done;
 	}
 	else if('#' == c)
 	{ /* Line comments to aid the humans */
-		collect_comment(input);
+		collect_comment(पासोक);
 		command_done = 1;
 		goto collect_token_done;
 	}
 	else if('\\' == c)
 	{ /* Support for end of line escapes, drops the char after */
-		fgetc(input);
+		fgetc(पासोक);
 		goto collect_token_done;
 	}
 	token[i] = c;
@@ -107,7 +107,7 @@ int main(int argc, char** argv, char** envp)
 	if(NULL == script) exit(EXIT_FAILURE);
 
 main_loop:
-	tokens = calloc(max_args, sizeof(char*));
+	tokens = calloc(max_मगा_कातविरान, sizeof(char*));
 
 	int i = 0;
 	int status = 0;

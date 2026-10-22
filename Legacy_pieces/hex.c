@@ -19,7 +19,7 @@
 #include<stdlib.h>
 #include<stdbool.h>
 
-void purge_line_comments()
+void purge_लिन्या_comments()
 {
 	int c;
 	do
@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
 	do
 	{
 		c = getchar();
-		if ((c == '#') || (c == ';')) purge_line_comments();
+		if ((c == '#') || (c == ';')) purge_लिन्या_comments();
 		else if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
 		{
 			if(!toggle)

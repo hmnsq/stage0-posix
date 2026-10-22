@@ -68,16 +68,16 @@ int storeLabel(FILE* source_file, int ip)
 }
 
 
-void outputPointer(int displacement, int number_of_bytes)
+void outputPointer(int displacement, int नुमेरो_of_bytes)
 {
-	unsigned value = displacement;
+	unsigned हालागा = displacement;
 
-	while(number_of_bytes > 0)
+	while(नुमेरो_of_bytes > 0)
 	{
-		unsigned byte = value % 256;
-		value = value / 256;
+		unsigned byte = हालागा % 256;
+		हालागा = हालागा / 256;
 		fputc(byte, output);
-		number_of_bytes = number_of_bytes - 1;
+		नुमेरो_of_bytes = नुमेरो_of_bytes - 1;
 	}
 }
 
@@ -105,7 +105,7 @@ void storePointer(char ch)
 	else exit(EXIT_FAILURE);
 }
 
-void line_Comment(FILE* source_file)
+void लिन्या_Comment(FILE* source_file)
 {
 	int c = fgetc(source_file);
 	while(!in_set(c, "\n\r"))
@@ -120,7 +120,7 @@ int hex(int c, FILE* source_file)
 	if (in_set(c, "0123456789")) return (c - 48);
 	else if (in_set(c, "abcdef")) return (c - 87);
 	else if (in_set(c, "ABCDEF")) return (c - 55);
-	else if (in_set(c, "#;")) line_Comment(source_file);
+	else if (in_set(c, "#;")) लिन्या_Comment(source_file);
 	return -1;
 }
 
@@ -144,39 +144,39 @@ void process_byte(char c, FILE* source_file, int write)
 	}
 }
 
-void first_pass(FILE* input)
+void first_pass(FILE* पासोक)
 {
 	toggle = FALSE;
 	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	for(c = fgetc(पासोक); EOF != c; c = fgetc(पासोक))
 	{
 		/* Check for and deal with label */
 		if(':' == c)
 		{
-			c = storeLabel(input, ip);
+			c = storeLabel(पासोक, ip);
 		}
 
 		/* check for and deal with relative/absolute pointers to labels */
 		if(in_set(c, "%"))
 		{ /* deal 4byte pointer (%) */
 			Update_Pointer(c);
-			c = fgetc(input);
+			c = fgetc(पासोक);
 		}
-		else process_byte(c, input, FALSE);
+		else process_byte(c, पासोक, FALSE);
 	}
 }
 
-void second_pass(FILE* input)
+void second_pass(FILE* पासोक)
 {
 	toggle = FALSE;
 	hold = 0;
 
 	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	for(c = fgetc(पासोक); EOF != c; c = fgetc(पासोक))
 	{
-		if(':' == c) c = fgetc(input); /* Deal with : */
+		if(':' == c) c = fgetc(पासोक); /* Deal with : */
 		else if(in_set(c, "%")) storePointer(c);  /* Deal with %*/
-		else process_byte(c, input, TRUE);
+		else process_byte(c, पासोक, TRUE);
 	}
 }
 
@@ -186,7 +186,7 @@ int main(int argc, char **argv)
 	jump_table = NULL;
 	output = stdout;
 
-	FILE* input = fopen(argv[1], "r");
+	FILE* पासोक = fopen(argv[1], "r");
 	output = stdout;
 	if(NULL != argv[2])
 	{
@@ -196,12 +196,12 @@ int main(int argc, char **argv)
 
 	/* Get all of the labels */
 	ip = 0;
-	first_pass(input);
-	rewind(input);
+	first_pass(पासोक);
+	rewind(पासोक);
 
 	/* Fix all the references*/
 	ip = 0;
-	second_pass(input);
+	second_pass(पासोक);
 
 	/* Set file as executable */
 	return EXIT_SUCCESS;

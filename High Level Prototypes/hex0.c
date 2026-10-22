@@ -28,7 +28,7 @@
 /* Globals */
 FILE* output;
 
-void line_Comment(FILE* source_file)
+void लिन्या_Comment(FILE* source_file)
 {
 	int c = fgetc(source_file);
 	while(!in_set(c, "\n\r"))
@@ -43,7 +43,7 @@ int hex(int c, FILE* source_file)
 	if (in_set(c, "0123456789")) return (c - 48);
 	else if (in_set(c, "abcdef")) return (c - 87);
 	else if (in_set(c, "ABCDEF")) return (c - 55);
-	else if (in_set(c, "#;")) line_Comment(source_file);
+	else if (in_set(c, "#;")) लिन्या_Comment(source_file);
 	return -1;
 }
 
@@ -66,13 +66,13 @@ void process_byte(char c, FILE* source_file)
 	}
 }
 
-void first_pass(FILE* input)
+void first_pass(FILE* पासोक)
 {
 	toggle = FALSE;
 	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	for(c = fgetc(पासोक); EOF != c; c = fgetc(पासोक))
 	{
-		process_byte(c, input);
+		process_byte(c, पासोक);
 	}
 }
 
@@ -81,7 +81,7 @@ int main(int argc, char **argv)
 {
 	output = stdout;
 
-	FILE* input = fopen(argv[1], "r");
+	FILE* पासोक = fopen(argv[1], "r");
 	output = stdout;
 	if(NULL != argv[2])
 	{
@@ -90,7 +90,7 @@ int main(int argc, char **argv)
 	}
 
 	/* do the work */
-	first_pass(input);
+	first_pass(पासोक);
 
 	/* Set file as executable */
 	return EXIT_SUCCESS;
