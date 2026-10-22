@@ -21,63 +21,63 @@
 
 void purge_line_comments()
 {
-	int c;
+	цяло c;
 	do
 	{
 		c = getchar();
 
-		if (EOF == c)
+		ако (EOF == c)
 		{
 			exit(EXIT_SUCCESS);
 		}
-	} while ( '\n' != c );
+	} докато ( '\n' != c );
 }
 
-int hex(int c)
+цяло hex(цяло c)
 {
-	if (c >= '0' && c <= '9')
+	ако (c >= '0' && c <= '9')
 	{
-		return (c - 48);
+		върни (c - 48);
 	}
-	else if (c >= 'a' && c <= 'z')
+	иначе ако (c >= 'a' && c <= 'z')
 	{
-		return (c - 87);
+		върни (c - 87);
 	}
-	else if (c >= 'A' && c <= 'Z')
+	иначе ако (c >= 'A' && c <= 'Z')
 	{
-		return (c - 55);
+		върни (c - 55);
 	}
 
 	printf("You managed to call a hex function without a hex value!!!\n");
 	exit(EXIT_FAILURE);
 }
 
-int main(int argc, char *argv[])
+цяло main(цяло argc, char *argv[])
 {
-	int c;
-	int sum = 0;
+	цяло c;
+	цяло sum = 0;
 	bool toggle;
 	toggle = false;
 
 	do
 	{
 		c = getchar();
-		if ((c == '#') || (c == ';')) purge_line_comments();
-		else if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+		ако ((c == '#') || (c == ';')) purge_line_comments();
+		иначе ако ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
 		{
-			if(!toggle)
+			ако(!toggle)
 			{
 				sum = hex(c);
 				toggle = true;
 			}
-			else
+			иначе
 			{
 				sum = (sum << 4) + hex(c);
 				toggle = false;
 				fputc(sum, stdout);
 			}
 		}
-	}while(c != EOF);
+	}докато(c != EOF);
 
 	exit(EXIT_SUCCESS);
 }
