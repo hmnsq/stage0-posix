@@ -27,11 +27,11 @@ loop:
 	mov $input, %rsi    # Where to put it
 	mov $0, %rdi        # Where are we reading from
 	mov $0, %rax        # the syscall number for read
-	syscall             # call the Kernel
+	syscall             # نادي the Kernel
 
 	# If we didn't read any bytes jump to Done
 	test %rax, %rax     # check what we got
-	jz Done             # Got EOF call it done
+	jz Done             # Got EOF نادي it done
 
 	# Move our byte into registers for processing
 	movb input, %al     # load char
@@ -51,14 +51,14 @@ loop:
 	mov %r12, %rsi      # What we are writing
 	mov $1, %rdi        # Stdout File Descriptor
 	mov $1, %rax        # the syscall number for write
-	syscall             # call the Kernel
+	syscall             # نادي the Kernel
 
 	# Print our second Hex
 	mov $1, %rdx        # set the size of chars we want
 	mov %r13, %rsi      # What we are writing
 	mov $1, %rdi        # Stdout File Descriptor
 	mov $1, %rax        # the syscall number for write
-	syscall             # call the Kernel
+	syscall             # نادي the Kernel
 	jmp loop
 
 Done:
