@@ -15,69 +15,69 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include<stdio.h>
-#include<stdlib.h>
-#include<stdbool.h>
+#অন্তর্ভাৱ<stdio.h>
+#অন্তর্ভাৱ<stdlib.h>
+#অন্তর্ভাৱ<stdbool.h>
 
-void purge_line_comments()
+শূন্য purge_সাৰি_comments()
 {
-	int c;
-	do
+	পূর্ণাঙ্ক c;
+	কৰা
 	{
 		c = getchar();
 
-		if (EOF == c)
+		যদি (EOF == c)
 		{
 			exit(EXIT_SUCCESS);
 		}
-	} while ( '\n' != c );
+	} যেতিয়ালৈ ( '\n' != c );
 }
 
-int hex(int c)
+পূর্ণাঙ্ক hex(পূর্ণাঙ্ক c)
 {
-	if (c >= '0' && c <= '9')
+	যদি (c >= '0' && c <= '9')
 	{
-		return (c - 48);
+		ঘূৰাই (c - 48);
 	}
-	else if (c >= 'a' && c <= 'z')
+	অন্যথা যদি (c >= 'a' && c <= 'z')
 	{
-		return (c - 87);
+		ঘূৰাই (c - 87);
 	}
-	else if (c >= 'A' && c <= 'Z')
+	অন্যথা যদি (c >= 'A' && c <= 'Z')
 	{
-		return (c - 55);
+		ঘূৰাই (c - 55);
 	}
 
 	printf("You managed to call a hex function without a hex value!!!\n");
 	exit(EXIT_FAILURE);
 }
 
-int main(int argc, char *argv[])
+পূর্ণাঙ্ক main(পূর্ণাঙ্ক argc, ৱর্ণ *argv[])
 {
-	int c;
-	int sum = 0;
+	পূর্ণাঙ্ক c;
+	পূর্ণাঙ্ক sum = 0;
 	bool toggle;
 	toggle = false;
 
-	do
+	কৰা
 	{
 		c = getchar();
-		if ((c == '#') || (c == ';')) purge_line_comments();
-		else if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+		যদি ((c == '#') || (c == ';')) purge_সাৰি_comments();
+		অন্যথা যদি ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
 		{
-			if(!toggle)
+			যদি(!toggle)
 			{
 				sum = hex(c);
 				toggle = true;
 			}
-			else
+			অন্যথা
 			{
 				sum = (sum << 4) + hex(c);
 				toggle = false;
 				fputc(sum, stdout);
 			}
 		}
-	}while(c != EOF);
+	}যেতিয়ালৈ(c != EOF);
 
 	exit(EXIT_SUCCESS);
 }

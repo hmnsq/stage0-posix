@@ -15,218 +15,218 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <string.h>
+#অন্তর্ভাৱ <stdio.h>
+#অন্তর্ভাৱ <stdlib.h>
+#অন্তর্ভাৱ <stdint.h>
+#অন্তর্ভাৱ <stdbool.h>
+#অন্তর্ভাৱ <string.h>
 #define max_string 63
 
 FILE* source_file;
 bool Reached_EOF;
 
-struct Token
+সংরচনা Token
 {
-	struct Token* next;
+	সংরচনা Token* next;
 	uint8_t type;
-	char* Text;
-	char* Expression;
+	ৱর্ণ* Text;
+	ৱর্ণ* Expression;
 };
 
-enum type
+গণনা type
 {
 	macro = 1,
 	str = (1 << 1)
 };
 
-struct Token* newToken()
+সংরচনা Token* newToken()
 {
-	struct Token* p;
+	সংরচনা Token* p;
 
-	p = calloc (1, sizeof (struct Token));
-	if (NULL == p)
+	p = calloc (1, পরিমাণ (সংরচনা Token));
+	যদি (রিক্ত == p)
 	{
 		fprintf (stderr, "calloc failed.\n");
 		exit (EXIT_FAILURE);
 	}
 
-	return p;
+	ঘূৰাই p;
 }
 
-struct Token* addToken(struct Token* head, struct Token* p)
+সংরচনা Token* addToken(সংরচনা Token* head, সংরচনা Token* p)
 {
-	if(NULL == head)
+	যদি(রিক্ত == head)
 	{
-		return p;
+		ঘূৰাই p;
 	}
-	if(NULL == head->next)
+	যদি(রিক্ত == head->next)
 	{
 		head->next = p;
 	}
-	else
+	অন্যথা
 	{
 		addToken(head->next, p);
 	}
-	return head;
+	ঘূৰাই head;
 }
 
-void purge_lineComment()
+শূন্য purge_সাৰি_Comment()
 {
-	int c = fgetc(source_file);
-	while((10 != c) && (13 != c))
+	পূর্ণাঙ্ক c = fgetc(source_file);
+	যেতিয়ালৈ((10 != c) && (13 != c))
 	{
 		c = fgetc(source_file);
 	}
 }
 
-char* store_atom(char c)
+ৱর্ণ* store_atom(ৱর্ণ c)
 {
-	char* store = calloc(max_string + 1, sizeof(char));
+	ৱর্ণ* store = calloc(max_string + 1, পরিমাণ(ৱর্ণ));
 	int32_t ch;
 	uint32_t i = 0;
 	ch = c;
-	do
+	কৰা
 	{
-		store[i] = (char)ch;
+		store[i] = (ৱর্ণ)ch;
 		ch = fgetc(source_file);
 		i = i + 1;
-	} while ((9 != ch) && (10 != ch) && (32 != ch));
+	} যেতিয়ালৈ ((9 != ch) && (10 != ch) && (32 != ch));
 
-	return store;
+	ঘূৰাই store;
 }
 
-char* store_string(char c)
+ৱর্ণ* store_string(ৱর্ণ c)
 {
-	char* store = calloc(max_string + 1, sizeof(char));
+	ৱর্ণ* store = calloc(max_string + 1, পরিমাণ(ৱর্ণ));
 	int32_t ch;
 	uint32_t i = 0;
 	ch = c;
-	do
+	কৰা
 	{
-		store[i] = (char)ch;
+		store[i] = (ৱর্ণ)ch;
 		i = i + 1;
 		ch = fgetc(source_file);
-	} while(ch != c);
+	} যেতিয়ালৈ(ch != c);
 
-	return store;
+	ঘূৰাই store;
 }
 
-struct Token* Tokenize_Line(struct Token* head)
+সংরচনা Token* Tokenize_সাৰি(সংরচনা Token* head)
 {
 
 	int32_t c;
 	c = fgetc(source_file);
 
-	if((35 == c) || (59 == c))
+	যদি((35 == c) || (59 == c))
 	{
-		purge_lineComment();
-		return Tokenize_Line(head);
+		purge_সাৰি_Comment();
+		ঘূৰাই Tokenize_সাৰি(head);
 	}
 
-	if((9 == c) || (10 == c) || (32 == c))
+	যদি((9 == c) || (10 == c) || (32 == c))
 	{
-		return Tokenize_Line(head);
+		ঘূৰাই Tokenize_সাৰি(head);
 	}
 
-	struct Token* p = newToken();
-	if(-1 == c)
+	সংরচনা Token* p = newToken();
+	যদি(-1 == c)
 	{
 		Reached_EOF = true;
-		free(p);
-		return head;
+		মুক্ত(p);
+		ঘূৰাই head;
 	}
-	else if((34 == c) || (39 == c))
+	অন্যথা যদি((34 == c) || (39 == c))
 	{
 		p->Text = store_string(c);
 		p->type = str;
 	}
-	else
+	অন্যথা
 	{
 		p->Text = store_atom(c);
 	}
 
-	return addToken(head, p);
+	ঘূৰাই addToken(head, p);
 }
 
-void setExpression(struct Token* p, char match[], char Exp[])
+শূন্য setExpression(সংরচনা Token* p, ৱর্ণ match[], ৱর্ণ Exp[])
 {
 	/* Leave macros alone */
-	if((p->type & macro))
+	যদি((p->type & macro))
 	{
 		setExpression(p->next, match, Exp);
-		return;
+		ঘূৰাই;
 	}
 
 	/* Only if there is an exact match replace */
-	if(0 == strncmp(p->Text, match, max_string))
+	যদি(0 == strncmp(p->Text, match, max_string))
 	{
 		p->Expression = Exp;
 	}
 
-	if(NULL != p->next)
+	যদি(রিক্ত != p->next)
 	{
 		setExpression(p->next, match, Exp);
 	}
 
 }
 
-void identify_macros(struct Token* p)
+শূন্য identify_macros(সংরচনা Token* p)
 {
-	if(0 == strncmp(p->Text, "DEFINE", max_string))
+	যদি(0 == strncmp(p->Text, "DEFINE", max_string))
 	{
 		p->type = macro;
 		p->Text = p->next->Text;
-		if(p->next->next->type & str)
+		যদি(p->next->next->type & str)
 		{
 			p->Expression = p->next->next->Text + 1;
 		}
-		else
+		অন্যথা
 		{
 			p->Expression = p->next->next->Text;
 		}
 		p->next = p->next->next->next;
 	}
 
-	if(NULL != p->next)
+	যদি(রিক্ত != p->next)
 	{
 		identify_macros(p->next);
 	}
 }
 
-void line_macro(struct Token* p)
+শূন্য সাৰি_macro(সংরচনা Token* p)
 {
-	if(p->type & macro)
+	যদি(p->type & macro)
 	{
 		setExpression(p->next, p->Text, p->Expression);
 	}
 
-	if(NULL != p->next)
+	যদি(রিক্ত != p->next)
 	{
-		line_macro(p->next);
+		সাৰি_macro(p->next);
 	}
 }
 
-void hexify_string(struct Token* p)
+শূন্য hexify_string(সংরচনা Token* p)
 {
-	char table[16] = {0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46};
-	int i = ((strnlen(p->Text + 1 , max_string)/4) + 1) * 8;
+	ৱর্ণ table[16] = {0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46};
+	পূর্ণাঙ্ক i = ((strnlen(p->Text + 1 , max_string)/4) + 1) * 8;
 
-	char* d = calloc(max_string, sizeof(char));
+	ৱর্ণ* d = calloc(max_string, পরিমাণ(ৱর্ণ));
 	p->Expression = d;
 
-	while(0 < i)
+	যেতিয়ালৈ(0 < i)
 	{
 		i = i - 1;
 		d[i] = 0x30;
 	}
 
-	while( i < max_string)
+	যেতিয়ালৈ( i < max_string)
 	{
-		if(0 == p->Text[i+1])
+		যদি(0 == p->Text[i+1])
 		{
 			i = max_string;
 		}
-		else
+		অন্যথা
 		{
 			d[2*i]  = table[p->Text[i+1] / 16];
 			d[2*i + 1] = table[p->Text[i+1] % 16];
@@ -235,109 +235,109 @@ void hexify_string(struct Token* p)
 	}
 }
 
-void process_string(struct Token* p)
+শূন্য process_string(সংরচনা Token* p)
 {
-	if(p->type & str)
+	যদি(p->type & str)
 	{
-		if('\'' == p->Text[0])
+		যদি('\'' == p->Text[0])
 		{
 			p->Expression = p->Text + 1;
 		}
-		else if('"' == p->Text[0])
+		অন্যথা যদি('"' == p->Text[0])
 		{
 			hexify_string(p);
 		}
 	}
 
-	if(NULL != p->next)
+	যদি(রিক্ত != p->next)
 	{
 		process_string(p->next);
 	}
 }
 
 
-void preserve_other(struct Token* p)
+শূন্য preserve_other(সংরচনা Token* p)
 {
-	if(NULL != p->next)
+	যদি(রিক্ত != p->next)
 	{
 		preserve_other(p->next);
 	}
 
-	if((NULL == p->Expression) && !(p->type & macro))
+	যদি((রিক্ত == p->Expression) && !(p->type & macro))
 	{
 		p->Expression = p->Text;
 	}
 }
 
-uint16_t numerate_string(char a[])
+uint16_t numerate_string(ৱর্ণ a[])
 {
-	char *ptr;
-	return (uint16_t)strtol(a, &ptr, 0);
+	ৱর্ণ *ptr;
+	ঘূৰাই (uint16_t)strtol(a, &ptr, 0);
 }
 
-void eval_immediates(struct Token* p)
+শূন্য eval_immediates(সংরচনা Token* p)
 {
-	if(NULL != p->next)
+	যদি(রিক্ত != p->next)
 	{
 		eval_immediates(p->next);
 	}
 
-	if((NULL == p->Expression) && !(p->type & macro))
+	যদি((রিক্ত == p->Expression) && !(p->type & macro))
 	{
-		uint16_t value;
-		value = numerate_string(p->Text);
+		uint16_t মান;
+		মান = numerate_string(p->Text);
 
-		if(('0' == p->Text[0]) || (0 != value))
+		যদি(('0' == p->Text[0]) || (0 != মান))
 		{
-			char* c = calloc(5, sizeof(char));
-			sprintf(c, "%04x", value);
+			ৱর্ণ* c = calloc(5, পরিমাণ(ৱর্ণ));
+			sprintf(c, "%04x", মান);
 			p->Expression = c;
 		}
 	}
 }
 
-void print_hex(struct Token* p)
+শূন্য print_hex(সংরচনা Token* p)
 {
-	if(p->type ^ macro)
+	যদি(p->type ^ macro)
 	{
 		fprintf(stdout, "\n%s", p->Expression);
 	}
 
-	if(NULL != p->next)
+	যদি(রিক্ত != p->next)
 	{
 		print_hex(p->next);
 	}
-	else
+	অন্যথা
 	{
 		fprintf(stdout, "\n");
 	}
 }
 
 /* Standard C main program */
-int main(int argc, char **argv)
+পূর্ণাঙ্ক main(পূর্ণাঙ্ক argc, ৱর্ণ **argv)
 {
 	/* Make sure we have a program tape to run */
-	if (argc < 2)
+	যদি (argc < 2)
 	{
 		fprintf(stderr, "Usage: %s $FileName\nWhere $FileName is the name of the paper tape of the program being run\n", argv[0]);
-		return EXIT_FAILURE;
+		ঘূৰাই EXIT_FAILURE;
 	}
 
 	source_file = fopen(argv[1], "r");
 
 	Reached_EOF = false;
-	struct Token* head = NULL;
-	while(!Reached_EOF)
+	সংরচনা Token* head = রিক্ত;
+	যেতিয়ালৈ(!Reached_EOF)
 	{
-		head = Tokenize_Line(head);
+		head = Tokenize_সাৰি(head);
 	}
 
 	identify_macros(head);
-	line_macro(head);
+	সাৰি_macro(head);
 	process_string(head);
 	eval_immediates(head);
 	preserve_other(head);
 	print_hex(head);
 
-	return EXIT_SUCCESS;
+	ঘূৰাই EXIT_SUCCESS;
 }
