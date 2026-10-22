@@ -16,49 +16,49 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include "../M2libc/bootstrappable.h"
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <unistd.h>
+#অন্তর্ভাব <sys/stat.h>
+#অন্তর্ভাব "../M2libc/bootstrappable.h"
 
 #define max_string 4096
 
 /* Globals */
 FILE* output;
 
-void line_Comment(FILE* source_file)
+শূন্য সারি_Comment(FILE* source_file)
 {
-	int c = fgetc(source_file);
-	while(!in_set(c, "\n\r"))
+	পূর্ণাঙ্ক c = fgetc(source_file);
+	যাবত্(!in_set(c, "\n\r"))
 	{
-		if(EOF == c) break;
+		যদি(EOF == c) ভঙ্গ;
 		c = fgetc(source_file);
 	}
 }
 
-int hex(int c, FILE* source_file)
+পূর্ণাঙ্ক hex(পূর্ণাঙ্ক c, FILE* source_file)
 {
-	if (in_set(c, "0123456789")) return (c - 48);
-	else if (in_set(c, "abcdef")) return (c - 87);
-	else if (in_set(c, "ABCDEF")) return (c - 55);
-	else if (in_set(c, "#;")) line_Comment(source_file);
-	return -1;
+	যদি (in_set(c, "0123456789")) প্রত্যাগম (c - 48);
+	অন্যথা যদি (in_set(c, "abcdef")) প্রত্যাগম (c - 87);
+	অন্যথা যদি (in_set(c, "ABCDEF")) প্রত্যাগম (c - 55);
+	অন্যথা যদি (in_set(c, "#;")) সারি_Comment(source_file);
+	প্রত্যাগম -1;
 }
 
-int hold;
-int toggle;
-void process_byte(char c, FILE* source_file)
+পূর্ণাঙ্ক hold;
+পূর্ণাঙ্ক toggle;
+শূন্য process_byte(বর্ণ c, FILE* source_file)
 {
-	if(0 <= hex(c, source_file))
+	যদি(0 <= hex(c, source_file))
 	{
-		if(toggle)
+		যদি(toggle)
 		{
 			fputc(((hold * 16)) + hex(c, source_file), output);
 			hold = 0;
 		}
-		else
+		অন্যথা
 		{
 			hold = hex(c, source_file);
 		}
@@ -66,32 +66,32 @@ void process_byte(char c, FILE* source_file)
 	}
 }
 
-void first_pass(FILE* input)
+শূন্য first_pass(FILE* প্রবেশ)
 {
 	toggle = FALSE;
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	পূর্ণাঙ্ক c;
+	প্রতি(c = fgetc(প্রবেশ); EOF != c; c = fgetc(প্রবেশ))
 	{
-		process_byte(c, input);
+		process_byte(c, প্রবেশ);
 	}
 }
 
 /* Standard C main program */
-int main(int argc, char **argv)
+পূর্ণাঙ্ক main(পূর্ণাঙ্ক argc, বর্ণ **argv)
 {
 	output = stdout;
 
-	FILE* input = fopen(argv[1], "r");
+	FILE* প্রবেশ = fopen(argv[1], "r");
 	output = stdout;
-	if(NULL != argv[2])
+	যদি(রিক্ত != argv[2])
 	{
 		output = fopen(argv[2], "w");
 		chmod(argv[2], 0700);
 	}
 
 	/* do the work */
-	first_pass(input);
+	first_pass(প্রবেশ);
 
 	/* Set file as executable */
-	return EXIT_SUCCESS;
+	প্রত্যাগম EXIT_SUCCESS;
 }
