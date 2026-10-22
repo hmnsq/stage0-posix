@@ -16,49 +16,49 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include "../M2libc/bootstrappable.h"
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <unistd.h>
+#अन्तर्भाव <sys/stat.h>
+#अन्तर्भाव "../M2libc/bootstrappable.h"
 
 #define max_string 4096
 
 /* Globals */
-FILE* output;
+खाता* output;
 
-void line_Comment(FILE* source_file)
+शून्य पङ्क्ति_Comment(खाता* source_file)
 {
-	int c = fgetc(source_file);
-	while(!in_set(c, "\n\r"))
+	पूर्णाङ्क c = ख_अक्षर_लो(source_file);
+	जबसम्म(!in_set(c, "\n\r"))
 	{
-		if(EOF == c) break;
-		c = fgetc(source_file);
+		यदि(खातापूर्ण == c) रोक;
+		c = ख_अक्षर_लो(source_file);
 	}
 }
 
-int hex(int c, FILE* source_file)
+पूर्णाङ्क hex(पूर्णाङ्क c, खाता* source_file)
 {
-	if (in_set(c, "0123456789")) return (c - 48);
-	else if (in_set(c, "abcdef")) return (c - 87);
-	else if (in_set(c, "ABCDEF")) return (c - 55);
-	else if (in_set(c, "#;")) line_Comment(source_file);
-	return -1;
+	यदि (in_set(c, "0123456789")) फर्काऊ (c - 48);
+	अन्यथा यदि (in_set(c, "abcdef")) फर्काऊ (c - 87);
+	अन्यथा यदि (in_set(c, "ABCDEF")) फर्काऊ (c - 55);
+	अन्यथा यदि (in_set(c, "#;")) पङ्क्ति_Comment(source_file);
+	फर्काऊ -1;
 }
 
-int hold;
-int toggle;
-void process_byte(char c, FILE* source_file)
+पूर्णाङ्क hold;
+पूर्णाङ्क toggle;
+शून्य process_byte(वर्ण c, खाता* source_file)
 {
-	if(0 <= hex(c, source_file))
+	यदि(0 <= hex(c, source_file))
 	{
-		if(toggle)
+		यदि(toggle)
 		{
-			fputc(((hold * 16)) + hex(c, source_file), output);
+			ख_अक्षर_दो(((hold * 16)) + hex(c, source_file), output);
 			hold = 0;
 		}
-		else
+		अन्यथा
 		{
 			hold = hex(c, source_file);
 		}
@@ -66,32 +66,32 @@ void process_byte(char c, FILE* source_file)
 	}
 }
 
-void first_pass(FILE* input)
+शून्य first_pass(खाता* आगत)
 {
 	toggle = FALSE;
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	पूर्णाङ्क c;
+	लागि(c = ख_अक्षर_लो(आगत); खातापूर्ण != c; c = ख_अक्षर_लो(आगत))
 	{
-		process_byte(c, input);
+		process_byte(c, आगत);
 	}
 }
 
 /* Standard C main program */
-int main(int argc, char **argv)
+पूर्णाङ्क main(पूर्णाङ्क argc, वर्ण **argv)
 {
-	output = stdout;
+	output = मानक_निकास;
 
-	FILE* input = fopen(argv[1], "r");
-	output = stdout;
-	if(NULL != argv[2])
+	खाता* आगत = ख_खोलो(argv[1], "r");
+	output = मानक_निकास;
+	यदि(रिक्त != argv[2])
 	{
-		output = fopen(argv[2], "w");
+		output = ख_खोलो(argv[2], "w");
 		chmod(argv[2], 0700);
 	}
 
 	/* do the work */
-	first_pass(input);
+	first_pass(आगत);
 
 	/* Set file as executable */
-	return EXIT_SUCCESS;
+	फर्काऊ निकास_सफल;
 }

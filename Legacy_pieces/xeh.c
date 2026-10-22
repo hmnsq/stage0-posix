@@ -15,42 +15,42 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdlib.h>
-#include <stdio.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <stdio.h>
 
-int main (int argc, char** argv)
+पूर्णाङ्क main (पूर्णाङ्क argc, वर्ण** argv)
 {
-	if(argc != 2)
+	यदि(argc != 2)
 	{
-		fputs("xeh $filename is the only valid input form\n", stderr);
-		exit(EXIT_FAILURE);
+		ख_माला_दो("xeh $filename is the only valid input form\n", मानक_त्रुटि);
+		निकास(निकास_त्रुटि);
 	}
 
-	FILE* in = fopen(argv[1], "r");
-	if(NULL == in)
+	खाता* in = ख_खोलो(argv[1], "r");
+	यदि(रिक्त == in)
 	{
-		fputs("Unable to open file: ", stderr);
-		fputs(argv[1], stderr);
-		fputs(" aborting to prevent problems\n", stderr);
-		exit(EXIT_FAILURE);
+		ख_माला_दो("Unable to open file: ", मानक_त्रुटि);
+		ख_माला_दो(argv[1], मानक_त्रुटि);
+		ख_माला_दो(" aborting to prevent problems\n", मानक_त्रुटि);
+		निकास(निकास_त्रुटि);
 	}
 
-	char* table = "0123456789ABCDEF";
-	int c = fgetc(in);
-	int col = 40;
-	while(EOF != c)
+	वर्ण* table = "0123456789ABCDEF";
+	पूर्णाङ्क c = ख_अक्षर_लो(in);
+	पूर्णाङ्क col = 40;
+	जबसम्म(खातापूर्ण != c)
 	{
-		fputc(table[c / 16], stdout);
-		fputc(table[c % 16], stdout);
+		ख_अक्षर_दो(table[c / 16], मानक_निकास);
+		ख_अक्षर_दो(table[c % 16], मानक_निकास);
 		col = col - 2;
-		if(0 == col)
+		यदि(0 == col)
 		{
 			col = 40;
-			fputc('\n', stdout);
+			ख_अक्षर_दो('\n', मानक_निकास);
 		}
-		else fputc(' ', stdout);
-		c = fgetc(in);
+		अन्यथा ख_अक्षर_दो(' ', मानक_निकास);
+		c = ख_अक्षर_लो(in);
 	}
-	fputc('\n', stdout);
-	exit(EXIT_SUCCESS);
+	ख_अक्षर_दो('\n', मानक_निकास);
+	निकास(निकास_सफल);
 }
