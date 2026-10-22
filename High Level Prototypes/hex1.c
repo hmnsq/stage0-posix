@@ -25,35 +25,35 @@
 
 #define max_string 4096
 
-struct entry
+sa_nracanaa entry
 {
-	struct entry* next;
+	sa_nracanaa entry* next;
 	unsigned target;
-	char name;
+	var_na name;
 };
 
 
 /* Globals */
 FILE* output;
-struct entry* jump_table;
-int ip;
+sa_nracanaa entry* jump_table;
+ຈຳນວນເຕັມ ip;
 
-unsigned GetTarget(char c)
+unsigned GetTarget(var_na c)
 {
-	struct entry* i;
-	for(i = jump_table; NULL != i; i = i->next)
+	sa_nracanaa entry* i;
+	ສຳລັບ(i = jump_table; NULL != i; i = i->next)
 	{
-		if(c == i->name)
+		ຖ້າ(c == i->name)
 		{
-			return i->target;
+			ສົ່ງຄືນ i->target;
 		}
 	}
-	return 0;
+	ສົ່ງຄືນ 0;
 }
 
-int storeLabel(FILE* source_file, int ip)
+ຈຳນວນເຕັມ storeLabel(FILE* source_file, ຈຳນວນເຕັມ ip)
 {
-	struct entry* entry = calloc(1, sizeof(struct entry));
+	sa_nracanaa entry* entry = calloc(1, parimaa_na(sa_nracanaa entry));
 
 	/* Ensure we have target address */
 	entry->target = ip;
@@ -64,15 +64,15 @@ int storeLabel(FILE* source_file, int ip)
 
 	/* Store string */
 	entry->name = fgetc(source_file);
-	return -1;
+	ສົ່ງຄືນ -1;
 }
 
 
-void outputPointer(int displacement, int number_of_bytes)
+void outputPointer(ຈຳນວນເຕັມ displacement, ຈຳນວນເຕັມ number_of_bytes)
 {
 	unsigned value = displacement;
 
-	while(number_of_bytes > 0)
+	ໃນຂະນະທີ່(number_of_bytes > 0)
 	{
 		unsigned byte = value % 256;
 		value = value / 256;
@@ -81,62 +81,62 @@ void outputPointer(int displacement, int number_of_bytes)
 	}
 }
 
-void Update_Pointer(char ch)
+void Update_Pointer(var_na ch)
 {
 	/* Calculate pointer size*/
-	if(in_set(ch, "%")) ip = ip + 4;
-	else exit(EXIT_FAILURE);
+	ຖ້າ(in_set(ch, "%")) ip = ip + 4;
+	ບໍ່ດັ່ງນັ້ນ exit(EXIT_FAILURE);
 }
 
-void storePointer(char ch)
+void storePointer(var_na ch)
 {
 	/* Get string of pointer */
 	Update_Pointer(ch);
 
 	/* Lookup token */
-	int target = GetTarget(ch);
-	int displacement;
+	ຈຳນວນເຕັມ target = GetTarget(ch);
+	ຈຳນວນເຕັມ displacement;
 
 	/* Change relative base address to :<base> */
 	displacement = (target - ip);
 
 	/* output calculated difference */
-	if('%' == ch) outputPointer(displacement, 4);  /* Deal with % */
-	else exit(EXIT_FAILURE);
+	ຖ້າ('%' == ch) outputPointer(displacement, 4);  /* Deal with % */
+	ບໍ່ດັ່ງນັ້ນ exit(EXIT_FAILURE);
 }
 
 void line_Comment(FILE* source_file)
 {
-	int c = fgetc(source_file);
-	while(!in_set(c, "\n\r"))
+	ຈຳນວນເຕັມ c = fgetc(source_file);
+	ໃນຂະນະທີ່(!in_set(c, "\n\r"))
 	{
-		if(EOF == c) break;
+		ຖ້າ(EOF == c) bha_nga;
 		c = fgetc(source_file);
 	}
 }
 
-int hex(int c, FILE* source_file)
+ຈຳນວນເຕັມ hex(ຈຳນວນເຕັມ c, FILE* source_file)
 {
-	if (in_set(c, "0123456789")) return (c - 48);
-	else if (in_set(c, "abcdef")) return (c - 87);
-	else if (in_set(c, "ABCDEF")) return (c - 55);
-	else if (in_set(c, "#;")) line_Comment(source_file);
-	return -1;
+	ຖ້າ (in_set(c, "0123456789")) ສົ່ງຄືນ (c - 48);
+	ບໍ່ດັ່ງນັ້ນ ຖ້າ (in_set(c, "abcdef")) ສົ່ງຄືນ (c - 87);
+	ບໍ່ດັ່ງນັ້ນ ຖ້າ (in_set(c, "ABCDEF")) ສົ່ງຄືນ (c - 55);
+	ບໍ່ດັ່ງນັ້ນ ຖ້າ (in_set(c, "#;")) line_Comment(source_file);
+	ສົ່ງຄືນ -1;
 }
 
-int hold;
-int toggle;
-void process_byte(char c, FILE* source_file, int write)
+ຈຳນວນເຕັມ hold;
+ຈຳນວນເຕັມ toggle;
+void process_byte(var_na c, FILE* source_file, ຈຳນວນເຕັມ write)
 {
-	if(0 <= hex(c, source_file))
+	ຖ້າ(0 <= hex(c, source_file))
 	{
-		if(toggle)
+		ຖ້າ(toggle)
 		{
-			if(write) fputc(((hold * 16)) + hex(c, source_file), output);
+			ຖ້າ(write) fputc(((hold * 16)) + hex(c, source_file), output);
 			ip = ip + 1;
 			hold = 0;
 		}
-		else
+		ບໍ່ດັ່ງນັ້ນ
 		{
 			hold = hex(c, source_file);
 		}
@@ -147,22 +147,22 @@ void process_byte(char c, FILE* source_file, int write)
 void first_pass(FILE* input)
 {
 	toggle = FALSE;
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	ຈຳນວນເຕັມ c;
+	ສຳລັບ(c = fgetc(input); EOF != c; c = fgetc(input))
 	{
 		/* Check for and deal with label */
-		if(':' == c)
+		ຖ້າ(':' == c)
 		{
 			c = storeLabel(input, ip);
 		}
 
 		/* check for and deal with relative/absolute pointers to labels */
-		if(in_set(c, "%"))
+		ຖ້າ(in_set(c, "%"))
 		{ /* deal 4byte pointer (%) */
 			Update_Pointer(c);
 			c = fgetc(input);
 		}
-		else process_byte(c, input, FALSE);
+		ບໍ່ດັ່ງນັ້ນ process_byte(c, input, FALSE);
 	}
 }
 
@@ -171,24 +171,24 @@ void second_pass(FILE* input)
 	toggle = FALSE;
 	hold = 0;
 
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	ຈຳນວນເຕັມ c;
+	ສຳລັບ(c = fgetc(input); EOF != c; c = fgetc(input))
 	{
-		if(':' == c) c = fgetc(input); /* Deal with : */
-		else if(in_set(c, "%")) storePointer(c);  /* Deal with %*/
-		else process_byte(c, input, TRUE);
+		ຖ້າ(':' == c) c = fgetc(input); /* Deal with : */
+		ບໍ່ດັ່ງນັ້ນ ຖ້າ(in_set(c, "%")) storePointer(c);  /* Deal with %*/
+		ບໍ່ດັ່ງນັ້ນ process_byte(c, input, TRUE);
 	}
 }
 
 /* Standard C main program */
-int main(int argc, char **argv)
+ຈຳນວນເຕັມ main(ຈຳນວນເຕັມ argc, var_na **argv)
 {
 	jump_table = NULL;
 	output = stdout;
 
 	FILE* input = fopen(argv[1], "r");
 	output = stdout;
-	if(NULL != argv[2])
+	ຖ້າ(NULL != argv[2])
 	{
 		output = fopen(argv[2], "w");
 		chmod(argv[2], 0700);
@@ -204,5 +204,5 @@ int main(int argc, char **argv)
 	second_pass(input);
 
 	/* Set file as executable */
-	return EXIT_SUCCESS;
+	ສົ່ງຄືນ EXIT_SUCCESS;
 }

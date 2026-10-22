@@ -30,35 +30,35 @@ FILE* output;
 
 void line_Comment(FILE* source_file)
 {
-	int c = fgetc(source_file);
-	while(!in_set(c, "\n\r"))
+	ຈຳນວນເຕັມ c = fgetc(source_file);
+	ໃນຂະນະທີ່(!in_set(c, "\n\r"))
 	{
-		if(EOF == c) break;
+		ຖ້າ(EOF == c) bha_nga;
 		c = fgetc(source_file);
 	}
 }
 
-int hex(int c, FILE* source_file)
+ຈຳນວນເຕັມ hex(ຈຳນວນເຕັມ c, FILE* source_file)
 {
-	if (in_set(c, "0123456789")) return (c - 48);
-	else if (in_set(c, "abcdef")) return (c - 87);
-	else if (in_set(c, "ABCDEF")) return (c - 55);
-	else if (in_set(c, "#;")) line_Comment(source_file);
-	return -1;
+	ຖ້າ (in_set(c, "0123456789")) ສົ່ງຄືນ (c - 48);
+	ບໍ່ດັ່ງນັ້ນ ຖ້າ (in_set(c, "abcdef")) ສົ່ງຄືນ (c - 87);
+	ບໍ່ດັ່ງນັ້ນ ຖ້າ (in_set(c, "ABCDEF")) ສົ່ງຄືນ (c - 55);
+	ບໍ່ດັ່ງນັ້ນ ຖ້າ (in_set(c, "#;")) line_Comment(source_file);
+	ສົ່ງຄືນ -1;
 }
 
-int hold;
-int toggle;
-void process_byte(char c, FILE* source_file)
+ຈຳນວນເຕັມ hold;
+ຈຳນວນເຕັມ toggle;
+void process_byte(var_na c, FILE* source_file)
 {
-	if(0 <= hex(c, source_file))
+	ຖ້າ(0 <= hex(c, source_file))
 	{
-		if(toggle)
+		ຖ້າ(toggle)
 		{
 			fputc(((hold * 16)) + hex(c, source_file), output);
 			hold = 0;
 		}
-		else
+		ບໍ່ດັ່ງນັ້ນ
 		{
 			hold = hex(c, source_file);
 		}
@@ -69,21 +69,21 @@ void process_byte(char c, FILE* source_file)
 void first_pass(FILE* input)
 {
 	toggle = FALSE;
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	ຈຳນວນເຕັມ c;
+	ສຳລັບ(c = fgetc(input); EOF != c; c = fgetc(input))
 	{
 		process_byte(c, input);
 	}
 }
 
 /* Standard C main program */
-int main(int argc, char **argv)
+ຈຳນວນເຕັມ main(ຈຳນວນເຕັມ argc, var_na **argv)
 {
 	output = stdout;
 
 	FILE* input = fopen(argv[1], "r");
 	output = stdout;
-	if(NULL != argv[2])
+	ຖ້າ(NULL != argv[2])
 	{
 		output = fopen(argv[2], "w");
 		chmod(argv[2], 0700);
@@ -93,5 +93,5 @@ int main(int argc, char **argv)
 	first_pass(input);
 
 	/* Set file as executable */
-	return EXIT_SUCCESS;
+	ສົ່ງຄືນ EXIT_SUCCESS;
 }
