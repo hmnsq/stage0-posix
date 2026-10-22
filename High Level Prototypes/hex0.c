@@ -16,49 +16,49 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include "../M2libc/bootstrappable.h"
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <unistd.h>
+#অন্তর্ভাব <sys/stat.h>
+#অন্তর্ভাব "../M2libc/bootstrappable.h"
 
 #define max_string 4096
 
 /* Globals */
 FILE* output;
 
-void line_Comment(FILE* source_file)
+শূন্য সারি_Comment(FILE* source_file)
 {
-	int c = fgetc(source_file);
-	while(!in_set(c, "\n\r"))
+	পূর্ণসংখ্যা c = fgetc(source_file);
+	যখন(!in_set(c, "\n\r"))
 	{
-		if(EOF == c) break;
+		যদি(EOF == c) বিরতি;
 		c = fgetc(source_file);
 	}
 }
 
-int hex(int c, FILE* source_file)
+পূর্ণসংখ্যা hex(পূর্ণসংখ্যা c, FILE* source_file)
 {
-	if (in_set(c, "0123456789")) return (c - 48);
-	else if (in_set(c, "abcdef")) return (c - 87);
-	else if (in_set(c, "ABCDEF")) return (c - 55);
-	else if (in_set(c, "#;")) line_Comment(source_file);
-	return -1;
+	যদি (in_set(c, "0123456789")) ফেরত (c - 48);
+	অন্যথা যদি (in_set(c, "abcdef")) ফেরত (c - 87);
+	অন্যথা যদি (in_set(c, "ABCDEF")) ফেরত (c - 55);
+	অন্যথা যদি (in_set(c, "#;")) সারি_Comment(source_file);
+	ফেরত -1;
 }
 
-int hold;
-int toggle;
-void process_byte(char c, FILE* source_file)
+পূর্ণসংখ্যা hold;
+পূর্ণসংখ্যা toggle;
+শূন্য process_byte(অক্ষর c, FILE* source_file)
 {
-	if(0 <= hex(c, source_file))
+	যদি(0 <= hex(c, source_file))
 	{
-		if(toggle)
+		যদি(toggle)
 		{
 			fputc(((hold * 16)) + hex(c, source_file), output);
 			hold = 0;
 		}
-		else
+		অন্যথা
 		{
 			hold = hex(c, source_file);
 		}
@@ -66,32 +66,32 @@ void process_byte(char c, FILE* source_file)
 	}
 }
 
-void first_pass(FILE* input)
+শূন্য first_pass(FILE* প্রবেশ)
 {
 	toggle = FALSE;
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	পূর্ণসংখ্যা c;
+	জন্য(c = fgetc(প্রবেশ); EOF != c; c = fgetc(প্রবেশ))
 	{
-		process_byte(c, input);
+		process_byte(c, প্রবেশ);
 	}
 }
 
 /* Standard C main program */
-int main(int argc, char **argv)
+পূর্ণসংখ্যা প্রধান(পূর্ণসংখ্যা argc, অক্ষর **argv)
 {
 	output = stdout;
 
-	FILE* input = fopen(argv[1], "r");
+	FILE* প্রবেশ = fopen(argv[1], "r");
 	output = stdout;
-	if(NULL != argv[2])
+	যদি(ফাঁকা != argv[2])
 	{
 		output = fopen(argv[2], "w");
 		chmod(argv[2], 0700);
 	}
 
 	/* do the work */
-	first_pass(input);
+	first_pass(প্রবেশ);
 
 	/* Set file as executable */
-	return EXIT_SUCCESS;
+	ফেরত EXIT_SUCCESS;
 }
