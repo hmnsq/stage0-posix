@@ -18,16 +18,16 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-int main (int argc, char** argv)
+ціле main (ціле argc, char** argv)
 {
-	if(argc != 2)
+	якщо(argc != 2)
 	{
 		fputs("xeh $filename is the only valid input form\n", stderr);
 		exit(EXIT_FAILURE);
 	}
 
 	FILE* in = fopen(argv[1], "r");
-	if(NULL == in)
+	якщо(NULL == in)
 	{
 		fputs("Unable to open file: ", stderr);
 		fputs(argv[1], stderr);
@@ -36,19 +36,19 @@ int main (int argc, char** argv)
 	}
 
 	char* table = "0123456789ABCDEF";
-	int c = fgetc(in);
-	int col = 40;
-	while(EOF != c)
+	ціле c = fgetc(in);
+	ціле col = 40;
+	поки(EOF != c)
 	{
 		fputc(table[c / 16], stdout);
 		fputc(table[c % 16], stdout);
 		col = col - 2;
-		if(0 == col)
+		якщо(0 == col)
 		{
 			col = 40;
 			fputc('\n', stdout);
 		}
-		else fputc(' ', stdout);
+		інакше fputc(' ', stdout);
 		c = fgetc(in);
 	}
 	fputc('\n', stdout);

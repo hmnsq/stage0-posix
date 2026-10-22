@@ -30,35 +30,35 @@ FILE* output;
 
 void line_Comment(FILE* source_file)
 {
-	int c = fgetc(source_file);
-	while(!in_set(c, "\n\r"))
+	ціле c = fgetc(source_file);
+	поки(!in_set(c, "\n\r"))
 	{
-		if(EOF == c) break;
+		якщо(EOF == c) break;
 		c = fgetc(source_file);
 	}
 }
 
-int hex(int c, FILE* source_file)
+ціле hex(ціле c, FILE* source_file)
 {
-	if (in_set(c, "0123456789")) return (c - 48);
-	else if (in_set(c, "abcdef")) return (c - 87);
-	else if (in_set(c, "ABCDEF")) return (c - 55);
-	else if (in_set(c, "#;")) line_Comment(source_file);
-	return -1;
+	якщо (in_set(c, "0123456789")) повернути (c - 48);
+	інакше якщо (in_set(c, "abcdef")) повернути (c - 87);
+	інакше якщо (in_set(c, "ABCDEF")) повернути (c - 55);
+	інакше якщо (in_set(c, "#;")) line_Comment(source_file);
+	повернути -1;
 }
 
-int hold;
-int toggle;
+ціле hold;
+ціле toggle;
 void process_byte(char c, FILE* source_file)
 {
-	if(0 <= hex(c, source_file))
+	якщо(0 <= hex(c, source_file))
 	{
-		if(toggle)
+		якщо(toggle)
 		{
 			fputc(((hold * 16)) + hex(c, source_file), output);
 			hold = 0;
 		}
-		else
+		інакше
 		{
 			hold = hex(c, source_file);
 		}
@@ -69,21 +69,21 @@ void process_byte(char c, FILE* source_file)
 void first_pass(FILE* input)
 {
 	toggle = FALSE;
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	ціле c;
+	для(c = fgetc(input); EOF != c; c = fgetc(input))
 	{
 		process_byte(c, input);
 	}
 }
 
 /* Standard C main program */
-int main(int argc, char **argv)
+ціле main(ціле argc, char **argv)
 {
 	output = stdout;
 
 	FILE* input = fopen(argv[1], "r");
 	output = stdout;
-	if(NULL != argv[2])
+	якщо(NULL != argv[2])
 	{
 		output = fopen(argv[2], "w");
 		chmod(argv[2], 0700);
@@ -93,5 +93,5 @@ int main(int argc, char **argv)
 	first_pass(input);
 
 	/* Set file as executable */
-	return EXIT_SUCCESS;
+	повернути EXIT_SUCCESS;
 }
