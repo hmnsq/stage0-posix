@@ -15,19 +15,19 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdlib.h>
-#include <stdio.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <stdio.h>
 
-int main (int argc, char** argv)
+पूर्णाङ्क main (पूर्णाङ्क argc, वर्ण** argv)
 {
-	if(argc != 2)
+	सचे(argc != 2)
 	{
 		fputs("xeh $filename is the only valid input form\n", stderr);
 		exit(EXIT_FAILURE);
 	}
 
 	FILE* in = fopen(argv[1], "r");
-	if(NULL == in)
+	सचे(रिक्त == in)
 	{
 		fputs("Unable to open file: ", stderr);
 		fputs(argv[1], stderr);
@@ -35,20 +35,20 @@ int main (int argc, char** argv)
 		exit(EXIT_FAILURE);
 	}
 
-	char* table = "0123456789ABCDEF";
-	int c = fgetc(in);
-	int col = 40;
-	while(EOF != c)
+	वर्ण* table = "0123456789ABCDEF";
+	पूर्णाङ्क c = fgetc(in);
+	पूर्णाङ्क col = 40;
+	याव(EOF != c)
 	{
 		fputc(table[c / 16], stdout);
 		fputc(table[c % 16], stdout);
 		col = col - 2;
-		if(0 == col)
+		सचे(0 == col)
 		{
 			col = 40;
 			fputc('\n', stdout);
 		}
-		else fputc(' ', stdout);
+		अञ्ञथा fputc(' ', stdout);
 		c = fgetc(in);
 	}
 	fputc('\n', stdout);
