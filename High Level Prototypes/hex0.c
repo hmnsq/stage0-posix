@@ -16,49 +16,49 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include "../M2libc/bootstrappable.h"
+#ଅନ୍ତର୍ଭାଵ <stdio.h>
+#ଅନ୍ତର୍ଭାଵ <stdlib.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
+#ଅନ୍ତର୍ଭାଵ <unistd.h>
+#ଅନ୍ତର୍ଭାଵ <sys/stat.h>
+#ଅନ୍ତର୍ଭାଵ "../M2libc/bootstrappable.h"
 
 #define max_string 4096
 
 /* Globals */
 FILE* output;
 
-void line_Comment(FILE* source_file)
+ଶୂନ୍ୟ ଧାଡ଼ି_Comment(FILE* source_file)
 {
-	int c = fgetc(source_file);
-	while(!in_set(c, "\n\r"))
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା c = fgetc(source_file);
+	ଯେତେବେଳେ(!in_set(c, "\n\r"))
 	{
-		if(EOF == c) break;
+		ଯଦି(EOF == c) ଭାଙ୍ଗ;
 		c = fgetc(source_file);
 	}
 }
 
-int hex(int c, FILE* source_file)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା hex(ପୂର୍ଣ୍ଣସଂଖ୍ୟା c, FILE* source_file)
 {
-	if (in_set(c, "0123456789")) return (c - 48);
-	else if (in_set(c, "abcdef")) return (c - 87);
-	else if (in_set(c, "ABCDEF")) return (c - 55);
-	else if (in_set(c, "#;")) line_Comment(source_file);
-	return -1;
+	ଯଦି (in_set(c, "0123456789")) ଫେରନ୍ତୁ (c - 48);
+	ଅନ୍ୟଥା ଯଦି (in_set(c, "abcdef")) ଫେରନ୍ତୁ (c - 87);
+	ଅନ୍ୟଥା ଯଦି (in_set(c, "ABCDEF")) ଫେରନ୍ତୁ (c - 55);
+	ଅନ୍ୟଥା ଯଦି (in_set(c, "#;")) ଧାଡ଼ି_Comment(source_file);
+	ଫେରନ୍ତୁ -1;
 }
 
-int hold;
-int toggle;
-void process_byte(char c, FILE* source_file)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା hold;
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା toggle;
+ଶୂନ୍ୟ process_byte(ଅକ୍ଷର c, FILE* source_file)
 {
-	if(0 <= hex(c, source_file))
+	ଯଦି(0 <= hex(c, source_file))
 	{
-		if(toggle)
+		ଯଦି(toggle)
 		{
 			fputc(((hold * 16)) + hex(c, source_file), output);
 			hold = 0;
 		}
-		else
+		ଅନ୍ୟଥା
 		{
 			hold = hex(c, source_file);
 		}
@@ -66,32 +66,32 @@ void process_byte(char c, FILE* source_file)
 	}
 }
 
-void first_pass(FILE* input)
+ଶୂନ୍ୟ first_pass(FILE* ନିବେଶ)
 {
 	toggle = FALSE;
-	int c;
-	for(c = fgetc(input); EOF != c; c = fgetc(input))
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା c;
+	ପାଇଁ(c = fgetc(ନିବେଶ); EOF != c; c = fgetc(ନିବେଶ))
 	{
-		process_byte(c, input);
+		process_byte(c, ନିବେଶ);
 	}
 }
 
 /* Standard C main program */
-int main(int argc, char **argv)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା ମୁଖ୍ୟ(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc, ଅକ୍ଷର **argv)
 {
 	output = stdout;
 
-	FILE* input = fopen(argv[1], "r");
+	FILE* ନିବେଶ = fopen(argv[1], "r");
 	output = stdout;
-	if(NULL != argv[2])
+	ଯଦି(ଖାଲି != argv[2])
 	{
 		output = fopen(argv[2], "w");
 		chmod(argv[2], 0700);
 	}
 
 	/* do the work */
-	first_pass(input);
+	first_pass(ନିବେଶ);
 
 	/* Set file as executable */
-	return EXIT_SUCCESS;
+	ଫେରନ୍ତୁ EXIT_SUCCESS;
 }

@@ -15,69 +15,69 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include<stdio.h>
-#include<stdlib.h>
-#include<stdbool.h>
+#ଅନ୍ତର୍ଭାଵ<stdio.h>
+#ଅନ୍ତର୍ଭାଵ<stdlib.h>
+#ଅନ୍ତର୍ଭାଵ<stdbool.h>
 
-void purge_line_comments()
+ଶୂନ୍ୟ purge_ଧାଡ଼ି_comments()
 {
-	int c;
-	do
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା c;
+	କର
 	{
 		c = getchar();
 
-		if (EOF == c)
+		ଯଦି (EOF == c)
 		{
 			exit(EXIT_SUCCESS);
 		}
-	} while ( '\n' != c );
+	} ଯେତେବେଳେ ( '\n' != c );
 }
 
-int hex(int c)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା hex(ପୂର୍ଣ୍ଣସଂଖ୍ୟା c)
 {
-	if (c >= '0' && c <= '9')
+	ଯଦି (c >= '0' && c <= '9')
 	{
-		return (c - 48);
+		ଫେରନ୍ତୁ (c - 48);
 	}
-	else if (c >= 'a' && c <= 'z')
+	ଅନ୍ୟଥା ଯଦି (c >= 'a' && c <= 'z')
 	{
-		return (c - 87);
+		ଫେରନ୍ତୁ (c - 87);
 	}
-	else if (c >= 'A' && c <= 'Z')
+	ଅନ୍ୟଥା ଯଦି (c >= 'A' && c <= 'Z')
 	{
-		return (c - 55);
+		ଫେରନ୍ତୁ (c - 55);
 	}
 
 	printf("You managed to call a hex function without a hex value!!!\n");
 	exit(EXIT_FAILURE);
 }
 
-int main(int argc, char *argv[])
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା ମୁଖ୍ୟ(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc, ଅକ୍ଷର *argv[])
 {
-	int c;
-	int sum = 0;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା c;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା sum = 0;
 	bool toggle;
 	toggle = false;
 
-	do
+	କର
 	{
 		c = getchar();
-		if ((c == '#') || (c == ';')) purge_line_comments();
-		else if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+		ଯଦି ((c == '#') || (c == ';')) purge_ଧାଡ଼ି_comments();
+		ଅନ୍ୟଥା ଯଦି ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
 		{
-			if(!toggle)
+			ଯଦି(!toggle)
 			{
 				sum = hex(c);
 				toggle = true;
 			}
-			else
+			ଅନ୍ୟଥା
 			{
 				sum = (sum << 4) + hex(c);
 				toggle = false;
 				fputc(sum, stdout);
 			}
 		}
-	}while(c != EOF);
+	}ଯେତେବେଳେ(c != EOF);
 
 	exit(EXIT_SUCCESS);
 }
