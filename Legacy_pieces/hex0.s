@@ -16,7 +16,7 @@
 
 # Our writable space
 .data
-.global _start
+.ವೈಶ್ವಿಕ _start
 hex:
 	# Purge Comment Lines
 	cmp $35, %rax
@@ -45,16 +45,16 @@ hex:
 purge_comment:
 	# Attempt to read 1 byte from STDIN
 	mov $1, %rdx          # set the size of chars we want
-	mov $input, %rsi      # Where to put it
+	mov $ಒಳಹರಿವು, %rsi      # Where to put it
 	mov $0, %rdi          # Where are we reading from
 	mov $0, %rax          # the syscall number for read
-	syscall               # call the Kernel
+	syscall               # ಆಹ್ವಾನ the Kernel
 
 	test %rax, %rax       # check what we got
-	jz Done               # Got EOF call it done
+	jz Done               # Got EOF ಆಹ್ವಾನ it done
 
 	# load byte
-	movb input, %al       # load char
+	movb ಒಳಹರಿವು, %al       # load char
 	movzx %al, %rax       # We have to zero extend it to use it
 
 	# Loop if not LF
@@ -88,20 +88,20 @@ _start:
 loop:
 	# Attempt to read 1 byte from STDIN
 	mov $1, %rdx          # set the size of chars we want
-	mov $input, %rsi      # Where to put it
+	mov $ಒಳಹರಿವು, %rsi      # Where to put it
 	mov $0, %rdi          # Where are we reading from
 	mov $0, %rax          # the syscall number for read
-	syscall               # call the Kernel
+	syscall               # ಆಹ್ವಾನ the Kernel
 
 	test %rax, %rax       # check what we got
-	jz Done               # Got EOF call it done
+	jz Done               # Got EOF ಆಹ್ವಾನ it done
 
 	# load byte
-	movb input, %al       # load char
+	movb ಒಳಹರಿವು, %al       # load char
 	movzx %al, %rax       # We have to zero extend it to use it
 
 	# process byte
-	call hex
+	ಆಹ್ವಾನ hex
 
 	# deal with -1 values
 	cmp $0, %rax
@@ -131,7 +131,7 @@ print:
 	mov $output, %rsi     # What we are writing
 	mov $1, %rdi          # Stdout File Descriptor
 	mov $1, %rax          # the syscall number for write
-	syscall               # call the Kernel
+	syscall               # ಆಹ್ವಾನ the Kernel
 
 	jmp loop
 
@@ -142,7 +142,7 @@ Done:
 	syscall               # Call it a good day
 
 read_size = 2
-input:
+ಒಳಹರಿವು:
 	.byte read_size
 output:
 	.byte 0x00
