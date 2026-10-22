@@ -48,10 +48,10 @@ purge_comment:
 	mov $input, %rsi      # Where to put it
 	mov $0, %rdi          # Where are we reading from
 	mov $0, %rax          # the syscall number for read
-	syscall               # call the Kernel
+	syscall               # نادي the Kernel
 
 	test %rax, %rax       # check what we got
-	jz Done               # Got EOF call it done
+	jz Done               # Got EOF نادي it done
 
 	# load byte
 	movb input, %al       # load char
@@ -91,17 +91,17 @@ loop:
 	mov $input, %rsi      # Where to put it
 	mov $0, %rdi          # Where are we reading from
 	mov $0, %rax          # the syscall number for read
-	syscall               # call the Kernel
+	syscall               # نادي the Kernel
 
 	test %rax, %rax       # check what we got
-	jz Done               # Got EOF call it done
+	jz Done               # Got EOF نادي it done
 
 	# load byte
 	movb input, %al       # load char
 	movzx %al, %rax       # We have to zero extend it to use it
 
 	# process byte
-	call hex
+	نادي hex
 
 	# deal with -1 values
 	cmp $0, %rax
@@ -131,7 +131,7 @@ print:
 	mov $output, %rsi     # What we are writing
 	mov $1, %rdi          # Stdout File Descriptor
 	mov $1, %rax          # the syscall number for write
-	syscall               # call the Kernel
+	syscall               # نادي the Kernel
 
 	jmp loop
 

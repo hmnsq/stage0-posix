@@ -15,69 +15,69 @@
  * along with stage0.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include<stdio.h>
-#include<stdlib.h>
-#include<stdbool.h>
+#ضمن<stdio.h>
+#ضمن<stdlib.h>
+#ضمن<stdbool.h>
 
-void purge_line_comments()
+فراغ purge_line_comments()
 {
-	int c;
-	do
+	صحيح c;
+	ܥܒܕ
 	{
 		c = getchar();
 
-		if (EOF == c)
+		ܐܢ (EOF == c)
 		{
 			exit(EXIT_SUCCESS);
 		}
-	} while ( '\n' != c );
+	} ܟܡܐ ( '\n' != c );
 }
 
-int hex(int c)
+صحيح hex(صحيح c)
 {
-	if (c >= '0' && c <= '9')
+	ܐܢ (c >= '0' && c <= '9')
 	{
-		return (c - 48);
+		ܦܢܐ (c - 48);
 	}
-	else if (c >= 'a' && c <= 'z')
+	ܐܚܪܢܐ ܐܢ (c >= 'a' && c <= 'z')
 	{
-		return (c - 87);
+		ܦܢܐ (c - 87);
 	}
-	else if (c >= 'A' && c <= 'Z')
+	ܐܚܪܢܐ ܐܢ (c >= 'A' && c <= 'Z')
 	{
-		return (c - 55);
+		ܦܢܐ (c - 55);
 	}
 
 	printf("You managed to call a hex function without a hex value!!!\n");
 	exit(EXIT_FAILURE);
 }
 
-int main(int argc, char *argv[])
+صحيح main(صحيح argc, حرف *argv[])
 {
-	int c;
-	int sum = 0;
+	صحيح c;
+	صحيح sum = 0;
 	bool toggle;
 	toggle = false;
 
-	do
+	ܥܒܕ
 	{
 		c = getchar();
-		if ((c == '#') || (c == ';')) purge_line_comments();
-		else if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+		ܐܢ ((c == '#') || (c == ';')) purge_line_comments();
+		ܐܚܪܢܐ ܐܢ ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
 		{
-			if(!toggle)
+			ܐܢ(!toggle)
 			{
 				sum = hex(c);
 				toggle = true;
 			}
-			else
+			ܐܚܪܢܐ
 			{
 				sum = (sum << 4) + hex(c);
 				toggle = false;
 				fputc(sum, stdout);
 			}
 		}
-	}while(c != EOF);
+	}ܟܡܐ(c != EOF);
 
 	exit(EXIT_SUCCESS);
 }
